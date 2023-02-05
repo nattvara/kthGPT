@@ -1,9 +1,32 @@
 # kthGTP
 
+A POC tool to download and summarise a lecture stored on [KTH Play](play.kth.se).
 
-# Examples
+# Usage
 
-```console
+```bash
+git clone https://github.com/nattvara/kthGTP.git
+cd kthGTP
+python3 --version
+# Python 3.10.3   Tested with this version
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# API KEY can be found here https://platform.openai.com/account/api-keys
+export OPENAI_API_KEY=sk-xxx...
+
+python src/main.py [URL] [QUERY]
+
+# eg.
+python src/main.py https://play.kth.se/media/Game-5/0_czbw6n1q "Summarise this lecture into 5 bullets"
+```
+
+# Example Queries
+
+> Query: Summarise this lecture into 5 bullets
+
+```bash
 $ python src/main.py https://play.kth.se/media/Game-5/0_czbw6n1q "Summarise this lecture into 5 bullets"
 
 fetching content link...
