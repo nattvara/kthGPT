@@ -15,10 +15,6 @@ def main():
     query = sys.argv[2]
     api_key = os.getenv('OPENAI_API_KEY')
 
-    print('url:', url)
-    print('query:', query)
-    print('')
-
     if Lecture.summary_exists(url):
         lecture = Lecture.from_summary(url)
     else:
