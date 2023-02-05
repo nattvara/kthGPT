@@ -1,12 +1,12 @@
-# kthGTP
+# kthGPT
 
-A POC tool to download and summarise a lecture stored on [KTH Play](play.kth.se).
+A POC tool to download and summarise a lecture stored on [KTH Play](https://play.kth.se).
 
 # Usage
 
 ```bash
-git clone https://github.com/nattvara/kthGTP.git
-cd kthGTP
+git clone https://github.com/nattvara/kthGPT.git
+cd kthGPT
 python3 --version
 # Python 3.10.3   Tested with this version
 python3 -m venv venv
