@@ -1,9 +1,10 @@
 import youtube_dl
 import uuid
+import os
 
 
 def download_mp4_from_m3u8(url: str) -> str:
-    filename = f'/tmp/{uuid.uuid4()}.mp4'
+    filename = os.path.join('tmp', f'{uuid.uuid4()}.mp4')
 
     ydl_opts = {
         'outtmpl': filename

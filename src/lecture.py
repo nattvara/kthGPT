@@ -14,15 +14,15 @@ class Lecture:
         self.summary_text = ''
 
     @staticmethod
-    def summary_exists(url, directory='/tmp'):
+    def summary_exists(url, directory='tmp'):
         sha = hashlib.sha256(url.encode()).hexdigest()
-        filename = f'{directory}/{sha}.txt'
+        filename = os.path.join(f'{directory}',f'{sha}.txt')
         return os.path.isfile(filename)
 
     @staticmethod
-    def from_summary(url, directory='/tmp'):
+    def from_summary(url, directory='tmp'):
         sha = hashlib.sha256(url.encode()).hexdigest()
-        filename = f'{directory}/{sha}.txt'
+        filename = os.path.join(f'{directory}',f'{sha}.txt')
 
         l = Lecture()
         l.src_url = url
@@ -32,9 +32,9 @@ class Lecture:
 
         return l
 
-    def save(self, directory='/tmp'):
+    def save(self, directory='tmp'):
         sha = hashlib.sha256(self.src_url.encode()).hexdigest()
-        filename = f'{directory}/{sha}.txt'
+        filename = os.path.join(f'{directory}',f'{sha}.txt')
         with open(filename, 'w+') as f:
             f.write(self.summary_text)
 
