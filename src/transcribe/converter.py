@@ -1,12 +1,13 @@
 import ffmpeg
-import uuid
 import os
 
-def extract_mp3(mp4: str) -> str:
-    mp3 = os.path.join('tmp',f'{uuid.uuid4()}.mp3')
+
+def extract_mp3(mp4: str, filename: str) -> str:
+    if os.path.isfile(filename):
+        return filename
 
     stream = ffmpeg.input(mp4)
-    stream = ffmpeg.output(stream, mp3)
+    stream = ffmpeg.output(stream, filename)
     ffmpeg.run(stream)
 
-    return mp3
+    return filename

@@ -1,5 +1,6 @@
 from revChatGPT.Official import AsyncChatbot
 import asyncio
+import time
 import math
 
 
@@ -33,7 +34,7 @@ def ask(text: str, api_key: str) -> str:
 
 def create_summary(chunks: list, chunk_size: int, api_key: str) -> str:
     current_summary = f'''
-The following is the summarised content of a recorded lecture:
+The following is the current summarised content of a recorded lecture:
 
 00:00 - 00:00
 - Lecture starts
@@ -46,11 +47,25 @@ The following is the summarised content of a recorded lecture:
         prompt = f'''
 {current_summary}
 
-Here is a transcript of the next {chunk_size} minutes, could you summarise this transcript into 4 bullets (using a dash for each bullet):
+Here is a transcript of the next {chunk_size} minutes, could you summarise this part of the transcript into 250 words, try to include all important keywords:
 {chunk_transcript}
         '''.strip()
 
-        response = ask(prompt, api_key)
+        got_reply = False
+        limit = 10
+        inc = 0
+        while not got_reply and inc < limit:
+            try:
+                response = ask(prompt, api_key)
+                got_reply = True
+            except Exception as e:
+                print(e)
+                print(f'{inc + 1}/{limit} failed to get a reply from chatGPT, retrying in 60s...')
+                time.sleep(60)
+                inc += 1
+
+        if not got_reply:
+            raise Exception('failed to reach chatGPT')
 
         current_summary += f'''
 

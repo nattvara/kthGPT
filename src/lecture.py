@@ -1,4 +1,5 @@
 import hashlib
+import paths
 import json
 import os
 
@@ -14,15 +15,13 @@ class Lecture:
         self.summary_text = ''
 
     @staticmethod
-    def summary_exists(url, directory='tmp'):
-        sha = hashlib.sha256(url.encode()).hexdigest()
-        filename = os.path.join(f'{directory}',f'{sha}.txt')
+    def summary_exists(url):
+        filename = paths.make_digest_filename(url)
         return os.path.isfile(filename)
 
     @staticmethod
-    def from_summary(url, directory='tmp'):
-        sha = hashlib.sha256(url.encode()).hexdigest()
-        filename = os.path.join(f'{directory}',f'{sha}.txt')
+    def from_summary(url):
+        filename = paths.make_digest_filename(url)
 
         l = Lecture()
         l.src_url = url
@@ -32,9 +31,8 @@ class Lecture:
 
         return l
 
-    def save(self, directory='tmp'):
-        sha = hashlib.sha256(self.src_url.encode()).hexdigest()
-        filename = os.path.join(f'{directory}',f'{sha}.txt')
+    def save(self):
+        filename = paths.make_digest_filename(self.src_url)
         with open(filename, 'w+') as f:
             f.write(self.summary_text)
 

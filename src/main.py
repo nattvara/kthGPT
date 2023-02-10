@@ -6,6 +6,7 @@ from summarise.summary import create_summary, create_chunks
 from lecture import Lecture
 from query import ask
 import beeprint
+import paths
 import sys
 import os
 
@@ -24,11 +25,11 @@ def main():
         print('fetching content link...')
         lecture.m3u8_url = get_m3u8(url)
         print('downloading lecture...')
-        lecture.mp4_file = download_mp4_from_m3u8(lecture.m3u8_url)
+        lecture.mp4_file = download_mp4_from_m3u8(lecture.m3u8_url, paths.make_mp4_filename(lecture.src_url))
         print('extracting audio...')
-        lecture.mp3_file = extract_mp3(lecture.mp4_file)
+        lecture.mp3_file = extract_mp3(lecture.mp4_file, paths.make_mp3_filename(lecture.src_url))
         print('transcribing lecture...')
-        lecture.whispr_json = extract_text(lecture.mp3_file, lecture.src_url)
+        lecture.whispr_json = extract_text(lecture.mp3_file, paths.make_transcript_filename(lecture.src_url))
 
         print('generating a digested summary...')
         size = 10
