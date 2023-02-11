@@ -8,6 +8,7 @@ from db.crud import get_lecture_by_public_id
 from tools.web.crawler import get_m3u8
 from db.models import Lecture
 import jobs.download_lecture
+import jobs.extract_audio
 
 
 def job(lecture_id: str):
@@ -19,7 +20,6 @@ def job(lecture_id: str):
 
     lecture.state = Lecture.State.DOWNLOADING
     lecture.save()
-    print(Lecture.State.DOWNLOADING)
 
     try:
         url = lecture.content_link()
@@ -31,6 +31,14 @@ def job(lecture_id: str):
 
         lecture.state = Lecture.State.IDLE
         lecture.save()
+
+        logger.info('queueing extraction job')
+        queue = Queue(connection=Redis(
+            host=settings.REDIS_HOST,
+            port=settings.REDIS_PORT,
+            password=settings.REDIS_PASSWORD,
+        ))
+        queue.enqueue(jobs.extract_audio.job, lecture.public_id)
         logger.info('done')
 
     except Exception as e:
