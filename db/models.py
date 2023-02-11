@@ -42,6 +42,8 @@ class URL(Base):
 class Lecture(Base):
     public_id = peewee.CharField(null=False, index=True)
     language = peewee.CharField(null=False)
+    length = peewee.IntegerField(null=False, default=0)
+    words = peewee.IntegerField(null=False, default=0)
     state = peewee.CharField(null=False, default='idle')
     img_preview = peewee.CharField(null=True)
     mp4_progress = peewee.IntegerField(null=False, default=0)
@@ -94,10 +96,17 @@ class Lecture(Base):
         with open(filename, 'r') as file:
             return file.read()
 
+    def count_words(self):
+        filename = f'{self.transcript_filepath}/{self.public_id}.mp3.txt'
+        with open(filename, 'r') as file:
+            return len(file.read().split(' '))
+
     def to_dict(self):
         return {
             'public_id': self.public_id,
             'language': self.language,
+            'words': self.words,
+            'length': self.length,
             'state': self.state,
             'preview_uri': self.preview_uri(),
             'transcript_uri': self.transcript_uri(),

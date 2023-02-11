@@ -40,4 +40,5 @@ def download_mp4_from_m3u8(download_url: str, lecture: Lecture) -> str:
 
     lecture.mp4_progress = 100
     lecture.mp4_filepath = output_filename
+    lecture.length = total_duration
     lecture.save()

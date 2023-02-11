@@ -11,6 +11,8 @@ router = APIRouter()
 class LectureOutputModel(BaseModel):
     public_id: str
     language: str
+    words: int
+    length: int
     state: str
     preview_uri: Union[str, None] = None
     transcript_uri: Union[str, None] = None

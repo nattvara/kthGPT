@@ -30,6 +30,7 @@ def job(lecture_id: str, language: str):
         logger.info(f'transcribing {lecture.mp3_filepath}')
 
         save_text(lecture.mp3_filepath, lecture)
+        lecture.words = lecture.count_words()
 
         lecture.state = Lecture.State.IDLE
         lecture.save()
@@ -50,7 +51,7 @@ if __name__ == '__main__':
     ))
     queue.enqueue(
         jobs.transcribe_audio.job,
-        '0_3xg3hl0c',
+        '0_a9vo7yd0',
         Lecture.Language.SWEDISH,
         job_timeout=7200
     )
