@@ -23,6 +23,7 @@ setup(
         'psycopg2== 2.9.5',
         'rq==1.12.0',
         'ffmpeg-python==0.2.0',
+        'openai-whisper==20230124',
     ],
     entry_points={
         'console_scripts': [

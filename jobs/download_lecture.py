@@ -4,17 +4,16 @@ from rq import Queue
 import logging
 
 from tools.web.downloader import download_mp4_from_m3u8
-from db.crud import get_lecture_by_public_id
+from db.crud import get_lecture_by_public_id_and_language
 from tools.web.crawler import get_m3u8
 from db.models import Lecture
 import jobs.download_lecture
-import jobs.extract_audio
 
 
-def job(lecture_id: str):
+def job(lecture_id: str, language: str):
     logger = logging.getLogger('rq.worker')
 
-    lecture = get_lecture_by_public_id(lecture_id)
+    lecture = get_lecture_by_public_id_and_language(lecture_id, language)
     if lecture is None:
         raise ValueError(f'lecture {lecture_id} not found')
 
@@ -33,12 +32,6 @@ def job(lecture_id: str):
         lecture.save()
 
         logger.info('queueing extraction job')
-        queue = Queue(connection=Redis(
-            host=settings.REDIS_HOST,
-            port=settings.REDIS_PORT,
-            password=settings.REDIS_PASSWORD,
-        ))
-        queue.enqueue(jobs.extract_audio.job, lecture.public_id)
         logger.info('done')
 
     except Exception as e:
@@ -55,4 +48,4 @@ if __name__ == '__main__':
         port=settings.REDIS_PORT,
         password=settings.REDIS_PASSWORD,
     ))
-    queue.enqueue(jobs.download_lecture.job, '0_3xg3hl0c')
+    queue.enqueue(jobs.download_lecture.job, '0_3xg3hl0c', Lecture.Language.ENGLISH)

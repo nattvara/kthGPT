@@ -3,11 +3,17 @@ from urllib.parse import urlparse
 from pydantic import BaseModel
 import re
 
-from db.crud import get_url_by_sha, get_lecture_by_public_id
+from db.crud import get_url_by_sha, get_lecture_by_public_id_and_language
 from db.models import URL, Lecture
 from db import get_db
 
-from jobs import get_queue, capture_preview, download_lecture
+from jobs import (
+    get_queue,
+    capture_preview,
+    download_lecture,
+    extract_audio,
+    transcribe_audio,
+)
 from tools.web.crawler import get_m3u8
 from rq import Queue
 
@@ -17,12 +23,11 @@ router = APIRouter()
 
 class InputModel(BaseModel):
     url: str
+    language: str
 
 
 class OutputModel(BaseModel):
-    url: str
-    url_hash: str
-    lecture_id: str
+    uri: str
 
 
 @router.post('/url', dependencies=[Depends(get_db)])
@@ -30,6 +35,13 @@ def parse_url(input_data: InputModel, queue: Queue = Depends(get_queue)) -> Outp
     domain = urlparse(input_data.url).netloc
     if not domain.endswith('play.kth.se'):
         raise HTTPException(status_code=400, detail='Unsupported domain')
+
+    if input_data.language == str(Lecture.Language.ENGLISH):
+        lang = Lecture.Language.ENGLISH
+    elif input_data.language == str(Lecture.Language.SWEDISH):
+        lang = Lecture.Language.SWEDISH
+    else:
+        raise HTTPException(status_code=400, detail='Unsupported language')
 
     sha = URL.make_sha(input_data.url)
     url = get_url_by_sha(sha)
@@ -55,12 +67,16 @@ def parse_url(input_data: InputModel, queue: Queue = Depends(get_queue)) -> Outp
         url.lecture_id = match.group(1)
         url.save()
 
-    lecture = get_lecture_by_public_id(url.lecture_id)
+    lecture = get_lecture_by_public_id_and_language(url.lecture_id, lang)
     if lecture is None:
-        lecture = Lecture(public_id=url.lecture_id)
+        lecture = Lecture(public_id=url.lecture_id, language=lang)
         lecture.save()
 
-        queue.enqueue(capture_preview.job, lecture.public_id)
-        queue.enqueue(download_lecture.job, lecture.public_id)
+        queue.enqueue(capture_preview.job, lecture.public_id, lecture.language)
+        queue.enqueue(download_lecture.job, lecture.public_id, lecture.language)
+        queue.enqueue(extract_audio.job, lecture.public_id, lecture.language)
+        queue.enqueue(transcribe_audio.job, lecture.public_id, lecture.language, job_timeout=transcribe_audio.TRANSCRIPTION_JOB_TIMEOUT)
 
-    return url.to_dict()
+    return {
+        'uri': url.lecture_uri(lang)
+    }

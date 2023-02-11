@@ -36,3 +36,13 @@ def writable_mp3_filepath(name: str) -> str:
         os.mkdir(directory)
 
     return os.path.join(directory, f'{name}.mp3')
+
+
+def writable_transcript_filepath(name: str, language: str) -> str:
+    create_root_if_not_exists()
+
+    directory = os.path.join(settings.STORAGE_DIRECTORY, 'transcripts')
+    if not os.path.isdir(directory):
+        os.mkdir(directory)
+
+    return os.path.join(directory, f'{name}-{language}')
