@@ -7,7 +7,9 @@ from db.crud import get_url_by_sha, get_lecture_by_public_id
 from db.models import URL, Lecture
 from db import get_db
 
-from kthgpt.web.crawler import get_m3u8
+from jobs import get_queue, capture_preview
+from tools.web.crawler import get_m3u8
+from rq import Queue
 
 
 router = APIRouter()
@@ -24,9 +26,9 @@ class OutputModel(BaseModel):
 
 
 @router.post('/url', dependencies=[Depends(get_db)])
-def parse_url(input_data: InputModel) -> OutputModel:
+def parse_url(input_data: InputModel, queue: Queue = Depends(get_queue)) -> OutputModel:
     domain = urlparse(input_data.url).netloc
-    if not domain.endswith('kth.se'):
+    if not domain.endswith('play.kth.se'):
         raise HTTPException(status_code=400, detail='Unsupported domain')
 
     sha = URL.make_sha(input_data.url)
@@ -38,7 +40,11 @@ def parse_url(input_data: InputModel) -> OutputModel:
             url_hash=URL.make_sha(input_data.url)
         )
 
-        content_url = urlparse(get_m3u8(input_data.url)).path
+        try:
+            content_url = urlparse(get_m3u8(input_data.url)).path
+        except:
+            raise HTTPException(status_code=500, detail='Something went wrong while trying to get the lecture video')
+
         regex = r'^.*entryId\/(\w*)\/.*$'
         matches = re.finditer(regex, content_url, re.MULTILINE)
         match = next(matches)
@@ -53,5 +59,7 @@ def parse_url(input_data: InputModel) -> OutputModel:
     if lecture is None:
         lecture = Lecture(public_id=url.lecture_id)
         lecture.save()
+
+        queue.enqueue(capture_preview.job, lecture.public_id)
 
     return url.to_dict()

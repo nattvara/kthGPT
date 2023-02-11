@@ -2,7 +2,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
 from config.settings import settings
-from api.routers import index, urls
+from api.routers import index, urls, lectures
 
 
 def main():
@@ -17,5 +17,6 @@ def main():
     )
     app.include_router(index.router)
     app.include_router(urls.router)
+    app.include_router(lectures.router)
 
     return app

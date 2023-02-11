@@ -4,6 +4,8 @@ from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
 
 class Settings(BaseSettings):
     NAME: str
+    STORAGE_DIRECTORY: str
+
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
 
     @validator('BACKEND_CORS_ORIGINS', pre=True)
@@ -33,6 +35,10 @@ class Settings(BaseSettings):
             port=values.get('POSTGRES_USER'),
             path=f"/{values.get('POSTGRES_DB') or ''}",
         )
+
+    REDIS_HOST: str
+    REDIS_PORT: str
+    REDIS_PASSWORD: str
 
     class Config:
         case_sensitive = True

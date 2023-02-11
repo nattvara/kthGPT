@@ -2,6 +2,7 @@ import datetime
 import hashlib
 import peewee
 
+from tools.files.paths import writable_image_filepath
 from .database import db
 
 
@@ -38,15 +39,26 @@ class URL(Base):
 
 
 class Lecture(Base):
-    public_id = peewee.CharField(null=True)
+    public_id = peewee.CharField(null=False, index=True, unique=True)
+    img_preview = peewee.CharField(null=True)
     mp4_progress = peewee.IntegerField(null=False, default=0)
     mp4_filepath = peewee.CharField(null=True)
 
     def content_link(self):
         return f'https://play.kth.se/media/{self.public_id}'
 
+    def preview_filename(self):
+        return writable_image_filepath(self.public_id, 'png')
+
+    def preview_uri(self):
+        if self.img_preview is None:
+            return None
+
+        return f'/lectures/{self.public_id}/preview'
+
     def to_dict(self):
         return {
             'public_id': self.public_id,
-            'content_link': self.content_link,
+            'preview_uri': self.preview_uri(),
+            'content_link': self.content_link(),
         }

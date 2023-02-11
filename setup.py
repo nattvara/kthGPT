@@ -21,6 +21,7 @@ setup(
         'pydantic[dotenv]==1.10.4',
         'peewee==3.15.4',
         'psycopg2== 2.9.5',
+        'rq==1.12.0',
     ],
     entry_points={
         'console_scripts': [
