@@ -10,9 +10,11 @@ router = APIRouter()
 
 class LectureOutputModel(BaseModel):
     public_id: str
+    state: str
     preview_uri: Union[str, None] = None
     content_link: Union[str, None] = None
     mp4_progress: int
+    mp3_progress: int
 
 
 @router.get('/lectures', dependencies=[Depends(get_db)])

@@ -26,3 +26,13 @@ def writable_mp4_filepath(name: str) -> str:
         os.mkdir(directory)
 
     return os.path.join(directory, f'{name}.mp4')
+
+
+def writable_mp3_filepath(name: str) -> str:
+    create_root_if_not_exists()
+
+    directory = os.path.join(settings.STORAGE_DIRECTORY, 'mp3')
+    if not os.path.isdir(directory):
+        os.mkdir(directory)
+
+    return os.path.join(directory, f'{name}.mp3')

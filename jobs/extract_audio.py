@@ -5,9 +5,9 @@ import logging
 
 from tools.web.downloader import download_mp4_from_m3u8
 from db.crud import get_lecture_by_public_id
-from tools.web.crawler import get_m3u8
+from tools.audio.extraction import extract_mp3_from_mp4
 from db.models import Lecture
-import jobs.download_lecture
+import jobs.extract_audio
 
 
 def job(lecture_id: str):
@@ -17,17 +17,15 @@ def job(lecture_id: str):
     if lecture is None:
         raise ValueError(f'lecture {lecture_id} not found')
 
-    lecture.state = Lecture.State.DOWNLOADING
+    lecture.state = Lecture.State.EXTRACTING_AUDIO
     lecture.save()
-    print(Lecture.State.DOWNLOADING)
 
     try:
-        url = lecture.content_link()
+        if lecture.mp4_filepath is None:
+            raise ValueError(f'lecture {lecture_id} has no mp4_filepath')
 
-        logger.info(f'fetching content link at {url}')
-        m3u8_url = get_m3u8(url)
-        logger.info(f'found {m3u8_url}')
-        download_mp4_from_m3u8(m3u8_url, lecture)
+        logger.info(f'extracting audio from {lecture.mp4_filepath}')
+        extract_mp3_from_mp4(lecture.mp4_filepath, lecture)
 
         lecture.state = Lecture.State.IDLE
         lecture.save()
@@ -39,7 +37,6 @@ def job(lecture_id: str):
         raise e
 
 
-
 # Test run the job
 if __name__ == '__main__':
     queue = Queue(connection=Redis(
@@ -47,4 +44,4 @@ if __name__ == '__main__':
         port=settings.REDIS_PORT,
         password=settings.REDIS_PASSWORD,
     ))
-    queue.enqueue(jobs.download_lecture.job, '0_3xg3hl0c')
+    queue.enqueue(jobs.extract_audio.job, '0_3xg3hl0c')
