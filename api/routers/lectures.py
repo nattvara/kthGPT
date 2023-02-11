@@ -12,6 +12,7 @@ class LectureOutputModel(BaseModel):
     public_id: str
     preview_uri: Union[str, None] = None
     content_link: Union[str, None] = None
+    mp4_progress: int
 
 
 @router.get('/lectures', dependencies=[Depends(get_db)])

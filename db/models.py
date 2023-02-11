@@ -2,7 +2,10 @@ import datetime
 import hashlib
 import peewee
 
-from tools.files.paths import writable_image_filepath
+from tools.files.paths import (
+    writable_image_filepath,
+    writable_mp4_filepath,
+)
 from .database import db
 
 
@@ -56,9 +59,13 @@ class Lecture(Base):
 
         return f'/lectures/{self.public_id}/preview'
 
+    def mp4_filename(self):
+        return writable_mp4_filepath(self.public_id)
+
     def to_dict(self):
         return {
             'public_id': self.public_id,
             'preview_uri': self.preview_uri(),
             'content_link': self.content_link(),
+            'mp4_progress': self.mp4_progress,
         }

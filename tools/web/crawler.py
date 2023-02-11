@@ -1,4 +1,5 @@
 from playwright.async_api import async_playwright
+from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
 import asyncio
 
 
@@ -19,15 +20,19 @@ async def get_m3u8_async_wrapper(url: str) -> str:
         page = await browser.new_page()
         page.on('request', lambda request: requests.append(request.url))
 
-        await page.goto(url)
-        await asyncio.sleep(1)
+        try:
+            await page.goto(url, timeout=10000)
+            await asyncio.sleep(2)
+        except PlaywrightTimeoutError:
+            # Sometime the browser waits for something unimportant
+            pass
 
         iframe = await page.query_selector('iframe')
         content = await iframe.content_frame()
         element = await content.query_selector(PLAY_BTN_CLASS)
 
         await element.click()
-        await asyncio.sleep(1)
+        await asyncio.sleep(2)
 
         for url in requests:
             if 'index.m3u8' in url and m3u8 is None:

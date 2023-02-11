@@ -22,6 +22,7 @@ setup(
         'peewee==3.15.4',
         'psycopg2== 2.9.5',
         'rq==1.12.0',
+        'ffmpeg-python==0.2.0',
     ],
     entry_points={
         'console_scripts': [

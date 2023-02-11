@@ -7,7 +7,7 @@ from db.crud import get_url_by_sha, get_lecture_by_public_id
 from db.models import URL, Lecture
 from db import get_db
 
-from jobs import get_queue, capture_preview
+from jobs import get_queue, capture_preview, download_lecture
 from tools.web.crawler import get_m3u8
 from rq import Queue
 
@@ -61,5 +61,6 @@ def parse_url(input_data: InputModel, queue: Queue = Depends(get_queue)) -> Outp
         lecture.save()
 
         queue.enqueue(capture_preview.job, lecture.public_id)
+        queue.enqueue(download_lecture.job, lecture.public_id)
 
     return url.to_dict()
