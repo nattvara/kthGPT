@@ -1,3 +1,4 @@
+import { GithubOutlined } from '@ant-design/icons';
 import styles from './frame.less';
 import {
   Space,
@@ -5,12 +6,20 @@ import {
   Col,
   Layout,
   Image,
+  Button,
 } from 'antd';
 import kthLogo from '../../assets/kth.svg';
 import Progress from './progress';
 
+const GITHUB_URL = 'https://github.com/nattvara/kthGPT';
+
+
 export default function Frame(props: {step: number, children: JSX.Element}) {
   const {step, children} = props;
+
+  const goToGithub = () => {
+    window.open(GITHUB_URL, '_blank')
+  };
 
   return (
     <>
@@ -18,7 +27,7 @@ export default function Frame(props: {step: number, children: JSX.Element}) {
         <Col span={24}>
           <div className={styles.hero}>
             <Row justify={'center'}>
-              <Space direction="horizontal" size="small">
+              <Space direction='horizontal' size='small'>
                 <Image
                   height={100}
                   src={kthLogo}
@@ -28,6 +37,9 @@ export default function Frame(props: {step: number, children: JSX.Element}) {
               </Space>
             </Row>
             <h1 className={styles.subtitle}>Ask GPT-3 questions about KTH lectures</h1>
+            <p className={styles.subtitle}>
+              <Button type='dashed' onClick={() => goToGithub()}><GithubOutlined /> Source Code</Button>
+            </p>
           </div>
         </Col>
       </Row>
