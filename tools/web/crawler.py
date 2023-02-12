@@ -1,4 +1,3 @@
-from playwright.async_api import async_playwright
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
 import asyncio
 
