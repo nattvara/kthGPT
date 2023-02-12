@@ -30,17 +30,7 @@ def job(lecture_id: str, language: str):
 
         logger.info(f'summarising {lecture.transcript_filepath}')
 
-        minutes = lecture.length / 60
-        if minutes > 120:
-            min_size = 8
-        elif minutes > 60:
-            min_size = 7
-        elif minutes > 30:
-            min_size = 4
-        elif minutes > 10:
-            min_size = 2
-        else:
-            min_size = 1
+        min_size = round((lecture.length / 60) / 25)
 
         logger.info(f'using minute size {min_size}')
 
@@ -57,7 +47,7 @@ def job(lecture_id: str, language: str):
         lecture.summary_progress = 100
         lecture.save()
 
-        lecture.state = Lecture.State.IDLE
+        lecture.state = Lecture.State.READY
         lecture.save()
         logger.info('done')
 
@@ -76,7 +66,7 @@ if __name__ == '__main__':
     ))
     queue.enqueue(
         jobs.summarise_transcript.job,
-        '0_fzwylllz',
+        '0_u40du3a9',
         Lecture.Language.ENGLISH,
         job_timeout=SUMMARY_JOB_TIMEOUT
     )

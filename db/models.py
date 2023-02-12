@@ -64,6 +64,7 @@ class Lecture(Base):
         EXTRACTING_AUDIO = 'extracting_audio'
         TRANSCRIBING_LECTURE = 'transcribing_lecture'
         SUMMARISING_LECTURE = 'summarising_lecture'
+        READY = 'ready'
 
     class Language:
         ENGLISH = 'en'
