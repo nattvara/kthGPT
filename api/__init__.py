@@ -9,7 +9,7 @@ from config.settings import settings
 
 
 def main():
-    app = FastAPI(title=settings.NAME)
+    app = FastAPI(title=settings.NAME, openapi_url=None)
 
     dictConfig(LogConfig().dict())
     log().info('starting api')
