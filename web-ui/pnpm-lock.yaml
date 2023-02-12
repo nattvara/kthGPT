@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@ant-design/icons': ^5.0.1
   '@ant-design/pro-layout': ^7.7.1
+  '@tanstack/react-query': ^4.24.6
   '@types/react': ^18.0.0
   '@types/react-dom': ^18.0.0
   '@umijs/plugins': ^4.0.51
@@ -14,6 +15,7 @@ specifiers:
 dependencies:
   '@ant-design/icons': 5.0.1
   '@ant-design/pro-layout': 7.7.1_antd@5.2.0
+  '@tanstack/react-query': 4.24.6
   antd: 5.2.0
   axios: 1.3.2
   umi: 4.0.51_c6mc5dj2lvpczaqlkcypbolpey
@@ -2910,7 +2912,6 @@ packages:
 
   /@tanstack/query-core/4.24.6:
     resolution: {integrity: sha512-Tfru6YTDTCpX7dKVwHp/sosw/dNjEdzrncduUjIkQxn7n7u+74HT2ZrGtwwrU6Orws4x7zp3FKRqBPWVVhpx9w==}
-    dev: true
 
   /@tanstack/react-query-devtools/4.24.6_bjksgqi67jvd6huprrxy2rqkiq:
     resolution: {integrity: sha512-d8CN4ZTtLkdCNi9x4Hogma0fdhlv7ckknv/RLuV4nbUciUoZEvhg1cI0+vp/1aY4W3jq9vH0BD/eUQKecgY15Q==}
@@ -2939,7 +2940,6 @@ packages:
     dependencies:
       '@tanstack/query-core': 4.24.6
       use-sync-external-store: 1.2.0
-    dev: true
 
   /@trysound/sax/0.2.0:
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
