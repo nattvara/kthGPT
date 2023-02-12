@@ -13,6 +13,7 @@ from jobs import (
     download_lecture,
     extract_audio,
     transcribe_audio,
+    summarise_transcript,
 )
 from tools.web.crawler import get_m3u8
 from rq import Queue
@@ -76,6 +77,7 @@ def parse_url(input_data: InputModel, queue: Queue = Depends(get_queue)) -> Outp
         queue.enqueue(download_lecture.job, lecture.public_id, lecture.language)
         queue.enqueue(extract_audio.job, lecture.public_id, lecture.language)
         queue.enqueue(transcribe_audio.job, lecture.public_id, lecture.language, job_timeout=transcribe_audio.TRANSCRIPTION_JOB_TIMEOUT)
+        queue.enqueue(summarise_transcript.job, lecture.public_id, lecture.language, job_timeout=summarise_transcript.SUMMARY_JOB_TIMEOUT)
 
     return {
         'uri': url.lecture_uri(lang)
