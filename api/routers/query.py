@@ -34,7 +34,7 @@ def new_query(input_data: InputModel) -> Response:
     if lecture is None:
         raise HTTPException(status_code=404)
 
-    query = get_query_by_sha(Query.make_sha(input_data.query_string))
+    query = get_query_by_sha(lecture, Query.make_sha(input_data.query_string))
     if query is None:
         query = create_query(lecture, input_data.query_string)
 
@@ -45,7 +45,10 @@ def new_query(input_data: InputModel) -> Response:
             response = ai.gpt3(prompt)
         except Exception as e:
             log().error(e)
-            raise HTTPException(status_code=500, detail='something went wrong when running GPT-3 query')
+            raise HTTPException(
+                status_code=500,
+                detail='Something went wrong when running GPT-3 query'
+            )
 
         query.response = response
         query.save()
