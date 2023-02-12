@@ -1,5 +1,5 @@
 import { PlayCircleOutlined } from '@ant-design/icons';
-import { DownloadOutlined } from '@ant-design/icons';
+import { BulbOutlined } from '@ant-design/icons';
 import styles from './selector.less';
 import {
   Input,
@@ -67,7 +67,7 @@ export default function Selector() {
         </Row>
         <Row gutter={[10, 10]}>
           <Col>
-            <Button onClick={submit} type="primary" icon={<DownloadOutlined />} size="large" loading={isPosting}>
+            <Button onClick={submit} type="primary" icon={<BulbOutlined />} size="large" loading={isPosting}>
               Analyze
             </Button>
           </Col>
