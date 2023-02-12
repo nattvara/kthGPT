@@ -1,8 +1,10 @@
 from fastapi import Depends, APIRouter, HTTPException, Response
 from typing import Union, List
 from pydantic import BaseModel
+import random as rand
 
 from db.crud import get_all_lectures, get_lecture_by_public_id_and_language
+from db.models import Lecture
 from db import get_db
 
 router = APIRouter()
@@ -34,15 +36,25 @@ class LectureSummaryOutputModel(BaseModel):
 
 
 @router.get('/lectures', dependencies=[Depends(get_db)])
-def get_all(summary: Union[bool, None] = None) -> List[Union[LectureOutputModel,LectureSummaryOutputModel]]:
+def get_all(summary: Union[bool, None] = None, random: Union[bool, None] = None) -> List[Union[LectureOutputModel, LectureSummaryOutputModel]]:
     lectures = get_all_lectures()
 
     out = []
     for lecture in lectures:
+        if random and lecture.state != Lecture.State.READY:
+            continue
+
         if summary:
             out.append(lecture.to_summary_dict())
         else:
             out.append(lecture.to_dict())
+
+    if random and len(out) == 0:
+        return []
+
+    if random:
+        index = rand.randint(0, len(out) - 1)
+        return [out[index]]
 
     if summary:
         out.reverse()
