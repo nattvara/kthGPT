@@ -11,21 +11,24 @@ export default function Progress(props: {step: number}) {
 
   return (
     <>
-      <Sider theme='light' className={styles.progress}>
+      <Sider theme='light' className={styles.progress} width={300}>
         <Steps
-          direction="vertical"
+          direction='vertical'
           className={styles.steps}
           current={step}
           items={[
-          {
-            title: 'Select Lecture',
-          },
-          {
-            title: 'Analyse Lecture',
-          },
-          {
-            title: 'Ask Questions',
-          },
+            {
+              title: 'Select Lecture',
+              description: 'Provide a recorded lecture for kthGPT to watch'
+            },
+            {
+              title: 'Analyse Lecture',
+              description: 'kthGPT will watch and analyse the lecture'
+            },
+            {
+              title: 'Ask Questions',
+              description: 'use kthGPT to ask questions about the lecture'
+            },
           ]}
         />
       </Sider>
