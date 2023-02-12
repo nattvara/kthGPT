@@ -16,10 +16,12 @@ class LectureOutputModel(BaseModel):
     state: str
     preview_uri: Union[str, None] = None
     transcript_uri: Union[str, None] = None
+    summary_uri: Union[str, None] = None
     content_link: Union[str, None] = None
     mp4_progress: int
     mp3_progress: int
     transcript_progress: int
+    summary_progress: int
 
 
 @router.get('/lectures', dependencies=[Depends(get_db)])
@@ -67,5 +69,20 @@ def get_transcript(public_id: str, language: str):
 
     return Response(
         content=lecture.transcript_text(),
+        media_type='text/plain'
+    )
+
+
+@router.get('/lectures/{public_id}/{language}/summary', dependencies=[Depends(get_db)])
+def get_transcript(public_id: str, language: str):
+    lecture = get_lecture_by_public_id_and_language(public_id, language)
+    if lecture is None:
+        raise HTTPException(status_code=404)
+
+    if lecture.summary_filepath is None:
+        raise HTTPException(status_code=404)
+
+    return Response(
+        content=lecture.summary_text(),
         media_type='text/plain'
     )

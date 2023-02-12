@@ -5,6 +5,7 @@ from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
 class Settings(BaseSettings):
     NAME: str
     STORAGE_DIRECTORY: str
+    OPENAI_API_KEY: str
 
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
 

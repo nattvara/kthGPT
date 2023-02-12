@@ -1,9 +1,11 @@
 import datetime
 import hashlib
 import peewee
+import json
 
 from tools.files.paths import (
     writable_transcript_filepath,
+    writable_summary_filepath,
     writable_image_filepath,
     writable_mp4_filepath,
     writable_mp3_filepath,
@@ -52,6 +54,8 @@ class Lecture(Base):
     mp3_filepath = peewee.CharField(null=True)
     transcript_progress = peewee.IntegerField(null=False, default=0)
     transcript_filepath = peewee.CharField(null=True)
+    summary_progress = peewee.IntegerField(null=False, default=0)
+    summary_filepath = peewee.CharField(null=True)
 
     class State:
         IDLE = 'idle'
@@ -59,6 +63,7 @@ class Lecture(Base):
         DOWNLOADING = 'downloading'
         EXTRACTING_AUDIO = 'extracting_audio'
         TRANSCRIBING_LECTURE = 'transcribing_lecture'
+        SUMMARISING_LECTURE = 'summarising_lecture'
 
     class Language:
         ENGLISH = 'en'
@@ -82,6 +87,12 @@ class Lecture(Base):
 
         return f'/lectures/{self.public_id}/{self.language}/transcript'
 
+    def summary_uri(self):
+        if self.summary_filepath is None:
+            return None
+
+        return f'/lectures/{self.public_id}/{self.language}/summary'
+
     def mp4_filename(self):
         return writable_mp4_filepath(self.public_id)
 
@@ -91,15 +102,30 @@ class Lecture(Base):
     def transcript_dirname(self):
         return writable_transcript_filepath(self.public_id, self.language)
 
+    def summary_filename(self):
+        return writable_summary_filepath(self.public_id, self.language)
+
     def transcript_text(self):
         filename = f'{self.transcript_filepath}/{self.public_id}.mp3.vtt'
         with open(filename, 'r') as file:
+            return file.read()
+
+    def summary_text(self):
+        with open(self.summary_filepath, 'r') as file:
             return file.read()
 
     def count_words(self):
         filename = f'{self.transcript_filepath}/{self.public_id}.mp3.txt'
         with open(filename, 'r') as file:
             return len(file.read().split(' '))
+
+    def get_segments(self):
+        if self.transcript_filepath is None:
+            return None
+
+        filename = f'{self.transcript_filepath}/{self.public_id}.mp3.json'
+        with open(filename, 'r') as file:
+            return json.load(file)['segments']
 
     def to_dict(self):
         return {
@@ -110,8 +136,10 @@ class Lecture(Base):
             'state': self.state,
             'preview_uri': self.preview_uri(),
             'transcript_uri': self.transcript_uri(),
+            'summary_uri': self.summary_uri(),
             'content_link': self.content_link(),
             'mp4_progress': self.mp4_progress,
             'mp3_progress': self.mp3_progress,
             'transcript_progress': self.transcript_progress,
+            'summary_progress': self.summary_progress,
         }
