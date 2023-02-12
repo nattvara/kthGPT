@@ -140,7 +140,16 @@ class Lecture(Base):
         weighted_summary = self.summary_progress * summary_weight
 
         total_weight = mp4_weight + mp3_weight + transcript_weight + summary_weight
-        return (weighted_mp4 + weighted_mp3 + weighted_transcript + weighted_summary) / total_weight
+        return int((weighted_mp4 + weighted_mp3 + weighted_transcript + weighted_summary) / total_weight)
+
+    def to_summary_dict(self):
+        return {
+            'public_id': self.public_id,
+            'language': self.language,
+            'state': self.state,
+            'content_link': self.content_link(),
+            'overall_progress': self.overall_progress(),
+        }
 
     def to_dict(self):
         return {

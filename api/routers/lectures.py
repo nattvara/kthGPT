@@ -25,13 +25,27 @@ class LectureOutputModel(BaseModel):
     overall_progress: int
 
 
+class LectureSummaryOutputModel(BaseModel):
+    public_id: str
+    language: str
+    state: str
+    content_link: Union[str, None] = None
+    overall_progress: int
+
+
 @router.get('/lectures', dependencies=[Depends(get_db)])
-def get_all() -> List[LectureOutputModel]:
+def get_all(summary: Union[bool, None] = None) -> List[Union[LectureOutputModel,LectureSummaryOutputModel]]:
     lectures = get_all_lectures()
 
     out = []
     for lecture in lectures:
-        out.append(lecture.to_dict())
+        if summary:
+            out.append(lecture.to_summary_dict())
+        else:
+            out.append(lecture.to_dict())
+
+    if summary:
+        out.reverse()
 
     return out
 
