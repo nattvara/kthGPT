@@ -6,7 +6,6 @@ import {
 import styles from './analyser.less';
 import {
   Row,
-  Image,
   Col,
   Space,
   Alert,
@@ -16,13 +15,14 @@ import {
   Statistic,
   Skeleton,
   Button,
-  Spin,
 } from 'antd';
 import { notification } from 'antd';
 import { useMutation } from '@tanstack/react-query';
+import { Lecture } from '@/components/lecture';
 import { useEffect, useState } from 'react';
-import apiClient, { makeUrl } from '@/http';
+import apiClient from '@/http';
 import { history } from 'umi';
+import Preview from '../preview';
 
 const UPDATE_LECTURE_INTERVAL = 1000;
 const UPDATE_QUEUE_INTERVAL = 5000;
@@ -32,25 +32,6 @@ interface AnalyserProps {
   id: string
   language: string
 }
-
-interface Lecture {
-  public_id: string
-  language: string
-  words: number | null
-  length: number | null
-  state: string
-  preview_uri: string | null
-  transcript_uri: string | null
-  summary_uri: string | null
-  content_link: string
-  mp4_progress: number
-  mp3_progress: number
-  transcript_progress: number
-  summary_progress: number
-  overall_progress: number
-}
-
-const { Meta } = Card;
 
 const prettyLengthString = (seconds: number) => {
   const hours = Math.floor(seconds / 3600);
@@ -73,7 +54,7 @@ export default function Analyser(props: AnalyserProps) {
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [notFound, setNotFound] = useState<boolean | null>(null);
 
-  const { isLoadingLecture, mutate: fetchLecture } = useMutation(
+  const { mutate: fetchLecture } = useMutation(
     async () => {
       return await apiClient.get(`/lectures/${id}/${language}`);
     },
@@ -99,7 +80,7 @@ export default function Analyser(props: AnalyserProps) {
     }
   );
 
-  const { isLoadingLectures, mutate: fetchLectures } = useMutation(
+  const { mutate: fetchLectures } = useMutation(
     async () => {
       return await apiClient.get(`/lectures?summary=true`);
     },
@@ -150,10 +131,6 @@ export default function Analyser(props: AnalyserProps) {
     return () => clearInterval(interval);
   }, []);
 
-  const openKthPlay = (url: string) => {
-    window.open(url, '_blank');
-  }
-
   if (notFound === true) {
     return (
       <>
@@ -171,11 +148,11 @@ export default function Analyser(props: AnalyserProps) {
           ]}
         />
       </>
-    )
+    );
   }
 
   if (lecture == null) {
-    return <Skeleton active paragraph={{ rows: 4 }} />
+    return <Skeleton active paragraph={{ rows: 4 }} />;
   }
 
   return (
@@ -225,22 +202,7 @@ export default function Analyser(props: AnalyserProps) {
           <Space direction='vertical' size='large'>
             <Row gutter={[20, 20]} justify='center' align='middle'>
               <Col sm={24} md={24} lg={12}>
-                <Card
-                  hoverable
-                  className={styles.preview}
-                  onClick={() => openKthPlay(lecture.content_link)}
-                  cover={
-                      <>
-                        <Spin tip="Loading..." spinning={lecture.preview_uri === null}>
-                          <Image
-                            preview={false}
-                            style={{minHeight: '100px'}}
-                            src={makeUrl(lecture.preview_uri!)} />
-                        </Spin>
-                      </>
-                    }>
-                  <Meta title='Lecture' description={lecture.content_link} />
-                </Card>
+                <Preview lecture={lecture}></Preview>
               </Col>
               <Col sm={24} md={24} lg={12}>
                 <Progress

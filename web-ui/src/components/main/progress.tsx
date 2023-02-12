@@ -27,7 +27,7 @@ export default function Progress(props: {step: number}) {
             },
             {
               title: 'Ask Questions',
-              description: 'use kthGPT to ask questions about the lecture'
+              description: 'Use kthGPT to ask questions about the lecture'
             },
           ]}
         />
