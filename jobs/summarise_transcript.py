@@ -10,8 +10,8 @@ from db.models import Lecture
 import jobs.summarise_transcript
 
 
-# 30min timeout
-SUMMARY_JOB_TIMEOUT = 1800
+# 90min timeout
+SUMMARY_JOB_TIMEOUT = 60 * 90
 
 
 def job(lecture_id: str, language: str):
@@ -31,6 +31,8 @@ def job(lecture_id: str, language: str):
         logger.info(f'summarising {lecture.transcript_filepath}')
 
         min_size = round((lecture.length / 60) / 25)
+        if min_size == 0:
+            min_size = 1
 
         logger.info(f'using minute size {min_size}')
 
