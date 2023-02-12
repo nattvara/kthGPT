@@ -38,8 +38,13 @@ def save_text(mp3_file: str, lecture: Lecture):
         '--verbose=True',
     ]
 
+    if lang != 'en':
+        cmd.append('--task translate')
+
     whisper_env = os.environ.copy()
     whisper_env['PYTHONUNBUFFERED'] = '1'
+
+    logger.info(f'executing command [$ {" ".join(cmd)}]')
 
     # Using a subprocess instead of the python api, since the python
     # api doesn't support accessing the progress
