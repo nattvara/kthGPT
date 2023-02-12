@@ -1,15 +1,14 @@
-import yayJpg from '../assets/yay.jpg';
+import Frame from '@/components/main/frame';
+import Selector from '@/components/selector/selector';
 
-export default function HomePage() {
+
+export default function IndexPage() {
+
   return (
-    <div>
-      <h2>Yay! Welcome to umi!</h2>
-      <p>
-        <img src={yayJpg} width="388" />
-      </p>
-      <p>
-        To get started, edit <code>pages/index.tsx</code> and save to reload.
-      </p>
-    </div>
+    <>
+      <Frame step={0}>
+        <Selector></Selector>
+      </Frame>
+    </>
   );
 }
