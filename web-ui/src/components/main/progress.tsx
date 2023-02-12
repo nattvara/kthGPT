@@ -1,4 +1,4 @@
-import styles from './frame.less';
+import styles from './progress.less';
 import {
   Steps,
   Layout,
@@ -11,7 +11,7 @@ export default function Progress(props: {step: number}) {
 
   return (
     <>
-      <Sider theme='light'>
+      <Sider theme='light' className={styles.progress}>
         <Steps
           direction="vertical"
           className={styles.steps}
