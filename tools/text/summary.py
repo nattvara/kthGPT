@@ -70,7 +70,7 @@ class Summary:
 
     def update_with_chunk(self, chunk: Chunk, include_summary: bool):
         prompt = prompts.create_text_to_summarise_chunk(self, chunk, include_summary)
-        response = ai.gpt3(prompt)
+        response = ai.gpt3_safe(prompt)
         self.summaries[chunk.period] = response.replace('\n', ' ')
 
     def current_summary(self):
@@ -82,7 +82,7 @@ class Summary:
 
     def summarise(self):
         prompt = prompts.create_text_to_summarise_summary(self)
-        response = ai.gpt3(prompt)
+        response = ai.gpt3_safe(prompt)
         return response
 
     @staticmethod

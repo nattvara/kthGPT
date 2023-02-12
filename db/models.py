@@ -159,3 +159,18 @@ class Lecture(Base):
             'summary_progress': self.summary_progress,
             'overall_progress': self.overall_progress(),
         }
+
+
+class Query(Base):
+    lecture_id = peewee.ForeignKeyField(Lecture, backref='lecture')
+    query_hash = peewee.CharField(index=True, unique=True, null=False)
+    query_string = peewee.TextField(null=False)
+    response = peewee.TextField(null=True)
+
+    @staticmethod
+    def make_sha(string: str) -> str:
+        return hashlib.sha256(string.encode()).hexdigest()
+
+    def save(self, *args, **kwargs):
+        self.query_hash = self.make_sha(self.query_string)
+        return super(Query, self).save(*args, **kwargs)

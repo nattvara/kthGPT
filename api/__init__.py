@@ -1,12 +1,18 @@
 from fastapi.middleware.cors import CORSMiddleware
+from logging.config import dictConfig
 from fastapi import FastAPI
+import logging
 
+from api.routers import index, urls, lectures, query
+from config.logger import LogConfig, log
 from config.settings import settings
-from api.routers import index, urls, lectures
 
 
 def main():
     app = FastAPI(title=settings.NAME)
+
+    dictConfig(LogConfig().dict())
+    log().info('starting api')
 
     app.add_middleware(
         CORSMiddleware,
@@ -18,5 +24,6 @@ def main():
     app.include_router(index.router)
     app.include_router(urls.router)
     app.include_router(lectures.router)
+    app.include_router(query.router)
 
     return app
