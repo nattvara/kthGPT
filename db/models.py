@@ -172,7 +172,7 @@ class Lecture(Base):
 
 class Query(Base):
     lecture_id = peewee.ForeignKeyField(Lecture, backref='lecture')
-    query_hash = peewee.CharField(index=True, unique=True, null=False)
+    query_hash = peewee.CharField(index=True, null=False)
     query_string = peewee.TextField(null=False)
     response = peewee.TextField(null=True)
 

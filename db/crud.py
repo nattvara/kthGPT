@@ -21,8 +21,8 @@ def get_all_lectures() -> List[models.Lecture]:
     return lectures
 
 
-def get_query_by_sha(sha: str) -> models.Query:
-    return models.Query.filter(models.Query.query_hash == sha).first()
+def get_query_by_sha(lecture: models.Lecture, sha: str) -> models.Query:
+    return models.Query.filter(models.Query.lecture_id == lecture.id).filter(models.Query.query_hash == sha).first()
 
 
 def create_query(lecture: models.Lecture, query_string: str) -> models.Query:
