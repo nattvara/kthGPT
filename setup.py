@@ -26,6 +26,7 @@ setup(
         'openai-whisper==20230124',
         'openai==0.26.5',
         'tiktoken==0.2.0',
+        'validators==0.20.0',
     ],
     entry_points={
         'console_scripts': [

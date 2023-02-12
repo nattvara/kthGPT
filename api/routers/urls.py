@@ -1,6 +1,7 @@
 from fastapi import Depends, APIRouter, HTTPException
 from urllib.parse import urlparse
 from pydantic import BaseModel
+import validators
 import re
 
 from db.crud import get_url_by_sha, get_lecture_by_public_id_and_language
@@ -33,9 +34,15 @@ class OutputModel(BaseModel):
 
 @router.post('/url', dependencies=[Depends(get_db)])
 def parse_url(input_data: InputModel, queue: Queue = Depends(get_queue)) -> OutputModel:
+    if input_data.url.strip() == '':
+        raise HTTPException(status_code=400, detail='No URL provided, please enter a url such as: https://play.kth.se/media/0_4zo9e4nh')
+
+    if not validators.url(input_data.url):
+        raise HTTPException(status_code=400, detail='The URL you entered was not valid, please enter a url such as: https://play.kth.se/media/0_4zo9e4nh')
+
     domain = urlparse(input_data.url).netloc
     if not domain.endswith('play.kth.se'):
-        raise HTTPException(status_code=400, detail='Unsupported domain')
+        raise HTTPException(status_code=400, detail='The URL was not valid, it must be kth.play.se video, such as https://play.kth.se/media/0_4zo9e4nh')
 
     if input_data.language == str(Lecture.Language.ENGLISH):
         lang = Lecture.Language.ENGLISH
@@ -56,7 +63,7 @@ def parse_url(input_data: InputModel, queue: Queue = Depends(get_queue)) -> Outp
         try:
             content_url = urlparse(get_m3u8(input_data.url)).path
         except:
-            raise HTTPException(status_code=500, detail='Something went wrong while trying to get the lecture video')
+            raise HTTPException(status_code=400, detail='Something went wrong while trying to get the lecture video, make sure its on the form https://play.kth.se/media/0_4zo9e4nh')
 
         regex = r'^.*entryId\/(\w*)\/.*$'
         matches = re.finditer(regex, content_url, re.MULTILINE)
