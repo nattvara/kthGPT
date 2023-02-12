@@ -127,6 +127,20 @@ class Lecture(Base):
         with open(filename, 'r') as file:
             return json.load(file)['segments']
 
+    def overall_progress(self):
+        mp4_weight = 1
+        mp3_weight = 3
+        transcript_weight = 15
+        summary_weight = 5
+
+        weighted_mp4 = self.mp4_progress * mp4_weight
+        weighted_mp3 = self.mp3_progress * mp3_weight
+        weighted_transcript = self.transcript_progress * transcript_weight
+        weighted_summary = self.summary_progress * summary_weight
+
+        total_weight = mp4_weight + mp3_weight + transcript_weight + summary_weight
+        return (weighted_mp4 + weighted_mp3 + weighted_transcript + weighted_summary) / total_weight
+
     def to_dict(self):
         return {
             'public_id': self.public_id,
@@ -142,4 +156,5 @@ class Lecture(Base):
             'mp3_progress': self.mp3_progress,
             'transcript_progress': self.transcript_progress,
             'summary_progress': self.summary_progress,
+            'overall_progress': self.overall_progress(),
         }

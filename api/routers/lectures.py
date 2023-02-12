@@ -22,6 +22,7 @@ class LectureOutputModel(BaseModel):
     mp3_progress: int
     transcript_progress: int
     summary_progress: int
+    overall_progress: int
 
 
 @router.get('/lectures', dependencies=[Depends(get_db)])
