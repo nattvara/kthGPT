@@ -1,5 +1,6 @@
 from openai.error import RateLimitError
 import tiktoken
+import logging
 import openai
 import time
 
@@ -40,6 +41,8 @@ def gpt3(prompt: str, retry_limit=10) -> str:
 
 
 def gpt3_safe(prompt: str, retry_limit=10) -> str:
+    logger = logging.getLogger('rq.worker')
+
     if retry_limit <= 0:
         raise RetryLimitException('reached retry limit')
 
@@ -55,9 +58,12 @@ def gpt3_safe(prompt: str, retry_limit=10) -> str:
             max_tokens=get_max_tokens(prompt),
         )
     except RateLimitError:
+        logger.warning('hit rate limit, waiting 10s')
         time.sleep(10)
         return gpt3_safe(prompt, retry_limit=retry_limit-1)
-    except:
+    except Exception as e:
+        logger.error('got an unexpected error, waiting 60s')
+        logger.error(e)
         time.sleep(60)
         return gpt3_safe(prompt, retry_limit=retry_limit-1)
 
