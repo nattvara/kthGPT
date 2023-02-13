@@ -8,6 +8,9 @@ from tools.web.camera import save_photo
 from db.models import Lecture
 import jobs.capture_preview
 
+# 5min timeout
+CAPTURE_PREVIEW_JOB_TIMEOUT = 5 * 60
+
 
 def job(lecture_id: str, language: str):
     logger = logging.getLogger('rq.worker')
@@ -30,4 +33,8 @@ if __name__ == '__main__':
         port=settings.REDIS_PORT,
         password=settings.REDIS_PASSWORD,
     ))
-    queue.enqueue(jobs.capture_preview.job, '0_3xg3hl0c', Lecture.Language.ENGLISH)
+    queue.enqueue(
+        jobs.capture_preview.job,
+        '0_3xg3hl0c',
+        Lecture.Language.ENGLISH
+    )
