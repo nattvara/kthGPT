@@ -1,8 +1,9 @@
-from tools.ffmpeg.progress import ProgressFFmpeg
-from db.models import Lecture
 import logging
 import ffmpeg
 import os
+
+from tools.ffmpeg.progress import ProgressFFmpeg
+from db.models import Lecture, Analysis
 
 
 def download_mp4_from_m3u8(download_url: str, lecture: Lecture) -> str:
@@ -14,15 +15,17 @@ def download_mp4_from_m3u8(download_url: str, lecture: Lecture) -> str:
         os.unlink(output_filename)
 
     lecture.refresh()
-    lecture.mp4_progress = 0
-    lecture.save()
+    analysis = lecture.get_last_analysis()
+    analysis.mp4_progress = 5  # starts at 5 since url fetch takes a while
+    analysis.save()
 
     def on_update(progress: float):
         progress = int(progress * 100)
         logger.info(f'current progress {progress}%')
         lecture.refresh()
-        lecture.mp4_progress = progress
-        lecture.save()
+        analysis = lecture.get_last_analysis()
+        analysis.mp4_progress = progress
+        analysis.save()
 
     total_duration = int(float(ffmpeg.probe(download_url)['format']['duration']))
     logger.info(f'total duration {total_duration}s')
@@ -37,12 +40,16 @@ def download_mp4_from_m3u8(download_url: str, lecture: Lecture) -> str:
         except ffmpeg.Error as e:
             logger.error(e.stderr)
             lecture.refresh()
-            lecture.state = Lecture.State.FAILURE
-            lecture.save()
+            analysis = lecture.get_last_analysis()
+            analysis.state = Analysis.State.FAILURE
+            analysis.save()
             raise Exception('ffmpeg failed')
 
     lecture.refresh()
-    lecture.mp4_progress = 100
     lecture.mp4_filepath = output_filename
     lecture.length = total_duration
     lecture.save()
+
+    analysis = lecture.get_last_analysis()
+    analysis.mp4_progress = 100
+    analysis.save()

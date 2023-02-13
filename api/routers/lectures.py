@@ -1,13 +1,33 @@
 from fastapi import Depends, APIRouter, HTTPException, Response
 from typing import Union, List
 from pydantic import BaseModel
+from datetime import datetime
 import random as rand
 
 from db.crud import get_all_lectures, get_lecture_by_public_id_and_language
-from db.models import Lecture
+from db.models import Lecture, Analysis
 from db import get_db
 
 router = APIRouter()
+
+
+class MessageOutputModel(BaseModel):
+    timestamp: datetime
+    title: str
+    body: Union[str, None] = None
+
+
+class AnalysisOutputModel(BaseModel):
+    analysis_id: int
+    created_at: datetime
+    modified_at: datetime
+    state: str
+    last_message: Union[MessageOutputModel, None] = None
+    mp4_progress: int
+    mp3_progress: int
+    transcript_progress: int
+    summary_progress: int
+    overall_progress: int
 
 
 class LectureOutputModel(BaseModel):
@@ -15,16 +35,11 @@ class LectureOutputModel(BaseModel):
     language: str
     words: int
     length: int
-    state: str
     preview_uri: Union[str, None] = None
     transcript_uri: Union[str, None] = None
     summary_uri: Union[str, None] = None
     content_link: Union[str, None] = None
-    mp4_progress: int
-    mp3_progress: int
-    transcript_progress: int
-    summary_progress: int
-    overall_progress: int
+    analysis: Union[AnalysisOutputModel, None] = None
 
 
 class LectureSummaryOutputModel(BaseModel):
@@ -41,7 +56,7 @@ def get_all(summary: Union[bool, None] = None, random: Union[bool, None] = None)
 
     out = []
     for lecture in lectures:
-        if random and lecture.state != Lecture.State.READY:
+        if random and lecture.get_last_analysis().state != Analysis.State.READY:
             continue
 
         if summary:

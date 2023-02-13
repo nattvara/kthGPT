@@ -5,7 +5,7 @@ import logging
 
 from db.crud import get_lecture_by_public_id_and_language
 from tools.audio.transcription import save_text
-from db.models import Lecture
+from db.models import Lecture, Analysis
 import jobs.transcribe_audio
 
 
@@ -21,8 +21,9 @@ def job(lecture_id: str, language: str):
         raise ValueError(f'lecture {lecture_id} not found')
 
     lecture.refresh()
-    lecture.state = Lecture.State.TRANSCRIBING_LECTURE
-    lecture.save()
+    analysis = lecture.get_last_analysis()
+    analysis.state = Analysis.State.TRANSCRIBING_LECTURE
+    analysis.save()
 
     try:
         if lecture.mp3_filepath is None:
@@ -34,14 +35,21 @@ def job(lecture_id: str, language: str):
 
         lecture.refresh()
         lecture.words = lecture.count_words()
-        lecture.state = Lecture.State.IDLE
         lecture.save()
+
+        analysis = lecture.get_last_analysis()
+        analysis.transcript_progress = 100
+        analysis.state = Analysis.State.IDLE
+        analysis.save()
         logger.info('done')
 
     except Exception as e:
+        logger.error(e)
+
         lecture.refresh()
-        lecture.state = Lecture.State.FAILURE
-        lecture.save()
+        analysis = lecture.get_last_analysis()
+        analysis.state = Analysis.State.FAILURE
+        analysis.save()
         raise e
 
 
@@ -54,7 +62,7 @@ if __name__ == '__main__':
     ))
     queue.enqueue(
         jobs.transcribe_audio.job,
-        '0_a9vo7yd0',
-        Lecture.Language.SWEDISH,
+        '0_blzql89t',
+        Lecture.Language.ENGLISH,
         job_timeout=TIMEOUT
     )

@@ -5,8 +5,8 @@ import logging
 import os
 
 from db.crud import get_lecture_by_public_id_and_language
+from db.models import Lecture, Analysis
 from tools.text.summary import Summary
-from db.models import Lecture
 import jobs.summarise_transcript
 
 
@@ -22,8 +22,9 @@ def job(lecture_id: str, language: str):
         raise ValueError(f'lecture {lecture_id} not found')
 
     lecture.refresh()
-    lecture.state = Lecture.State.SUMMARISING_LECTURE
-    lecture.save()
+    analysis = lecture.get_last_analysis()
+    analysis.state = Analysis.State.SUMMARISING_LECTURE
+    analysis.save()
 
     try:
         if lecture.mp3_filepath is None:
@@ -48,15 +49,22 @@ def job(lecture_id: str, language: str):
 
         lecture.refresh()
         lecture.summary_filepath = output_filename
-        lecture.summary_progress = 100
-        lecture.state = Lecture.State.READY
         lecture.save()
+
+        analysis = lecture.get_last_analysis()
+        analysis.summary_progress = 100
+        analysis.state = Analysis.State.READY
+        analysis.save()
+
         logger.info('done')
 
     except Exception as e:
+        logger.error(e)
+
         lecture.refresh()
-        lecture.state = Lecture.State.FAILURE
-        lecture.save()
+        analysis = lecture.get_last_analysis()
+        analysis.state = Analysis.State.FAILURE
+        analysis.save()
         raise e
 
 
@@ -69,7 +77,7 @@ if __name__ == '__main__':
     ))
     queue.enqueue(
         jobs.summarise_transcript.job,
-        '0_u40du3a9',
+        '0_blzql89t',
         Lecture.Language.ENGLISH,
         job_timeout=TIMEOUT
     )

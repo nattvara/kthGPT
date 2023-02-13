@@ -158,7 +158,7 @@ export default function Analyser(props: AnalyserProps) {
   return (
     <>
       {contextHolder}
-      {lecture.state === 'ready' &&
+      {lecture.analysis?.state === 'ready' &&
         <>
           <Result
             status='success'
@@ -177,7 +177,7 @@ export default function Analyser(props: AnalyserProps) {
           <div className={styles.divider}></div>
         </>
       }
-      {lecture.state === 'failure' &&
+      {lecture.analysis?.state === 'failure' &&
         <>
           <Result
             status='500'
@@ -207,7 +207,7 @@ export default function Analyser(props: AnalyserProps) {
               <Col sm={24} md={24} lg={12}>
                 <Progress
                   type='circle'
-                  percent={lecture.overall_progress}
+                  percent={lecture.analysis?.overall_progress}
                   className={styles.circle} />
               </Col>
             </Row>
@@ -216,28 +216,28 @@ export default function Analyser(props: AnalyserProps) {
               <Col span={24}>
                 Downloading video
                 <Progress
-                  percent={lecture.mp4_progress}
-                  showInfo={lecture.mp4_progress != 0} />
+                  percent={lecture.analysis?.mp4_progress}
+                  showInfo={lecture.analysis?.mp4_progress != 0} />
 
                 Extracting audio
                 <Progress
-                  percent={lecture.mp3_progress}
-                  showInfo={lecture.mp3_progress != 0} />
+                  percent={lecture.analysis?.mp3_progress}
+                  showInfo={lecture.analysis?.mp3_progress != 0} />
 
                 Transcribing lecture
                 <Progress
-                  percent={lecture.transcript_progress}
-                  showInfo={lecture.transcript_progress != 0} />
+                  percent={lecture.analysis?.transcript_progress}
+                  showInfo={lecture.analysis?.transcript_progress != 0} />
 
                 Generating summary
                 <Progress
-                  percent={lecture.summary_progress}
-                  showInfo={lecture.summary_progress != 0} />
+                  percent={lecture.analysis?.summary_progress}
+                  showInfo={lecture.analysis?.summary_progress != 0} />
               </Col>
             </Row>
 
             <Space direction='vertical' size='small'>
-              {lecture.state == 'waiting' &&
+              {lecture.analysis?.state == 'waiting' &&
                 <Row gutter={[20, 20]}>
                   <Col span={24}>
                     <Alert
@@ -295,7 +295,7 @@ export default function Analyser(props: AnalyserProps) {
                 <div style={{width: '95%'}} key={lecture.public_id}>
                   <span>{lecture.content_link}</span>
                   <Progress
-                    percent={lecture.overall_progress}
+                    percent={lecture.analysis?.overall_progress}
                     className={styles.previous_lecture}
                     strokeColor='#aaa' />
                 </div>

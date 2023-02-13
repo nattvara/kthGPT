@@ -36,6 +36,6 @@ if __name__ == '__main__':
     ))
     queue.enqueue(
         jobs.capture_preview.job,
-        '0_3xg3hl0c',
+        '0_blzql89t',
         Lecture.Language.ENGLISH
     )

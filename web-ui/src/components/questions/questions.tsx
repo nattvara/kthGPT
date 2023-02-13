@@ -19,6 +19,7 @@ import apiClient from '@/http';
 import { history } from 'umi';
 import TextArea from 'antd/es/input/TextArea';
 import Preview from '../preview';
+import { Lecture } from '@/components/lecture';
 
 interface QuestionsProps {
   id: string

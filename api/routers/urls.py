@@ -4,8 +4,12 @@ from pydantic import BaseModel
 import validators
 import re
 
-from db.crud import get_url_by_sha, get_lecture_by_public_id_and_language
-from db.models import URL, Lecture
+from db.crud import (
+    get_lecture_by_public_id_and_language,
+    save_message_for_analysis,
+    get_url_by_sha,
+)
+from db.models import URL, Lecture, Analysis
 from db import get_db
 
 from jobs import (
@@ -89,6 +93,24 @@ def parse_url(
     if lecture is None:
         lecture = Lecture(public_id=url.lecture_id, language=lang)
         lecture.save()
+
+    should_analyse = False
+    analysis = lecture.get_last_analysis()
+
+    if analysis is None:
+        should_analyse = True
+    else:
+        if analysis.state == Analysis.State.FAILURE:
+            should_analyse = True
+
+        if analysis.seems_to_have_crashed():
+            should_analyse = True
+
+    if should_analyse:
+        analysis = Analysis(lecture_id=lecture.id)
+        analysis.save()
+
+        save_message_for_analysis(analysis, 'Lecture received', 'Waiting for a worker to pick it up.')
 
         queue_default.enqueue(capture_preview.job, lecture.public_id, lecture.language, job_timeout=capture_preview.TIMEOUT)
         job_1 = queue_download.enqueue(download_lecture.job, lecture.public_id, lecture.language, job_timeout=download_lecture.TIMEOUT)

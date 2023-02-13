@@ -14,8 +14,9 @@ def save_text(mp3_file: str, lecture: Lecture):
     logger = logging.getLogger('rq.worker')
 
     lecture.refresh()
-    lecture.transcript_progress = 0
-    lecture.save()
+    analysis = lecture.get_last_analysis()
+    analysis.transcript_progress = 0
+    analysis.save()
 
     total_duration = int(float(ffmpeg.probe(mp3_file)['format']['duration']))
     logger.info(f'total duration {total_duration}s')
@@ -79,12 +80,16 @@ def save_text(mp3_file: str, lecture: Lecture):
 
             logger.info(f'current progress {progress}%')
             lecture.refresh()
-            lecture.transcript_progress = progress
-            lecture.save()
+            analysis = lecture.get_last_analysis()
+            analysis.transcript_progress = progress
+            analysis.save()
 
     lecture.refresh()
-    lecture.transcript_progress = 100
     lecture.transcript_filepath = output_dir
     lecture.save()
+
+    analysis = lecture.get_last_analysis()
+    lecture.transcript_progress = 100
+    analysis.save()
 
     process.stdout.close()

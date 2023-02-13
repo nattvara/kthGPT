@@ -106,8 +106,9 @@ class Summary:
                 logger.info(f'current progress {progress}%')
 
                 lecture.refresh()
-                lecture.summary_progress = progress
-                lecture.save()
+                analysis = lecture.get_last_analysis()
+                analysis.summary_progress = progress
+                analysis.save()
 
         except ai.TokenLimitExceededException:
             new_min_size = min_size * 2

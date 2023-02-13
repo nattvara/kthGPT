@@ -5,7 +5,7 @@ import logging
 
 from db.crud import get_lecture_by_public_id_and_language
 from tools.audio.extraction import extract_mp3_from_mp4
-from db.models import Lecture
+from db.models import Lecture, Analysis
 import jobs.extract_audio
 
 
@@ -21,8 +21,9 @@ def job(lecture_id: str, language: str):
         raise ValueError(f'lecture {lecture_id} not found')
 
     lecture.refresh()
-    lecture.state = Lecture.State.EXTRACTING_AUDIO
-    lecture.save()
+    analysis = lecture.get_last_analysis()
+    analysis.state = Analysis.State.EXTRACTING_AUDIO
+    analysis.save()
 
     try:
         if lecture.mp4_filepath is None:
@@ -32,15 +33,19 @@ def job(lecture_id: str, language: str):
         extract_mp3_from_mp4(lecture.mp4_filepath, lecture)
 
         lecture.refresh()
-        lecture.state = Lecture.State.IDLE
-        lecture.save()
+        analysis = lecture.get_last_analysis()
+        analysis.state = Analysis.State.IDLE
+        analysis.save()
 
         logger.info('done')
 
     except Exception as e:
+        logger.error(e)
+
         lecture.refresh()
-        lecture.state = Lecture.State.FAILURE
-        lecture.save()
+        analysis = lecture.get_last_analysis()
+        analysis.state = Analysis.State.FAILURE
+        analysis.save()
         raise e
 
 
@@ -51,4 +56,4 @@ if __name__ == '__main__':
         port=settings.REDIS_PORT,
         password=settings.REDIS_PASSWORD,
     ))
-    queue.enqueue(jobs.extract_audio.job, '0_3xg3hl0c', Lecture.Language.ENGLISH)
+    queue.enqueue(jobs.extract_audio.job, '0_blzql89t', Lecture.Language.ENGLISH)
