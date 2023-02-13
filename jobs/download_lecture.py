@@ -10,6 +10,10 @@ from db.models import Lecture
 import jobs.download_lecture
 
 
+# 20min timeout
+TIMEOUT = 20 * 60
+
+
 def job(lecture_id: str, language: str):
     logger = logging.getLogger('rq.worker')
 

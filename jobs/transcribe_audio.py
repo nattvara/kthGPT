@@ -10,7 +10,7 @@ import jobs.transcribe_audio
 
 
 # 2hr timeout
-TRANSCRIPTION_JOB_TIMEOUT = 7200
+TIMEOUT = 2 * 60 * 60
 
 
 def job(lecture_id: str, language: str):
@@ -53,5 +53,5 @@ if __name__ == '__main__':
         jobs.transcribe_audio.job,
         '0_a9vo7yd0',
         Lecture.Language.SWEDISH,
-        job_timeout=7200
+        job_timeout=TIMEOUT
     )

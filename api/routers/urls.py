@@ -80,14 +80,14 @@ def parse_url(input_data: InputModel, queue: Queue = Depends(get_queue)) -> Outp
         lecture = Lecture(public_id=url.lecture_id, language=lang)
         lecture.save()
 
-        queue.enqueue(capture_preview.job, lecture.public_id, lecture.language)
+        queue.enqueue(capture_preview.job, lecture.public_id, lecture.language, job_timeout=capture_preview.TIMEOUT)
         with queue.connection.pipeline() as pipe:
             jobs = queue.enqueue_many(
                 [
-                    queue.prepare_data(download_lecture.job, [lecture.public_id, lecture.language]),
-                    queue.prepare_data(extract_audio.job, [lecture.public_id, lecture.language]),
-                    Queue.prepare_data(transcribe_audio.job, [lecture.public_id, lecture.language], timeout=transcribe_audio.TRANSCRIPTION_JOB_TIMEOUT),
-                    Queue.prepare_data(summarise_transcript.job, [lecture.public_id, lecture.language], timeout=summarise_transcript.SUMMARY_JOB_TIMEOUT),
+                    queue.prepare_data(download_lecture.job, [lecture.public_id, lecture.language], timeout=download_lecture.TIMEOUT),
+                    queue.prepare_data(extract_audio.job, [lecture.public_id, lecture.language], timeout=extract_audio.TIMEOUT),
+                    Queue.prepare_data(transcribe_audio.job, [lecture.public_id, lecture.language], timeout=transcribe_audio.TIMEOUT),
+                    Queue.prepare_data(summarise_transcript.job, [lecture.public_id, lecture.language], timeout=summarise_transcript.TIMEOUT),
                 ],
                 pipeline=pipe,
             )

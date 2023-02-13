@@ -11,7 +11,7 @@ import jobs.summarise_transcript
 
 
 # 90min timeout
-SUMMARY_JOB_TIMEOUT = 60 * 90
+TIMEOUT = 90 * 60
 
 
 def job(lecture_id: str, language: str):
@@ -70,5 +70,5 @@ if __name__ == '__main__':
         jobs.summarise_transcript.job,
         '0_u40du3a9',
         Lecture.Language.ENGLISH,
-        job_timeout=SUMMARY_JOB_TIMEOUT
+        job_timeout=TIMEOUT
     )

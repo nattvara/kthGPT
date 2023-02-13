@@ -9,7 +9,7 @@ from db.models import Lecture
 import jobs.capture_preview
 
 # 5min timeout
-CAPTURE_PREVIEW_JOB_TIMEOUT = 5 * 60
+TIMEOUT = 5 * 60
 
 
 def job(lecture_id: str, language: str):

@@ -9,6 +9,10 @@ from db.models import Lecture
 import jobs.extract_audio
 
 
+# 20min timeout
+TIMEOUT = 20 * 60
+
+
 def job(lecture_id: str, language: str):
     logger = logging.getLogger('rq.worker')
 
