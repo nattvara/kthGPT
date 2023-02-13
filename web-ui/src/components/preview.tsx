@@ -31,7 +31,7 @@ export default function Preview(props: PreviewProps) {
               <Image
                 preview={false}
                 style={{minHeight: '100px'}}
-                src={makeUrl(lecture.preview_uri!)} />
+                src={lecture.preview_uri === null ? '' : makeUrl(lecture.preview_uri!)} />
             </Spin>
           </>
         }>
