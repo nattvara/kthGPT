@@ -1,6 +1,13 @@
 import axios from 'axios';
 
-const baseURL = 'http://localhost:8000';
+let baseURL: string;
+
+if (process.env.NODE_ENV === 'production') {
+  baseURL = '/api';
+} else {
+  baseURL = 'http://localhost:8000';
+}
+
 
 export const makeUrl = (uri: string) => `${baseURL}${uri}`;
 

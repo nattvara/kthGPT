@@ -2,11 +2,11 @@
   "private": true,
   "author": "Ludwig Kristoffersson <ludwig@kristoffersson.org>",
   "scripts": {
-    "dev": "umi dev",
-    "build": "umi build",
+    "dev": "ENVIRONMENT=development umi dev",
+    "build": "ENVIRONMENT=production umi build",
     "postinstall": "umi setup",
     "setup": "umi setup",
-    "start": "npm run dev"
+    "start": "ENVIRONMENT=development npm run dev"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
