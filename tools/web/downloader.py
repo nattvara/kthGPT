@@ -16,7 +16,6 @@ def download_mp4_from_m3u8(download_url: str, lecture: Lecture) -> str:
 
     lecture.refresh()
     analysis = lecture.get_last_analysis()
-    analysis.mp4_progress = 5  # starts at 5 since url fetch takes a while
     analysis.save()
 
     def on_update(progress: float):

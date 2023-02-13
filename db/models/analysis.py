@@ -4,6 +4,9 @@ import peewee
 from .base import Base
 from .message import Message
 
+# 20 minutes
+FROZEN_LIMIT = 20 * 60
+
 
 class Analysis(Base):
     lecture_id = peewee.IntegerField(null=False, index=True)  # not sure how to make this a foreign key field, due to circular imports
@@ -38,9 +41,20 @@ class Analysis(Base):
                 .first())
 
     def seems_to_have_crashed(self) -> bool:
+        if self.state == self.State.WAITING:
+            return False
+        if self.state == self.State.READY:
+            return False
+        if self.state == self.State.IDLE:
+            return False
+        if self.state == self.State.FAILURE:
+            return False
+
         msg = self.get_last_message()
         now = datetime.now()
-        return False
+        diff = (now - msg.created_at).total_seconds()
+
+        return diff > FROZEN_LIMIT
 
     def overall_progress(self):
         mp4_weight = 1
@@ -66,6 +80,7 @@ class Analysis(Base):
         return {
             'analysis_id': self.id,
             'state': self.state,
+            'frozen': self.seems_to_have_crashed(),
             'created_at': self.created_at,
             'modified_at': self.modified_at,
             'last_message': msg_dict,

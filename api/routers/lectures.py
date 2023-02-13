@@ -22,6 +22,7 @@ class AnalysisOutputModel(BaseModel):
     created_at: datetime
     modified_at: datetime
     state: str
+    frozen: bool
     last_message: Union[MessageOutputModel, None] = None
     mp4_progress: int
     mp3_progress: int

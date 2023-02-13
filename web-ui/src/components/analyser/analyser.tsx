@@ -2,6 +2,7 @@ import {
   FlagOutlined,
   ClockCircleOutlined,
   NumberOutlined,
+  BulbOutlined,
 } from '@ant-design/icons';
 import styles from './analyser.less';
 import {
@@ -26,7 +27,6 @@ import Preview from '../preview';
 
 const UPDATE_LECTURE_INTERVAL = 1000;
 const UPDATE_QUEUE_INTERVAL = 5000;
-const GITHUB_URL = 'https://github.com/nattvara/kthGPT';
 
 interface AnalyserProps {
   id: string
@@ -102,12 +102,40 @@ export default function Analyser(props: AnalyserProps) {
     }
   );
 
+  const { isLoading: isPosting, mutate: postUrl } = useMutation(
+    async () => {
+      return await apiClient.post(`/url`, {
+        url: `https://play.kth.se/media/${id}`,
+        language,
+      });
+    },
+    {
+      onSuccess: (res: any) => {
+        const result = {
+          status: res.status + '-' + res.statusText,
+          headers: res.headers,
+          data: res.data,
+        };
+        notificationApi['success']({
+          message: 'Restarted analysis',
+          description: 'Hopefully it works this time!',
+        });
+      },
+      onError: (err: any) => {
+        notificationApi['error']({
+          message: 'Failed restart analysis',
+          description: err.response.data.detail,
+        });
+      },
+    }
+  );
+
   const goToQuestions = () => {
     history.push(`/questions/lectures/${id}/${language}`);
   };
 
-  const goToGithub = () => {
-    window.open(GITHUB_URL, '_blank')
+  const restart = () => {
+    postUrl();
   };
 
   useEffect(() => {
@@ -181,19 +209,44 @@ export default function Analyser(props: AnalyserProps) {
         <>
           <Result
             status='500'
-            title='Something went wrong when analyzing lecture!'
-            subTitle='Unfortunately something must have gone wrong, please contact the maintainer for help.'
+            title='Something went wrong when analyzing the lecture!'
+            subTitle='Unfortunately something must have gone wrong, click the button to try analyzing the video again. Sometimes restarting just fixes things ¯\_(ツ)_/¯'
             extra={[
               <Button
-                onClick={() => goToGithub()}
-                danger
+                onClick={() => restart()}
+                loading={isPosting}
                 type='primary'
                 key='btn'
+                icon={<BulbOutlined />}
                 size='large'>
-                Contact
+                Restart
               </Button>,
             ]}
           />
+          <div className={styles.divider}></div>
+          <div className={styles.divider}></div>
+        </>
+      }
+      {lecture.analysis?.frozen &&
+        <>
+          <Result
+            status='403'
+            title='The analysis seems to be stuck!'
+            subTitle='Click the button to restart the analysis. Sometimes restarting just fixes things ¯\_(ツ)_/¯'
+            extra={[
+              <Button
+                onClick={() => restart()}
+                loading={isPosting}
+                type='primary'
+                key='btn'
+                icon={<BulbOutlined />}
+                size='large'>
+                Restart
+              </Button>,
+            ]}
+          />
+          <div className={styles.divider}></div>
+          <div className={styles.divider}></div>
         </>
       }
 

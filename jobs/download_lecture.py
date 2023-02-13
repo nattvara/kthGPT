@@ -31,7 +31,7 @@ def job(lecture_id: str, language: str):
         url = lecture.content_link()
 
         lecture.refresh()
-        analysis.mp4_progress = 1
+        analysis.mp4_progress = 2
         analysis.save()
 
         logger.info(f'fetching content link at {url}')

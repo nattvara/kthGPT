@@ -10,6 +10,7 @@ interface Analysis {
   created_at: Date
   modified_at: Date
   state: string
+  frozen: boolean
   mp4_progress: number
   mp3_progress: number
   transcript_progress: number
