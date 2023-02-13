@@ -13,12 +13,14 @@ def extract_mp3_from_mp4(src_file: str, lecture: Lecture) -> str:
     if os.path.isfile(output_filename):
         os.unlink(output_filename)
 
+    lecture.refresh()
     lecture.mp3_progress = 0
     lecture.save()
 
     def on_update(progress: float):
         progress = int(progress * 100)
         logger.info(f'current progress {progress}%')
+        lecture.refresh()
         lecture.mp3_progress = progress
         lecture.save()
 
@@ -34,10 +36,12 @@ def extract_mp3_from_mp4(src_file: str, lecture: Lecture) -> str:
                 .run(quiet=True))
         except ffmpeg.Error as e:
             logger.error(e.stderr)
+            lecture.refresh()
             lecture.state = Lecture.State.FAILURE
             lecture.save()
             raise Exception('ffmpeg failed')
 
+    lecture.refresh()
     lecture.mp3_progress = 100
     lecture.mp3_filepath = output_filename
     lecture.save()

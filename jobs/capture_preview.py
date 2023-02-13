@@ -20,6 +20,7 @@ def job(lecture_id: str, language: str):
     logger.info(f'taking photo of {url}')
 
     save_photo(url, lecture.preview_filename())
+    lecture.refresh()
     lecture.img_preview = lecture.preview_filename()
     lecture.save()
 

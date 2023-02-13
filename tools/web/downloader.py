@@ -13,12 +13,14 @@ def download_mp4_from_m3u8(download_url: str, lecture: Lecture) -> str:
     if os.path.isfile(output_filename):
         os.unlink(output_filename)
 
+    lecture.refresh()
     lecture.mp4_progress = 0
     lecture.save()
 
     def on_update(progress: float):
         progress = int(progress * 100)
         logger.info(f'current progress {progress}%')
+        lecture.refresh()
         lecture.mp4_progress = progress
         lecture.save()
 
@@ -34,10 +36,12 @@ def download_mp4_from_m3u8(download_url: str, lecture: Lecture) -> str:
                 .run(quiet=True))
         except ffmpeg.Error as e:
             logger.error(e.stderr)
+            lecture.refresh()
             lecture.state = Lecture.State.FAILURE
             lecture.save()
             raise Exception('ffmpeg failed')
 
+    lecture.refresh()
     lecture.mp4_progress = 100
     lecture.mp4_filepath = output_filename
     lecture.length = total_duration

@@ -20,6 +20,7 @@ def job(lecture_id: str, language: str):
     if lecture is None:
         raise ValueError(f'lecture {lecture_id} not found')
 
+    lecture.refresh()
     lecture.state = Lecture.State.TRANSCRIBING_LECTURE
     lecture.save()
 
@@ -30,13 +31,15 @@ def job(lecture_id: str, language: str):
         logger.info(f'transcribing {lecture.mp3_filepath}')
 
         save_text(lecture.mp3_filepath, lecture)
-        lecture.words = lecture.count_words()
 
+        lecture.refresh()
+        lecture.words = lecture.count_words()
         lecture.state = Lecture.State.IDLE
         lecture.save()
         logger.info('done')
 
     except Exception as e:
+        lecture.refresh()
         lecture.state = Lecture.State.FAILURE
         lecture.save()
         raise e

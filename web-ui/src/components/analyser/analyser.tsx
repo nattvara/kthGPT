@@ -237,7 +237,7 @@ export default function Analyser(props: AnalyserProps) {
             </Row>
 
             <Space direction='vertical' size='small'>
-              {lecture.state == 'idle' &&
+              {lecture.state == 'waiting' &&
                 <Row gutter={[20, 20]}>
                   <Col span={24}>
                     <Alert

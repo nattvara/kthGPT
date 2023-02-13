@@ -46,7 +46,7 @@ class Lecture(Base):
     language = peewee.CharField(null=False)
     length = peewee.IntegerField(null=False, default=0)
     words = peewee.IntegerField(null=False, default=0)
-    state = peewee.CharField(null=False, default='idle')
+    state = peewee.CharField(null=False, default='waiting')
     img_preview = peewee.CharField(null=True)
     mp4_progress = peewee.IntegerField(null=False, default=0)
     mp4_filepath = peewee.CharField(null=True)
@@ -58,6 +58,7 @@ class Lecture(Base):
     summary_filepath = peewee.CharField(null=True)
 
     class State:
+        WAITING = 'waiting'
         IDLE = 'idle'
         FAILURE = 'failure'
         DOWNLOADING = 'downloading'
@@ -141,6 +142,23 @@ class Lecture(Base):
 
         total_weight = mp4_weight + mp3_weight + transcript_weight + summary_weight
         return int((weighted_mp4 + weighted_mp3 + weighted_transcript + weighted_summary) / total_weight)
+
+    def refresh(self):
+        update = Lecture.get(self.id)
+        self.public_id = update.public_id
+        self.language = update.language
+        self.length = update.length
+        self.words = update.words
+        self.state = update.state
+        self.img_preview = update.img_preview
+        self.mp4_progress = update.mp4_progress
+        self.mp4_filepath = update.mp4_filepath
+        self.mp3_progress = update.mp3_progress
+        self.mp3_filepath = update.mp3_filepath
+        self.transcript_progress = update.transcript_progress
+        self.transcript_filepath = update.transcript_filepath
+        self.summary_progress = update.summary_progress
+        self.summary_filepath = update.summary_filepath
 
     def to_summary_dict(self):
         return {

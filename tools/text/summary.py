@@ -105,6 +105,7 @@ class Summary:
                 progress = int((inc / len(chunks)) * 100)
                 logger.info(f'current progress {progress}%')
 
+                lecture.refresh()
                 lecture.summary_progress = progress
                 lecture.save()
 

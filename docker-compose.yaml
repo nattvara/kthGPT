@@ -37,7 +37,7 @@ services:
     volumes:
       - queue:/data
 
-  rq-worker:
+  queue_worker:
     build:
       context: .
       dockerfile: api/Dockerfile
@@ -48,16 +48,16 @@ services:
       - db
       - queue
       - api
-    command: rq worker --url="redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}"
+    command: rq worker --url="redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}" default download extract transcribe summarise
     deploy:
-      replicas: 1
+      replicas: 2
     volumes:
       - shared:/shared
 
   frontend:
     build:
       context: web-ui
-      dockerfile: .
+      dockerfile: ./Dockerfile
     restart: always
     env_file:
       - .env
@@ -67,7 +67,7 @@ services:
   proxy:
     build:
       context: proxy
-      dockerfile: .
+      dockerfile: ./Dockerfile
     restart: always
     env_file:
       - .env

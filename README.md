@@ -80,7 +80,7 @@ docker run --name redis -d -p 6379:6379 redis redis-server --requirepass redis
 Start a queue worker.
 
 ```bash
-rq worker --url='redis://:redis@localhost:6379'
+rq worker --url='redis://:redis@localhost:6379' default download extract transcribe summarise
 ```
 
 Start the web server.

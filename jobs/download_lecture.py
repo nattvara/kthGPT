@@ -21,6 +21,7 @@ def job(lecture_id: str, language: str):
     if lecture is None:
         raise ValueError(f'lecture {lecture_id} not found')
 
+    lecture.refresh()
     lecture.state = Lecture.State.DOWNLOADING
     lecture.save()
 
@@ -32,6 +33,7 @@ def job(lecture_id: str, language: str):
         logger.info(f'found {m3u8_url}')
         download_mp4_from_m3u8(m3u8_url, lecture)
 
+        lecture.refresh()
         lecture.state = Lecture.State.IDLE
         lecture.save()
 
@@ -39,6 +41,7 @@ def job(lecture_id: str, language: str):
         logger.info('done')
 
     except Exception as e:
+        lecture.refresh()
         lecture.state = Lecture.State.FAILURE
         lecture.save()
         raise e

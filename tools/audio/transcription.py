@@ -13,6 +13,7 @@ MODEL = 'tiny'
 def save_text(mp3_file: str, lecture: Lecture):
     logger = logging.getLogger('rq.worker')
 
+    lecture.refresh()
     lecture.transcript_progress = 0
     lecture.save()
 
@@ -77,9 +78,11 @@ def save_text(mp3_file: str, lecture: Lecture):
             progress = int((current / total_duration) * 100)
 
             logger.info(f'current progress {progress}%')
+            lecture.refresh()
             lecture.transcript_progress = progress
             lecture.save()
 
+    lecture.refresh()
     lecture.transcript_progress = 100
     lecture.transcript_filepath = output_dir
     lecture.save()

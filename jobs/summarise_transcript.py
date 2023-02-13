@@ -21,6 +21,7 @@ def job(lecture_id: str, language: str):
     if lecture is None:
         raise ValueError(f'lecture {lecture_id} not found')
 
+    lecture.refresh()
     lecture.state = Lecture.State.SUMMARISING_LECTURE
     lecture.save()
 
@@ -45,15 +46,15 @@ def job(lecture_id: str, language: str):
         with open(output_filename, 'w+') as file:
             file.write(summary.current_summary())
 
+        lecture.refresh()
         lecture.summary_filepath = output_filename
         lecture.summary_progress = 100
-        lecture.save()
-
         lecture.state = Lecture.State.READY
         lecture.save()
         logger.info('done')
 
     except Exception as e:
+        lecture.refresh()
         lecture.state = Lecture.State.FAILURE
         lecture.save()
         raise e

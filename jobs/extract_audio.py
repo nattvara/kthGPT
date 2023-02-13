@@ -20,6 +20,7 @@ def job(lecture_id: str, language: str):
     if lecture is None:
         raise ValueError(f'lecture {lecture_id} not found')
 
+    lecture.refresh()
     lecture.state = Lecture.State.EXTRACTING_AUDIO
     lecture.save()
 
@@ -30,12 +31,14 @@ def job(lecture_id: str, language: str):
         logger.info(f'extracting audio from {lecture.mp4_filepath}')
         extract_mp3_from_mp4(lecture.mp4_filepath, lecture)
 
+        lecture.refresh()
         lecture.state = Lecture.State.IDLE
         lecture.save()
 
         logger.info('done')
 
     except Exception as e:
+        lecture.refresh()
         lecture.state = Lecture.State.FAILURE
         lecture.save()
         raise e

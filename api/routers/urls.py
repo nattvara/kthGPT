@@ -9,7 +9,11 @@ from db.models import URL, Lecture
 from db import get_db
 
 from jobs import (
-    get_queue,
+    get_default_queue,
+    get_download_queue,
+    get_extract_queue,
+    get_transcribe_queue,
+    get_summarise_queue,
     capture_preview,
     download_lecture,
     extract_audio,
@@ -22,7 +26,6 @@ from rq import Queue
 
 router = APIRouter()
 
-
 class InputModel(BaseModel):
     url: str
     language: str
@@ -33,7 +36,14 @@ class OutputModel(BaseModel):
 
 
 @router.post('/url', dependencies=[Depends(get_db)])
-def parse_url(input_data: InputModel, queue: Queue = Depends(get_queue)) -> OutputModel:
+def parse_url(
+    input_data: InputModel,
+    queue_default: Queue = Depends(get_default_queue),
+    queue_download: Queue = Depends(get_download_queue),
+    queue_extract: Queue = Depends(get_extract_queue),
+    queue_transcribe: Queue = Depends(get_transcribe_queue),
+    queue_summarise: Queue = Depends(get_summarise_queue),
+) -> OutputModel:
     if input_data.url.strip() == '':
         raise HTTPException(status_code=400, detail='No URL provided, please enter a url such as: https://play.kth.se/media/0_4zo9e4nh')
 
@@ -80,18 +90,11 @@ def parse_url(input_data: InputModel, queue: Queue = Depends(get_queue)) -> Outp
         lecture = Lecture(public_id=url.lecture_id, language=lang)
         lecture.save()
 
-        queue.enqueue(capture_preview.job, lecture.public_id, lecture.language, job_timeout=capture_preview.TIMEOUT)
-        with queue.connection.pipeline() as pipe:
-            jobs = queue.enqueue_many(
-                [
-                    queue.prepare_data(download_lecture.job, [lecture.public_id, lecture.language], timeout=download_lecture.TIMEOUT),
-                    queue.prepare_data(extract_audio.job, [lecture.public_id, lecture.language], timeout=extract_audio.TIMEOUT),
-                    Queue.prepare_data(transcribe_audio.job, [lecture.public_id, lecture.language], timeout=transcribe_audio.TIMEOUT),
-                    Queue.prepare_data(summarise_transcript.job, [lecture.public_id, lecture.language], timeout=summarise_transcript.TIMEOUT),
-                ],
-                pipeline=pipe,
-            )
-            pipe.execute()
+        queue_default.enqueue(capture_preview.job, lecture.public_id, lecture.language, job_timeout=capture_preview.TIMEOUT)
+        job_1 = queue_download.enqueue(download_lecture.job, lecture.public_id, lecture.language, job_timeout=download_lecture.TIMEOUT)
+        job_2 = queue_extract.enqueue(extract_audio.job, lecture.public_id, lecture.language, job_timeout=extract_audio.TIMEOUT, depends_on=job_1)
+        job_3 = queue_transcribe.enqueue(transcribe_audio.job, lecture.public_id, lecture.language, job_timeout=transcribe_audio.TIMEOUT, depends_on=job_2)
+        job_4 = queue_summarise.enqueue(summarise_transcript.job, lecture.public_id, lecture.language, job_timeout=summarise_transcript.TIMEOUT, depends_on=job_3)
 
     return {
         'uri': url.lecture_uri(lang)

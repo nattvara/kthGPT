@@ -40,7 +40,7 @@ def gpt3(prompt: str, retry_limit=10) -> str:
     return completion['choices'][0]['text'].strip()
 
 
-def gpt3_safe(prompt: str, retry_limit=10) -> str:
+def gpt3_safe(prompt: str, retry_limit=50) -> str:
     logger = logging.getLogger('rq.worker')
 
     if retry_limit <= 0:
@@ -64,7 +64,7 @@ def gpt3_safe(prompt: str, retry_limit=10) -> str:
     except Exception as e:
         logger.error('got an unexpected error, waiting 60s')
         logger.error(e)
-        time.sleep(60)
+        time.sleep(15)
         return gpt3_safe(prompt, retry_limit=retry_limit-1)
 
     return completion['choices'][0]['text'].strip()
