@@ -22,3 +22,8 @@ RUN pip install -r requirements.txt
 RUN python setup.py install
 RUN playwright install
 RUN playwright install-deps
+
+# install ffmpeg
+RUN apt-get -y update
+RUN apt-get -y upgrade
+RUN apt-get install -y ffmpeg
