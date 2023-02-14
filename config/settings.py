@@ -39,7 +39,7 @@ class Settings(BaseSettings):
 
     REDIS_HOST: str
     REDIS_PORT: str
-    REDIS_PASSWORD: str
+    REDIS_PASSWORD: Union[str, None] = None
 
     class Config:
         case_sensitive = True

@@ -56,8 +56,14 @@ def get_summarise_queue() -> Queue:
 
 
 def get_connection() -> Queue:
+    if settings.REDIS_PASSWORD is not None:
+        return Redis(
+            host=settings.REDIS_HOST,
+            port=settings.REDIS_PORT,
+            password=settings.REDIS_PASSWORD,
+        )
+
     return Redis(
         host=settings.REDIS_HOST,
         port=settings.REDIS_PORT,
-        password=settings.REDIS_PASSWORD,
     )
