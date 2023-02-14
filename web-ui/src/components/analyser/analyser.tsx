@@ -54,6 +54,18 @@ const prettyTimeElapsedString = (date: Date) => {
   const minutes = Math.floor(seconds / 60);
   seconds = seconds % 60;
 
+  if (minutes > 180) {
+    return 'long ago...';
+  }
+
+  if (minutes > 120) {
+    return 'over 2h ago';
+  }
+
+  if (minutes > 60) {
+    return 'over 1h ago';
+  }
+
   if (seconds < 5) {
     return 'Just now';
   }

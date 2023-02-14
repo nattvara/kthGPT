@@ -57,3 +57,4 @@ urllib3==1.26.14
 uvicorn==0.20.0
 validators==0.20.0
 yarl==1.8.2
+pytz==2022.7.1

@@ -1,5 +1,5 @@
-import hashlib
 import peewee
+import pytz
 
 from .base import Base
 
@@ -10,8 +10,10 @@ class Message(Base):
     body = peewee.TextField()
 
     def to_dict(self):
+        tz = pytz.timezone('UTC')
+        created_at = tz.localize(self.created_at, is_dst=None)
         return {
-            'timestamp': self.created_at,
+            'timestamp': created_at.isoformat(),
             'title': self.title,
             'body': self.body,
         }

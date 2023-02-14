@@ -27,6 +27,7 @@ setup(
         'openai==0.26.5',
         'tiktoken==0.2.0',
         'validators==0.20.0',
+        'pytz==2022.7.1'
     ],
     entry_points={
         'console_scripts': [

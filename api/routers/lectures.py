@@ -12,15 +12,15 @@ router = APIRouter()
 
 
 class MessageOutputModel(BaseModel):
-    timestamp: datetime
+    timestamp: str
     title: str
     body: Union[str, None] = None
 
 
 class AnalysisOutputModel(BaseModel):
     analysis_id: int
-    created_at: datetime
-    modified_at: datetime
+    created_at: str
+    modified_at: str
     state: str
     frozen: bool
     last_message: Union[MessageOutputModel, None] = None

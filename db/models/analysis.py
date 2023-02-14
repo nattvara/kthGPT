@@ -1,5 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import peewee
+import pytz
 
 from .base import Base
 from .message import Message
@@ -51,7 +52,7 @@ class Analysis(Base):
             return False
 
         msg = self.get_last_message()
-        now = datetime.now()
+        now = datetime.utcnow()
         diff = (now - msg.created_at).total_seconds()
 
         return diff > FROZEN_LIMIT
@@ -77,12 +78,16 @@ class Analysis(Base):
         else:
             msg_dict = None
 
+        tz = pytz.timezone('UTC')
+        created_at = tz.localize(self.created_at, is_dst=None)
+        modified_at = tz.localize(self.modified_at, is_dst=None)
+
         return {
             'analysis_id': self.id,
             'state': self.state,
             'frozen': self.seems_to_have_crashed(),
-            'created_at': self.created_at,
-            'modified_at': self.modified_at,
+            'created_at': created_at.isoformat(),
+            'modified_at': modified_at.isoformat(),
             'last_message': msg_dict,
             'mp4_progress': self.mp4_progress,
             'mp3_progress': self.mp3_progress,
