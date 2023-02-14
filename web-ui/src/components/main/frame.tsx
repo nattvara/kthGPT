@@ -31,6 +31,7 @@ export default function Frame(props: {step: number, children: JSX.Element}) {
                 <Image
                   height={100}
                   src={kthLogo}
+                  className={styles.logo}
                   preview={false}
                 />
                 <h1 className={styles.huge}>kthGPT</h1>

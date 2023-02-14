@@ -39,6 +39,10 @@ const examples = [
     title: 'At which point in the lecture is X covered?',
     queryString: 'At which point in the lecture is X covered?',
   },
+  {
+    title: 'Tell me a joke about this lecture',
+    queryString: 'Tell me a joke about the contents covered in this lecture',
+  },
 ];
 
 const randomInt = (min: number, max: number) => {
@@ -54,6 +58,8 @@ export default function Questions(props: QuestionsProps) {
   const [response, setResponse] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [notFound, setNotFound] = useState<boolean | null>(null);
+  const [overrideCache, setOverrideCache] = useState<boolean>(false);
+  const [wasCached, setWasCached] = useState<boolean>(false);
 
   const { isLoading: isLoadingLecture, mutate: fetchLecture } = useMutation(
     async () => {
@@ -88,6 +94,7 @@ export default function Questions(props: QuestionsProps) {
         lecture_id: id,
         language: language,
         query_string: queryString,
+        override_cache: overrideCache,
       });
     },
     {
@@ -98,7 +105,9 @@ export default function Questions(props: QuestionsProps) {
           data: res.data,
         };
         setError('');
-        setResponse(result.data);
+        setResponse(result.data.response);
+        setWasCached(result.data.cached);
+        setOverrideCache(false);
       },
       onError: (err: any) => {
         if (err.response.status === 404) {
@@ -120,6 +129,11 @@ export default function Questions(props: QuestionsProps) {
 
   const askQuestion = () => {
     makeQuery();
+  };
+
+  const askQuestionWithoutCache = async () => {
+    await setOverrideCache(true);
+    askQuestion();
   };
 
   if (notFound === true) {
@@ -239,6 +253,25 @@ export default function Questions(props: QuestionsProps) {
               <pre className={styles.response}>
                 {response}
               </pre>
+
+              <div className={styles.divider}></div>
+
+              {wasCached &&
+                <Row justify='end' align='middle'>
+                  <Button type='text' size='small' style={{pointerEvents: 'none'}}>
+                    This response was cached. Click here to override the cache
+                  </Button>
+                  <Button
+                    onClick={() => askQuestionWithoutCache()}
+                    loading={isMakingQuery}
+                    type='dashed'
+                    size='small'
+                    icon={<ReloadOutlined />}
+                  >
+                    New Response
+                  </Button>
+                </Row>
+              }
             </>
           }
         </Col>

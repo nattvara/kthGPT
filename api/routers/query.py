@@ -1,7 +1,6 @@
-from fastapi import Depends, APIRouter, HTTPException, Response
-from urllib.parse import urlparse
+from typing import Union
+from fastapi import Depends, APIRouter, HTTPException
 from pydantic import BaseModel
-import logging
 
 from db.crud import (
     get_lecture_by_public_id_and_language,
@@ -22,10 +21,16 @@ class InputModel(BaseModel):
     lecture_id: str
     language: str
     query_string: str
+    override_cache: Union[bool, None] = None
+
+
+class OutputModel(BaseModel):
+    response: str
+    cached: bool
 
 
 @router.post('/query', dependencies=[Depends(get_db)])
-def new_query(input_data: InputModel) -> Response:
+def new_query(input_data: InputModel) -> OutputModel:
     lecture = get_lecture_by_public_id_and_language(
         input_data.lecture_id,
         input_data.language
@@ -38,7 +43,9 @@ def new_query(input_data: InputModel) -> Response:
     if query is None:
         query = create_query(lecture, input_data.query_string)
 
-    if query.response is None:
+    cached = True
+    if query.response is None or input_data.override_cache is True:
+        cached = False
         prompt = prompts.create_query_text(query, lecture)
 
         try:
@@ -53,7 +60,7 @@ def new_query(input_data: InputModel) -> Response:
         query.response = response
         query.save()
 
-    return Response(
-        content=query.response,
-        media_type='text/plain'
-    )
+    return {
+        'response': query.response,
+        'cached': cached,
+    }
