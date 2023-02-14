@@ -98,7 +98,8 @@ export default function Selector() {
         <Row gutter={[10, 10]}>
           <Col>
             <Button onClick={submit} type='primary' icon={<BulbOutlined />} size='large' loading={isPosting}>
-              Analyze
+              {!isPosting && <>Analyze</>}
+              {isPosting && <>Starting Analysis...</>}
             </Button>
           </Col>
           <Col>

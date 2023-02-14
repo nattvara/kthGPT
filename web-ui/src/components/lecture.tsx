@@ -1,6 +1,6 @@
 
 interface Message {
-  id: number
+  timestamp: Date
   title: string
   body: string | null
 }
@@ -30,4 +30,5 @@ export interface Lecture {
   summary_uri: string | null
   content_link: string
   analysis: Analysis | null
+  overall_progress: number | null  // for the summary response
 }

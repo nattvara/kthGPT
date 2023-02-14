@@ -16,6 +16,7 @@ import {
   Statistic,
   Skeleton,
   Button,
+  Tag,
 } from 'antd';
 import { notification } from 'antd';
 import { useMutation } from '@tanstack/react-query';
@@ -44,6 +45,24 @@ const prettyLanguageString = (slug: string) => {
   if (slug === 'en') return 'English';
   if (slug === 'sv') return 'Swedish';
   return 'Unknown';
+}
+
+const prettyTimeElapsedString = (date: Date) => {
+  const currentDate = new Date();
+  const elapsedTime = currentDate.getTime() - date.getTime();
+  let seconds = Math.floor(elapsedTime / 1000);
+  const minutes = Math.floor(seconds / 60);
+  seconds = seconds % 60;
+
+  if (seconds < 5) {
+    return 'Just now';
+  }
+
+  if (minutes === 0) {
+    return `${seconds}s ago`;
+  }
+
+  return `${minutes}min ${seconds}s ago`;
 }
 
 export default function Analyser(props: AnalyserProps) {
@@ -258,13 +277,44 @@ export default function Analyser(props: AnalyserProps) {
                 <Preview lecture={lecture}></Preview>
               </Col>
               <Col sm={24} md={24} lg={12}>
-                <Progress
-                  type='circle'
-                  percent={lecture.analysis?.overall_progress}
-                  className={styles.circle} />
+                <Row justify='center' align='middle'>
+                  <Progress
+                    type='circle'
+                    percent={lecture.analysis?.overall_progress}
+                    className={styles.circle} />
+                </Row>
+                <Row justify='center' align='middle'>
+                  <Col>
+                    <h1>Progress</h1>
+                  </Col>
+                </Row>
               </Col>
             </Row>
 
+            {
+              lecture.analysis !== null &&
+              lecture.analysis?.last_message !== null &&
+              lecture.analysis?.state !== 'ready' &&
+              <Row gutter={[20, 10]}>
+                <Col>
+                  <Tag className={styles.tag} icon={<ClockCircleOutlined />} color='#108ee9'>
+                    {prettyTimeElapsedString(new Date(lecture.analysis?.last_message?.timestamp!))}
+                  </Tag>
+                  <Alert
+                    message={
+                      <>
+                        <Space direction='horizontal' size='small'>
+                          <strong>{lecture.analysis?.last_message?.title}</strong>
+                          <span>{lecture.analysis?.last_message?.body}</span>
+                        </Space>
+                      </>
+                    }
+                    type='info'
+                    showIcon
+                  />
+                </Col>
+              </Row>
+            }
             <Row gutter={[20, 10]}>
               <Col span={24}>
                 Downloading video
@@ -290,19 +340,6 @@ export default function Analyser(props: AnalyserProps) {
             </Row>
 
             <Space direction='vertical' size='small'>
-              {lecture.analysis?.state == 'waiting' &&
-                <Row gutter={[20, 20]}>
-                  <Col span={24}>
-                    <Alert
-                      message='Lectures before in queue'
-                      description='There are other lectures being analyzed before this lecture'
-                      type='warning'
-                      showIcon
-                      />
-                  </Col>
-                </Row>
-              }
-
               <Row gutter={[20, 10]}>
                 {lecture.length !== 0 &&
                   <Col>
@@ -348,7 +385,7 @@ export default function Analyser(props: AnalyserProps) {
                 <div style={{width: '95%'}} key={lecture.public_id}>
                   <span>{lecture.content_link}</span>
                   <Progress
-                    percent={lecture.analysis?.overall_progress}
+                    percent={lecture.overall_progress!}
                     className={styles.previous_lecture}
                     strokeColor='#aaa' />
                 </div>
