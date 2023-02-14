@@ -3,7 +3,7 @@ from redis import Redis
 from rq import Queue
 import logging
 
-from db.crud import get_lecture_by_public_id_and_language
+from db.crud import get_lecture_by_public_id_and_language, save_message_for_analysis
 from tools.audio.extraction import extract_mp3_from_mp4
 from db.models import Lecture, Analysis
 import jobs.extract_audio
@@ -29,6 +29,7 @@ def job(lecture_id: str, language: str):
         if lecture.mp4_filepath is None:
             raise ValueError(f'lecture {lecture_id} has no mp4_filepath')
 
+        save_message_for_analysis(analysis, 'Extracting audio...', 'The analyzer only looks at what is being said in the lecture.')
         logger.info(f'extracting audio from {lecture.mp4_filepath}')
         extract_mp3_from_mp4(lecture.mp4_filepath, lecture)
 

@@ -4,7 +4,7 @@ from rq import Queue
 import logging
 
 from tools.web.downloader import download_mp4_from_m3u8
-from db.crud import get_lecture_by_public_id_and_language
+from db.crud import get_lecture_by_public_id_and_language, save_message_for_analysis
 from tools.web.crawler import get_m3u8
 from db.models import Lecture, Analysis
 import jobs.download_lecture
@@ -35,6 +35,7 @@ def job(lecture_id: str, language: str):
         analysis.save()
 
         logger.info(f'fetching content link at {url}')
+        save_message_for_analysis(analysis, 'Downloading...', 'Looking for link to content.')
         m3u8_url = get_m3u8(url)
         logger.info(f'found {m3u8_url}')
 
@@ -42,6 +43,7 @@ def job(lecture_id: str, language: str):
         analysis.mp4_progress = 3
         analysis.save()
 
+        save_message_for_analysis(analysis, 'Downloading...', 'Retrieving the recorded lecture, this is usually pretty quick.')
         download_mp4_from_m3u8(m3u8_url, lecture)
 
         lecture.refresh()

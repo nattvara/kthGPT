@@ -4,6 +4,8 @@ import logging
 import openai
 import time
 
+from db.crud import save_message_for_analysis
+from db.models.lecture import Lecture
 from config.settings import settings
 
 MODEL = 'text-davinci-003'
@@ -40,7 +42,7 @@ def gpt3(prompt: str, retry_limit=10) -> str:
     return completion['choices'][0]['text'].strip()
 
 
-def gpt3_safe(prompt: str, retry_limit=50) -> str:
+def gpt3_safe(prompt: str, lecture: Lecture, retry_limit=50) -> str:
     logger = logging.getLogger('rq.worker')
 
     if retry_limit <= 0:
@@ -59,12 +61,19 @@ def gpt3_safe(prompt: str, retry_limit=50) -> str:
         )
     except RateLimitError:
         logger.warning('hit rate limit, waiting 10s')
+        lecture.refresh()
+        analysis = lecture.get_last_analysis()
+        save_message_for_analysis(analysis, 'Creating summary', 'OpenAI is overloaded, waiting a little while.')
         time.sleep(10)
-        return gpt3_safe(prompt, retry_limit=retry_limit-1)
+        return gpt3_safe(prompt, lecture, retry_limit=retry_limit-1)
     except Exception as e:
         logger.error('got an unexpected error, waiting 60s')
         logger.error(e)
+
+        lecture.refresh()
+        analysis = lecture.get_last_analysis()
+        save_message_for_analysis(analysis, 'Creating summary', 'Got an error from OpenAI, it is probably overloaded, waiting a little while.')
         time.sleep(15)
-        return gpt3_safe(prompt, retry_limit=retry_limit-1)
+        return gpt3_safe(prompt, lecture, retry_limit=retry_limit-1)
 
     return completion['choices'][0]['text'].strip()

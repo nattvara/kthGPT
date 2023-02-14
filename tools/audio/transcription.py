@@ -1,3 +1,4 @@
+from db.crud import save_message_for_analysis
 from db.models import Lecture
 import subprocess
 import logging
@@ -72,9 +73,13 @@ def save_text(mp3_file: str, lecture: Lecture):
             if len(match.group(1).split(':')) == 3:
                 hours, minutes, seconds = match.group(1).split(':')
                 current = int(hours) * 60 * 60 + int(minutes) * 60 + int(seconds)
+                timestamp = f'{hours}:{minutes}:{seconds}'
             else:
                 minutes, seconds = match.group(1).split(':')
                 current = int(minutes) * 60 + int(seconds)
+                timestamp = f'{minutes}:{seconds}'
+
+            save_message_for_analysis(analysis, 'Creating transcript...', f'This is usually what takes the longest time. Currently at {timestamp} in the lecture.')
 
             progress = int((current / total_duration) * 100)
 

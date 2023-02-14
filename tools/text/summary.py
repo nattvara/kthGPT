@@ -1,8 +1,9 @@
 import logging
 import math
 
-from . import prompts, ai
+from db.crud import save_message_for_analysis
 from db.models import Lecture
+from . import prompts, ai
 
 
 class Chunk:
@@ -62,15 +63,15 @@ class Chunk:
 
 class Summary:
 
-    def __init__(self, min_size: int, summary_size: int) -> None:
+    def __init__(self, min_size: int, summary_size: int, lecture: Lecture) -> None:
         self.min_size = min_size
         self.summary_size = summary_size
-        self.summaries = {
-        }
+        self.lecture = lecture
+        self.summaries = {}
 
-    def update_with_chunk(self, chunk: Chunk, include_summary: bool):
+    def update_with_chunk(self, lecture: Lecture, chunk: Chunk, include_summary: bool):
         prompt = prompts.create_text_to_summarise_chunk(self, chunk, include_summary)
-        response = ai.gpt3_safe(prompt)
+        response = ai.gpt3_safe(prompt, lecture)
         self.summaries[chunk.period] = response.replace('\n', ' ')
 
     def current_summary(self):
@@ -82,7 +83,7 @@ class Summary:
 
     def summarise(self):
         prompt = prompts.create_text_to_summarise_summary(self)
-        response = ai.gpt3_safe(prompt)
+        response = ai.gpt3_safe(prompt, self.lecture)
         return response
 
     @staticmethod
@@ -91,7 +92,7 @@ class Summary:
 
         segments = lecture.get_segments()
         chunks = Chunk.create_chunks(segments, min_size)
-        summary = Summary(min_size, 50)
+        summary = Summary(min_size, 50, lecture)
 
         try:
             include_summary = False
@@ -99,7 +100,11 @@ class Summary:
             inc = 0
             for chunk in chunks:
                 inc += 1
-                summary.update_with_chunk(chunk, include_summary)
+                lecture.refresh()
+                analysis = lecture.get_last_analysis()
+                save_message_for_analysis(analysis, 'Creating summary...', f'This step is using AI to summarize the lecture. This can take a while. Currently on part {inc}/{len(chunks)}.')
+
+                summary.update_with_chunk(lecture, chunk, include_summary)
                 include_summary = True
 
                 progress = int((inc / len(chunks)) * 100)

@@ -46,7 +46,7 @@ class LectureOutputModel(BaseModel):
 class LectureSummaryOutputModel(BaseModel):
     public_id: str
     language: str
-    state: str
+    state: Union[str, None] = None
     content_link: Union[str, None] = None
     overall_progress: int
 

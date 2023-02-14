@@ -105,12 +105,18 @@ class Lecture(Base):
 
     def to_summary_dict(self):
         a = self.get_last_analysis()
+        if a is not None:
+            state = a.state
+            overall_progress = a.overall_progress()
+        else:
+            state = None
+            overall_progress = 0
         return {
             'public_id': self.public_id,
             'language': self.language,
-            'state': a.state,
+            'state': state,
             'content_link': self.content_link(),
-            'overall_progress': a.overall_progress(),
+            'overall_progress': overall_progress,
         }
 
     def to_dict(self):

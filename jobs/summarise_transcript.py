@@ -4,7 +4,7 @@ from rq import Queue
 import logging
 import os
 
-from db.crud import get_lecture_by_public_id_and_language
+from db.crud import get_lecture_by_public_id_and_language, save_message_for_analysis
 from db.models import Lecture, Analysis
 from tools.text.summary import Summary
 import jobs.summarise_transcript
@@ -31,6 +31,8 @@ def job(lecture_id: str, language: str):
             raise ValueError(f'lecture {lecture_id} has no mp3_filepath')
 
         logger.info(f'summarising {lecture.transcript_filepath}')
+
+        save_message_for_analysis(analysis, 'Creating summary...', 'Summarizing the lecture into something you can query.')
 
         min_size = round((lecture.length / 60) / 25)
         if min_size == 0:
