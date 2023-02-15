@@ -1,0 +1,83 @@
+version: "3.8"
+
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - queue
+    volumes:
+      - shared:/shared
+    command: uvicorn api:main --host 0.0.0.0 --port 8000
+
+  db:
+    image: postgres:12
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  queue:
+    image: redis:7.0.8-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - queue:/data
+
+  queue_worker:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - queue
+      - api
+    command: rq worker --url="redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}" default download extract transcribe summarise
+    deploy:
+      replicas: 2
+    volumes:
+      - shared:/shared
+
+  frontend:
+    build:
+      context: web-ui
+      dockerfile: ./Dockerfile
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8080:80"
+
+  proxy:
+    build:
+      context: proxy
+      dockerfile: ./Dockerfile
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "1337:80"
+
+volumes:
+  db:
+    driver: local
+  queue:
+    driver: local
+  shared:
+    driver: local
