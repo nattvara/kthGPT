@@ -2,10 +2,13 @@
 
 A POC tool to download and summarise a lecture stored on [KTH Play](https://play.kth.se).
 
+![Hero image](docs/img/hero.png)
+
 - [kthGPT](#kthgpt)
   - [Usage](#usage)
     - [Docker](#docker)
     - [Development](#development)
+  - [Screenshots](#screenshots)
 
 
 ## Usage
@@ -100,3 +103,17 @@ pnpm install
 
 npm run dev
 ```
+
+## Screenshots
+
+> Select a KTH Play lecture
+
+![Select](docs/img/select.png)
+
+> The lecture is analysed
+
+![Analyse](docs/img/analyse.png)
+
+> Ask questions about the lecture
+
+![Questions](docs/img/question.png)
