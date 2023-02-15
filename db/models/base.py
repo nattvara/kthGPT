@@ -5,8 +5,8 @@ from db.database import db
 
 
 class Base(peewee.Model):
-    created_at = peewee.TimestampField(default=datetime.utcnow(), null=False)
-    modified_at = peewee.TimestampField(default=datetime.utcnow(), null=False)
+    created_at = peewee.TimestampField(default=datetime.utcnow, null=False)
+    modified_at = peewee.TimestampField(default=datetime.utcnow, null=False)
 
     class Meta:
         database = db
