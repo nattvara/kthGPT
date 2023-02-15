@@ -38,7 +38,7 @@ class Analysis(Base):
     def get_last_message(self):
         return (Message
                 .filter(Message.analysis_id == self.id)
-                .order_by(Message.created_at.desc())
+                .order_by(Message.modified_at.desc())
                 .first())
 
     def seems_to_have_crashed(self) -> bool:

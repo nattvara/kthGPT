@@ -11,9 +11,9 @@ class Message(Base):
 
     def to_dict(self):
         tz = pytz.timezone('UTC')
-        created_at = tz.localize(self.created_at, is_dst=None)
+        modified_at = tz.localize(self.modified_at, is_dst=None)
         return {
-            'timestamp': created_at.isoformat(),
+            'timestamp': modified_at.isoformat(),
             'title': self.title,
             'body': self.body,
         }
