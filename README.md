@@ -9,6 +9,7 @@ A POC tool to download and summarise a lecture stored on [KTH Play](https://play
     - [Docker](#docker)
     - [Development](#development)
   - [Screenshots](#screenshots)
+  - [License](#license)
 
 
 ## Usage
@@ -117,3 +118,9 @@ npm run dev
 > Ask questions about the lecture
 
 ![Questions](docs/img/question.png)
+
+## License
+
+MIT © Ludwig Kristoffersson
+
+See [LICENSE file](LICENSE) for more information.
