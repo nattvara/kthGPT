@@ -284,6 +284,14 @@ export default function Analyser(props: AnalyserProps) {
       <Row gutter={[20, 20]}>
         <Col sm={24} md={12}>
           <Space direction='vertical' size='large'>
+            {lecture.analysis?.state !== 'ready' && lecture.analysis?.state !== 'failure' &&
+              <Row>
+                <Col span={24}>
+                  <h1 className={styles.title}>kthGPT is watching the lecture 🍿</h1>
+                  <h2 className={styles.subtitle}>This can take a little while, but is only done once per lecture!</h2>
+                </Col>
+              </Row>
+            }
             <Row gutter={[20, 20]} justify='center' align='middle'>
               <Col sm={24} md={24} lg={12}>
                 <Preview lecture={lecture}></Preview>
@@ -297,12 +305,11 @@ export default function Analyser(props: AnalyserProps) {
                 </Row>
                 <Row justify='center' align='middle'>
                   <Col>
-                    <h1>Progress</h1>
+                    <h1>Lecture progress</h1>
                   </Col>
                 </Row>
               </Col>
             </Row>
-
             {
               lecture.analysis !== null &&
               lecture.analysis?.last_message !== null &&

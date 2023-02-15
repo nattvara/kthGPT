@@ -99,7 +99,7 @@ export default function Selector() {
           <Col>
             <Button onClick={submit} type='primary' icon={<BulbOutlined />} size='large' loading={isPosting}>
               {!isPosting && <>Analyze</>}
-              {isPosting && <>Starting Analysis...</>}
+              {isPosting && <>Verifying video URL . . .</>}
             </Button>
           </Col>
           <Col>

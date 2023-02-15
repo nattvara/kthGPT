@@ -95,6 +95,8 @@ export default function Questions(props: QuestionsProps) {
         language: language,
         query_string: queryString,
         override_cache: overrideCache,
+      }, {
+        timeout: 1000 * 40,  // 40s timeout
       });
     },
     {
@@ -110,6 +112,9 @@ export default function Questions(props: QuestionsProps) {
         setOverrideCache(false);
       },
       onError: (err: any) => {
+        if (err.code === 'ECONNABORTED') {
+          setError('OpenAI took to long to response, try asking again!');
+        }
         if (err.response.status === 404) {
           setNotFound(true);
         }
@@ -117,7 +122,7 @@ export default function Questions(props: QuestionsProps) {
         if (data.detail) {
           setError(data.detail);
         } else {
-          setError('Something went wrong when communicating with openAI.')
+          setError('Something went wrong when communicating with OpenAI.')
         }
       },
     }
@@ -250,14 +255,18 @@ export default function Questions(props: QuestionsProps) {
           }
           {!isMakingQuery && response !== '' &&
             <>
-              <pre className={styles.response}>
-                {response}
-              </pre>
+              <Row gutter={[20, 20]}>
+                <Col span={24}>
+                  <pre className={styles.response}>
+                    {response}
+                  </pre>
+                </Col>
+              </Row>
 
               <div className={styles.divider}></div>
 
               {wasCached &&
-                <Row justify='end' align='middle'>
+                <Row justify='end' align='middle' gutter={[10, 10]}>
                   <Button type='text' size='small' style={{pointerEvents: 'none'}}>
                     This response was cached. Click here to override the cache
                   </Button>
