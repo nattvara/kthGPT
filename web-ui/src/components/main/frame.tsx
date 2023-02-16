@@ -11,11 +11,17 @@ import {
 import kthLogo from '../../assets/logo.svg';
 import Progress from './progress';
 
+
 const GITHUB_URL = 'https://github.com/nattvara/kthGPT';
 
+interface FrameProps {
+  step?: number
+  showDescription?: boolean
+  children: JSX.Element
+}
 
-export default function Frame(props: {step: number, children: JSX.Element}) {
-  const {step, children} = props;
+function Frame(props: FrameProps) {
+  const { step, showDescription, children } = props;
 
   const goToGithub = () => {
     window.open(GITHUB_URL, '_blank')
@@ -37,16 +43,20 @@ export default function Frame(props: {step: number, children: JSX.Element}) {
                 <h1 className={styles.huge}>kthGPT</h1>
               </Space>
             </Row>
-            <h1 className={styles.subtitle}>Ask GPT-3 questions about KTH lectures</h1>
-            <p className={styles.subtitle}>
-              <Button type='dashed' onClick={() => goToGithub()}><GithubOutlined /> Source Code</Button>
-            </p>
+            {showDescription &&
+              <>
+                <h1 className={styles.subtitle}>Ask GPT-3 questions about KTH lectures</h1>
+                <p className={styles.subtitle}>
+                  <Button type='dashed' onClick={() => goToGithub()}><GithubOutlined /> Source Code</Button>
+                </p>
+              </>
+            }
           </div>
         </Col>
       </Row>
 
       <Layout className={styles.main}>
-        <Progress step={step}></Progress>
+        {step !== undefined && <Progress step={step}></Progress>}
 
         <Layout className={styles.noBg}>
           {children}
@@ -55,3 +65,9 @@ export default function Frame(props: {step: number, children: JSX.Element}) {
     </>
   );
 }
+
+Frame.defaultProps = {
+  showDescription: false,
+}
+
+export default Frame;
