@@ -105,7 +105,7 @@ export default function Selector() {
           <Col>
             <Radio.Group onChange={e => setLanguage(e.target.value)} value={language} defaultValue='en' buttonStyle='solid' size='large'>
               <Radio.Button value='en'>English lecture</Radio.Button>
-              <Radio.Button value='sv'>Swedish lecture</Radio.Button>
+              {/* <Radio.Button value='sv'>Swedish lecture</Radio.Button> */}
             </Radio.Group>
           </Col>
           <Col>
