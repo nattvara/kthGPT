@@ -17,6 +17,11 @@ import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import apiClient from '@/http';
 import { history } from 'umi';
+import {
+  EVENT_FEELING_LUCKY,
+  emitEvent,
+  EVENT_SUBMIT_URL,
+} from '@/matomo';
 
 export default function Selector() {
   const [language, setLanguage] = useState('en');
@@ -73,10 +78,12 @@ export default function Selector() {
   );
 
   const submit = async () => {
+    emitEvent(EVENT_SUBMIT_URL);
     await postUrl();
   };
 
   const random = async () => {
+    emitEvent(EVENT_FEELING_LUCKY);
     await requestRandom();
   };
 
