@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   api:
-    image: kthgpt_api
+    image: kthgpt_main
     build:
       context: .
       dockerfile: api/Dockerfile
@@ -38,7 +38,7 @@ services:
       - queue:/data
 
   queue_worker:
-    image: kthgpt_queue_worker
+    image: kthgpt_main
     build:
       context: .
       dockerfile: api/Dockerfile
