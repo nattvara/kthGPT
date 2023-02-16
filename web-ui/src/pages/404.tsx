@@ -1,16 +1,20 @@
 import Frame from '@/components/main/frame';
+import { registerPageLoad } from '@/matomo';
 import {
   Result,
   Button,
   Row,
   Col,
-  Tag,
 } from 'antd';
+import { useEffect } from 'react';
 import { history } from 'umi';
 import styles from './404.less';
 
 
 export default function IndexPage() {
+  useEffect(() => {
+    registerPageLoad();
+  }, []);
 
   return (
     <>
