@@ -8,7 +8,7 @@ import {
   Image,
   Button,
 } from 'antd';
-import kthLogo from '../../assets/kth.svg';
+import kthLogo from '../../assets/logo.svg';
 import Progress from './progress';
 
 const GITHUB_URL = 'https://github.com/nattvara/kthGPT';
