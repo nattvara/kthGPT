@@ -123,9 +123,9 @@ export default function Selector() {
                 <Row justify='center' align='middle'>
                   <Col><Image
                     src={enFlag}
-                    height={40}
+                    height={30}
                     preview={false}
-                    className={`${language !== 'en' ? styles.grayscale : ''}`}
+                    className={`${language !== 'en' ? styles.grayscale : ''} ${styles.flag}`}
                   /></Col>
                 </Row>
               </Radio>
@@ -133,9 +133,9 @@ export default function Selector() {
                 <Row justify='center' align='middle'>
                   <Col><Image
                     src={svFlag}
-                    height={40}
+                    height={30}
                     preview={false}
-                    className={`${language !== 'sv' ? styles.grayscale : ''}`}
+                    className={`${language !== 'sv' ? styles.grayscale : ''} ${styles.flag}`}
                   /></Col>
                 </Row>
               </Radio>
