@@ -2,6 +2,7 @@ import {
   BulbOutlined,
   PlayCircleOutlined,
   NotificationOutlined,
+  AudioOutlined,
 } from '@ant-design/icons';
 import styles from './selector.less';
 import {
@@ -11,6 +12,7 @@ import {
   Space,
   Button,
   Radio,
+  Image,
 } from 'antd';
 import { notification } from 'antd';
 import { useMutation } from '@tanstack/react-query';
@@ -22,6 +24,9 @@ import {
   emitEvent,
   EVENT_SUBMIT_URL,
 } from '@/matomo';
+import enFlag from '@/assets/flag-en.svg';
+import svFlag from '@/assets/flag-sv.svg';
+
 
 export default function Selector() {
   const [language, setLanguage] = useState('en');
@@ -78,13 +83,13 @@ export default function Selector() {
   );
 
   const submit = async () => {
-    emitEvent(EVENT_SUBMIT_URL);
     await postUrl();
+    emitEvent(EVENT_SUBMIT_URL);
   };
 
   const random = async () => {
-    emitEvent(EVENT_FEELING_LUCKY);
     await requestRandom();
+    emitEvent(EVENT_FEELING_LUCKY);
   };
 
   return (
@@ -111,8 +116,29 @@ export default function Selector() {
           </Col>
           <Col>
             <Radio.Group onChange={e => setLanguage(e.target.value)} value={language} defaultValue='en' buttonStyle='solid' size='large'>
-              <Radio.Button value='en'>English lecture</Radio.Button>
-              {/* <Radio.Button value='sv'>Swedish lecture</Radio.Button> */}
+              <Button type='text' size='large' style={{pointerEvents: 'none'}}>
+                <AudioOutlined /> Select lecture language:
+              </Button>
+              <Radio value='en'>
+                <Row justify='center' align='middle'>
+                  <Col><Image
+                    src={enFlag}
+                    height={40}
+                    preview={false}
+                    className={`${language !== 'en' ? styles.grayscale : ''}`}
+                  /></Col>
+                </Row>
+              </Radio>
+              <Radio value='sv'>
+                <Row justify='center' align='middle'>
+                  <Col><Image
+                    src={svFlag}
+                    height={40}
+                    preview={false}
+                    className={`${language !== 'sv' ? styles.grayscale : ''}`}
+                  /></Col>
+                </Row>
+              </Radio>
             </Radio.Group>
           </Col>
           <Col>

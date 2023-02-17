@@ -8,9 +8,6 @@ import re
 import os
 
 
-MODEL = 'tiny'
-
-
 def save_text(mp3_file: str, lecture: Lecture):
     logger = logging.getLogger('rq.worker')
 
@@ -29,20 +26,19 @@ def save_text(mp3_file: str, lecture: Lecture):
 
     if lecture.language == Lecture.Language.ENGLISH:
         lang = 'en'
+        model = 'tiny'
     elif lecture.language == Lecture.Language.SWEDISH:
         lang = 'sv'
+        model = 'small'
 
     cmd = [
         'whisper',
         mp3_file,
-        f'--model={MODEL}',
+        f'--model={model}',
         f'--language={lang}',
         f'--output_dir={output_dir}',
         '--verbose=True',
     ]
-
-    if lang != 'en':
-        cmd.append('--task translate')
 
     whisper_env = os.environ.copy()
     whisper_env['PYTHONUNBUFFERED'] = '1'

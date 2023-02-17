@@ -46,7 +46,13 @@ def new_query(input_data: InputModel) -> OutputModel:
     cached = True
     if query.response is None or input_data.override_cache is True:
         cached = False
-        prompt = prompts.create_query_text(query, lecture)
+        if lecture.language == lecture.Language.ENGLISH:
+            prompt = prompts.create_query_text_english(query, lecture)
+        elif lecture.language == lecture.Language.SWEDISH:
+            prompt = prompts.create_query_text_swedish(query, lecture)
+        else:
+            raise ValueError(f'language {lecture.language} is not supported')
+
 
         try:
             response = ai.gpt3(prompt)

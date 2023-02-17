@@ -63,7 +63,7 @@ if __name__ == '__main__':
     ))
     queue.enqueue(
         jobs.transcribe_audio.job,
-        '0_blzql89t',
-        Lecture.Language.ENGLISH,
+        '0_8fs7zau6',
+        Lecture.Language.SWEDISH,
         job_timeout=TIMEOUT
     )

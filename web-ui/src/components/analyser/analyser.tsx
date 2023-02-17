@@ -1,8 +1,8 @@
 import {
-  FlagOutlined,
   ClockCircleOutlined,
   NumberOutlined,
   BulbOutlined,
+  AudioOutlined,
 } from '@ant-design/icons';
 import styles from './analyser.less';
 import {
@@ -388,7 +388,7 @@ export default function Analyser(props: AnalyserProps) {
                     <Statistic
                       title='Language'
                       value={prettyLanguageString(lecture.language!)}
-                      prefix={<FlagOutlined />}
+                      prefix={<AudioOutlined />}
                     />
                   </Card>
                 </Col>
