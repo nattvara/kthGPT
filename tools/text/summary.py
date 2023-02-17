@@ -74,7 +74,12 @@ class Summary:
         self.summaries = {}
 
     def update_with_chunk(self, lecture: Lecture, chunk: Chunk, include_summary: bool):
-        prompt = prompts.create_text_to_summarise_chunk(self, chunk, include_summary)
+        if lecture.language == Lecture.Language.ENGLISH:
+            prompt = prompts.create_text_to_summarise_chunk_english(self, chunk, include_summary)
+        elif lecture.language == Lecture.Language.SWEDISH:
+            prompt = prompts.create_text_to_summarise_chunk_swedish(self, chunk, include_summary)
+        else:
+            raise ValueError(f'unsupported language {lecture.language}')
         response = ai.gpt3_safe(prompt, lecture)
         self.summaries[chunk.period] = response.replace('\n', ' ')
 
@@ -86,8 +91,14 @@ class Summary:
         return string
 
     def summarise(self):
-        prompt = prompts.create_text_to_summarise_summary(self)
+        if self.lecture.language == Lecture.Language.ENGLISH:
+            prompt = prompts.create_text_to_summarise_summary_english(self)
+        elif self.lecture.language == Lecture.Language.SWEDISH:
+            prompt = prompts.create_text_to_summarise_summary_swedish(self)
+        else:
+            raise ValueError(f'unsupported language {self.lecture.language}')
         response = ai.gpt3_safe(prompt, self.lecture)
+
         return response
 
     @staticmethod
