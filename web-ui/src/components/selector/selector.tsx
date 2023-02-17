@@ -83,13 +83,13 @@ export default function Selector() {
   );
 
   const submit = async () => {
-    emitEvent(EVENT_SUBMIT_URL);
     await postUrl();
+    emitEvent(EVENT_SUBMIT_URL);
   };
 
   const random = async () => {
-    emitEvent(EVENT_FEELING_LUCKY);
     await requestRandom();
+    emitEvent(EVENT_FEELING_LUCKY);
   };
 
   return (

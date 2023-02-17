@@ -24,8 +24,8 @@ export default function Preview(props: PreviewProps) {
   const { lecture } = props;
 
   const openKthPlay = (url: string) => {
-    emitEvent(EVENT_GOTO_LECTURE);
     window.open(url, '_blank');
+    emitEvent(EVENT_GOTO_LECTURE);
   }
 
   let flagIcon = '';
