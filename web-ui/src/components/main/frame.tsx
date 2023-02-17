@@ -67,7 +67,7 @@ function Frame(props: FrameProps) {
 }
 
 Frame.defaultProps = {
-  showDescription: false,
+  showDescription: true,
 }
 
 export default Frame;
