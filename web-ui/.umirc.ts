@@ -6,6 +6,7 @@ export default defineConfig({
     { path: '/404', component: '404' },
     { path: '/analyse/lectures/:id/:language', component: 'analyse' },
     { path: '/questions/lectures/:id/:language', component: 'questions' },
+    { component: '404' },
   ],
   npmClient: 'pnpm',
 });
