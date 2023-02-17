@@ -11,7 +11,7 @@ import { history } from 'umi';
 import styles from './404.less';
 
 
-export default function IndexPage() {
+export default function NotFoundPage() {
   useEffect(() => {
     registerPageLoad();
   }, []);
