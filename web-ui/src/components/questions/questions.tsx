@@ -33,20 +33,28 @@ interface QuestionsProps {
 
 const examples = [
   {
-    title: 'Summarize the lecture for me',
-    queryString: 'Summarize the lecture for me into 10 bullets',
+    titleEn: 'Summarize the lecture for me',
+    titleSv: 'Sammanfatta föreläsningen för mig',
+    queryStringEn: 'Summarize the lecture for me into 10 bullets',
+    queryStringSv: 'Sammanfatta denna föreläsning i 10 punkter',
   },
   {
-    title: 'Tell me the core concepts covered in the lecture',
-    queryString: 'Tell me the core concepts covered in the lecture and give some explanations for each',
+    titleEn: 'Tell me the core concepts covered in the lecture',
+    titleSv: 'Berätta om kärnbegreppen i föreläsningen',
+    queryStringEn: 'Tell me the core concepts covered in the lecture and give some explanations for each',
+    queryStringSv: 'Förklara kärnbegreppen i denna föreläsning, med några användbara exempel',
   },
   {
-    title: 'At which point in the lecture is X covered?',
-    queryString: 'At which point in the lecture is X covered?',
+    titleEn: 'At which point in the lecture is X covered?',
+    titleSv: 'När i föreläsningen berättar föreläsaren om X?',
+    queryStringEn: 'At which point in the lecture is X covered?',
+    queryStringSv: 'När i föreläsningen berättar föreläsaren om X?',
   },
   {
-    title: 'Tell me a joke about this lecture',
-    queryString: 'Tell me a joke about the contents covered in this lecture',
+    titleEn: 'Tell me a joke about this lecture',
+    titleSv: 'Berätta ett skämt om den här föreläsningen',
+    queryStringEn: 'Tell me a joke about the contents covered in this lecture',
+    queryStringSv: 'Berätta ett skämt om innehållet i den här föreläsningen',
   },
 ];
 
@@ -138,14 +146,20 @@ export default function Questions(props: QuestionsProps) {
   }, [id, language]);
 
   const askQuestion = () => {
-    emitEvent(EVENT_ASKED_QUESTION);
+    if (isMakingQuery) return;
+
     makeQuery();
+
+    emitEvent(EVENT_ASKED_QUESTION);
   };
 
   const askQuestionWithoutCache = async () => {
-    emitEvent(EVENT_ASKED_QUESTION_NO_CACHE);
+    if (isMakingQuery) return;
+
     await setOverrideCache(true);
     askQuestion();
+
+    emitEvent(EVENT_ASKED_QUESTION_NO_CACHE);
   };
 
   if (notFound === true) {
@@ -172,6 +186,13 @@ export default function Questions(props: QuestionsProps) {
     return <Skeleton active paragraph={{ rows: 4 }} />;
   }
 
+  let placeholder = '';
+  if (lecture.language === 'en') {
+    placeholder = 'Enter a question about the lecture...';
+  } else if (lecture.language === 'sv') {
+    placeholder = 'Skriv en fråga om föreläsningen...';
+  }
+
   return (
     <>
       {contextHolder}
@@ -183,9 +204,13 @@ export default function Questions(props: QuestionsProps) {
                 <TextArea
                   className={styles.hugeInput}
                   value={queryString}
-                  onChange={e => setQueryString(e.target.value)}
-                  onPressEnter={() => {}}
-                  placeholder='Enter a question...'
+                  onChange={e => {
+                    let val = e.target.value;
+                    val = val.replaceAll('\n', '');
+                    setQueryString(val);
+                  }}
+                  onPressEnter={() => askQuestion()}
+                  placeholder={placeholder}
                   autoSize={true} />
               </Col>
             </Row>
@@ -212,13 +237,20 @@ export default function Questions(props: QuestionsProps) {
                 </Button>
               </Col>
               {examples.map(example =>
-                <Col key={example.title}>
+                <Col key={example.titleEn}>
                   <Button
                     type='dashed'
                     size='small'
-                    onClick={() => setQueryString(example.queryString)}
+                    onClick={() => {
+                      if (language === 'en') {
+                        setQueryString(example.queryStringEn);
+                      } else if (language == 'sv') {
+                        setQueryString(example.queryStringSv);
+                      }
+                    }}
                   >
-                    {example.title}
+                    {lecture.language === 'en' && example.titleEn}
+                    {lecture.language === 'sv' && example.titleSv}
                   </Button>
                 </Col>
               )}
