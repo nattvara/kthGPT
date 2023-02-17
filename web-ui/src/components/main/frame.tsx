@@ -36,6 +36,7 @@ function Frame(props: FrameProps) {
               <Space direction='horizontal' size='small'>
                 <Image
                   height={100}
+                  width={100}
                   src={kthLogo}
                   className={styles.logo}
                   preview={false}
