@@ -24,5 +24,5 @@ export const emitEvent = (event: string) => {
 
   var _paq = window._paq || [];
 
-  _paq.push(['trackEvent', event, '', '']);
+  _paq.push(['trackEvent', 'kthgpt', 'event', event]);
 };
