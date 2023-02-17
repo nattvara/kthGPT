@@ -6,6 +6,16 @@ from db.models import Lecture
 from . import prompts, ai
 
 
+MIN_WORD_LIMIT = 500
+
+
+def minutes_to_time(minutes):
+    hours = math.floor(minutes // 60)
+    remainder = math.floor(minutes % 60)
+    time = f'{hours:02}:{remainder:02}:00'
+    return time
+
+
 class Chunk:
 
     def __init__(self, period: str, transcript: str) -> None:
@@ -14,12 +24,6 @@ class Chunk:
 
     @staticmethod
     def create_chunks(segments: list, min_size: int) -> list:
-        def minutes_to_time(minutes):
-            hours = math.floor(minutes // 60)
-            remainder = math.floor(minutes % 60)
-            time = f'{hours:02}:{remainder:02}:00'
-            return time
-
         end = segments[len(segments) - 1]['end']
 
         number_of_chunks = math.ceil(end / 60 / min_size)
@@ -89,6 +93,11 @@ class Summary:
     @staticmethod
     def create_summary(lecture: Lecture, min_size):
         logger = logging.getLogger('rq.worker')
+
+        if lecture.words < MIN_WORD_LIMIT:
+            summary = Summary(min_size, 50, lecture)
+            summary.summaries[f'00:00 - {minutes_to_time(lecture.length)}'] = '\n' + lecture.transcript_text()
+            return summary
 
         segments = lecture.get_segments()
         chunks = Chunk.create_chunks(segments, min_size)

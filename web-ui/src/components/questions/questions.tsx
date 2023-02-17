@@ -20,6 +20,11 @@ import { history } from 'umi';
 import TextArea from 'antd/es/input/TextArea';
 import Preview from '../preview';
 import { Lecture } from '@/components/lecture';
+import {
+  EVENT_ASKED_QUESTION,
+  EVENT_ASKED_QUESTION_NO_CACHE,
+  emitEvent,
+} from '@/matomo';
 
 interface QuestionsProps {
   id: string
@@ -133,10 +138,12 @@ export default function Questions(props: QuestionsProps) {
   }, [id, language]);
 
   const askQuestion = () => {
+    emitEvent(EVENT_ASKED_QUESTION);
     makeQuery();
   };
 
   const askQuestionWithoutCache = async () => {
+    emitEvent(EVENT_ASKED_QUESTION_NO_CACHE);
     await setOverrideCache(true);
     askQuestion();
   };

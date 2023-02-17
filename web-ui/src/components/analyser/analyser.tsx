@@ -222,7 +222,7 @@ export default function Analyser(props: AnalyserProps) {
           <Result
             status='success'
             title='Lecture has been successfully analyzed!'
-            subTitle='The lecture is ready to be quired with GPT-3'
+            subTitle='The lecture is ready to be queried with GPT-3'
             extra={[
               <Button
                 onClick={() => goToQuestions()}

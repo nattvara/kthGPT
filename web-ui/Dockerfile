@@ -13,6 +13,8 @@ COPY typings.d.ts .
 RUN npm install -g pnpm
 RUN pnpm install
 RUN npm run build
+COPY src/pages/index.html ./dist/index.html
+COPY src/assets/favicon.ico ./dist/favicon.ico
 
 FROM nginx
 COPY --from=build-stage /app/dist/ /usr/share/nginx/html

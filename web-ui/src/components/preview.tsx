@@ -6,6 +6,7 @@ import {
 } from 'antd';
 import { Lecture } from '@/components/lecture';
 import { makeUrl } from '@/http';
+import { EVENT_GOTO_LECTURE, emitEvent } from '@/matomo';
 
 interface PreviewProps {
   lecture: Lecture
@@ -17,6 +18,7 @@ export default function Preview(props: PreviewProps) {
   const { lecture } = props;
 
   const openKthPlay = (url: string) => {
+    emitEvent(EVENT_GOTO_LECTURE);
     window.open(url, '_blank');
   }
 
