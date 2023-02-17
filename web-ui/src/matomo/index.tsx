@@ -22,7 +22,7 @@ export const registerPageLoad = () => {
 export const emitEvent = (event: string) => {
   if (!window._paq) return;
 
-  const _paq = window._paq || [];
+  var _paq = window._paq || [];
 
-  _paq.push(['emitEvent', ]);
+  _paq.push(['trackEvent', event, '', '']);
 };
