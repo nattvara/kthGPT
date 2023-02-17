@@ -3,10 +3,16 @@ import {
   Image,
   Card,
   Spin,
+  Row,
+  Col,
+  Space,
 } from 'antd';
 import { Lecture } from '@/components/lecture';
 import { makeUrl } from '@/http';
 import { EVENT_GOTO_LECTURE, emitEvent } from '@/matomo';
+import svFlag from '@/assets/flag-sv.svg';
+import enFlag from '@/assets/flag-en.svg';
+import { AudioOutlined } from '@ant-design/icons';
 
 interface PreviewProps {
   lecture: Lecture
@@ -20,6 +26,14 @@ export default function Preview(props: PreviewProps) {
   const openKthPlay = (url: string) => {
     emitEvent(EVENT_GOTO_LECTURE);
     window.open(url, '_blank');
+  }
+
+  let flagIcon = '';
+  if (lecture.language == 'sv') {
+    flagIcon = svFlag;
+  }
+  else if (lecture.language == 'en') {
+    flagIcon = enFlag;
   }
 
   return (
@@ -37,7 +51,28 @@ export default function Preview(props: PreviewProps) {
             </Spin>
           </>
         }>
-      <Meta title='Lecture' description={lecture.content_link} />
+      <>
+        <Meta title='Lecture' description={<>
+          <Row>
+            {lecture.content_link}
+          </Row>
+          <Row justify='start' align='middle'>
+            <Space direction='horizontal'>
+              <Col>
+                <h3 className={styles.language}><AudioOutlined /> Language</h3>
+              </Col>
+              <Col>
+                <Image
+                  src={flagIcon}
+                  height={30}
+                  className={styles.flag}
+                  preview={false}
+                  />
+              </Col>
+            </Space>
+          </Row>
+        </>} />
+      </>
     </Card>
   )
 }
