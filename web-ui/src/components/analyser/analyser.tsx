@@ -3,6 +3,7 @@ import {
   NumberOutlined,
   BulbOutlined,
   AudioOutlined,
+  LoadingOutlined,
 } from '@ant-design/icons';
 import styles from './analyser.less';
 import {
@@ -212,6 +213,46 @@ export default function Analyser(props: AnalyserProps) {
 
   if (lecture == null) {
     return <Skeleton active paragraph={{ rows: 4 }} />;
+  }
+
+  if (lecture.approved === null) {
+    return <>
+      <Result
+        icon={<LoadingOutlined />}
+        title='Waiting for the video to be approved'
+        subTitle={
+          <>
+            <Row justify='center'>
+              <Col xs={24} sm={12}>
+                <strong>Since there is an infinite amount of youtube videos, lectures on youtube have to be approved before being analyzed. So they won't overflow they queue. It might take a while before kthGPT starts watching the lecture.</strong>
+              </Col>
+            </Row>
+          </>
+        }
+      />
+      <div className={styles.divider}></div>
+      <div className={styles.divider}></div>
+    </>
+  }
+
+  if (lecture.approved === false) {
+    return <>
+      <Result
+        status='error'
+        title='The video was denied'
+        subTitle={
+          <>
+            <Row justify='center'>
+              <Col xs={24} sm={12}>
+                <strong>The video was denied by an admin. There is a few reasons why this could have happened. However, most likely this is because the video was off-topic. Youtube videos should be about a topic that is relevant for a course at KTH, which is the purpose of kthGPT.</strong>
+              </Col>
+            </Row>
+          </>
+        }
+      />
+      <div className={styles.divider}></div>
+      <div className={styles.divider}></div>
+    </>
   }
 
   return (
