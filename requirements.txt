@@ -27,6 +27,7 @@ openai==0.26.5
 openai-whisper==20230124
 packaging==23.0
 peewee==3.15.4
+peewee-migrate==1.6.6
 playwright==1.30.0
 pluggy==1.0.0
 psycopg2==2.9.5
