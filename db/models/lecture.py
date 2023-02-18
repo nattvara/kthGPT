@@ -1,6 +1,7 @@
 import peewee
 import json
 
+
 from .analysis import Analysis
 from tools.files.paths import (
     writable_transcript_filepath,
@@ -9,6 +10,7 @@ from tools.files.paths import (
     writable_mp4_filepath,
     writable_mp3_filepath,
 )
+from db.models.url import URL
 from .base import Base
 
 
@@ -29,6 +31,14 @@ class Lecture(Base):
 
     def content_link(self):
         return f'https://play.kth.se/media/{self.public_id}'
+
+    def is_approved(self):
+        urls = URL.filter(URL.lecture_id == self.public_id)
+        for url in urls:
+            if url.approved is not None:
+                return url.approved
+
+        return None
 
     def preview_filename(self):
         return writable_image_filepath(self.public_id, 'png')
@@ -129,6 +139,7 @@ class Lecture(Base):
         return {
             'public_id': self.public_id,
             'language': self.language,
+            'approved': self.is_approved(),
             'words': self.words,
             'length': self.length,
             'preview_uri': self.preview_uri(),

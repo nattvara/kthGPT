@@ -34,6 +34,7 @@ class AnalysisOutputModel(BaseModel):
 class LectureOutputModel(BaseModel):
     public_id: str
     language: str
+    approved: Union[bool, None] = None
     words: int
     length: int
     preview_uri: Union[str, None] = None
