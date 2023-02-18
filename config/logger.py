@@ -30,5 +30,5 @@ class LogConfig(BaseModel):
     }
 
 
-def log():
-    return logging.getLogger(settings.NAME)
+def log(logger_name=settings.NAME):
+    return logging.getLogger(logger_name)
