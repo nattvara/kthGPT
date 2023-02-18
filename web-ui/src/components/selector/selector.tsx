@@ -124,6 +124,7 @@ export default function Selector() {
                   <Col><Image
                     src={enFlag}
                     height={30}
+                    width={60}
                     preview={false}
                     className={`${language !== 'en' ? styles.grayscale : ''} ${styles.flag}`}
                   /></Col>
@@ -134,6 +135,7 @@ export default function Selector() {
                   <Col><Image
                     src={svFlag}
                     height={30}
+                    width={50}
                     preview={false}
                     className={`${language !== 'sv' ? styles.grayscale : ''} ${styles.flag}`}
                   /></Col>
