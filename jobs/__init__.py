@@ -5,6 +5,7 @@ from db.crud import get_unfinished_analysis, save_message_for_analysis
 from config.settings import settings
 from db.models.analysis import Analysis
 from db.models.lecture import Lecture
+from config.logger import log
 from jobs import (
     capture_preview,
     download_lecture,
@@ -90,7 +91,7 @@ def get_connection() -> Queue:
     )
 
 
-def start_analysis_of_lecture(
+def schedule_analysis_of_lecture(
     lecture,
     queue_default: Queue = get_default_queue,
     queue_download: Queue = get_download_queue,
@@ -98,6 +99,8 @@ def start_analysis_of_lecture(
     queue_transcribe: Queue = get_transcribe_queue,
     queue_summarise: Queue = get_summarise_queue,
 ):
+    log().info(f'Scheduling analysis of {lecture.public_id}')
+
     analysis = Analysis(lecture_id=lecture.id)
     analysis.save()
 
@@ -116,3 +119,17 @@ def start_analysis_of_lecture(
     job_4 = next(queue_summarise()).enqueue(summarise_transcript.job, lecture.public_id, lecture.language, job_timeout=summarise_transcript.TIMEOUT, depends_on=job_3)
 
     return analysis
+
+
+def analysis_queues_restart():
+    analysis = get_unfinished_analysis()
+
+    lectures = []
+
+    for a in analysis:
+        if a.lecture_id not in lectures:
+            lectures.append(a.lecture_id)
+
+    for lecture_id in lectures:
+        lecture = Lecture.get_by_id(lecture_id)
+        schedule_analysis_of_lecture(lecture)

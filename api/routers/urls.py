@@ -8,6 +8,7 @@ from db.crud import (
     get_lecture_by_public_id_and_language,
     get_url_by_sha,
 )
+from jobs import schedule_analysis_of_lecture
 from db.models import URL, Lecture, Analysis
 from db import get_db
 
@@ -15,6 +16,7 @@ from tools.web.crawler import get_m3u8
 
 
 router = APIRouter()
+
 
 class InputModel(BaseModel):
     url: str
@@ -88,7 +90,7 @@ def parse_url(
             should_analyse = True
 
     if should_analyse:
-        analysis = Analysis.start_for_lecture(lecture)
+        analysis = schedule_analysis_of_lecture(lecture)
 
     return {
         'uri': url.lecture_uri(lang)

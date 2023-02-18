@@ -35,6 +35,7 @@ setup(
             'create_migration = db.migrations:create_migration',
             'migrate_up = db.migrations:run_migrations',
             'migrate_down = db.migrations:rollback',
+            'analysis_queues_restart = jobs:analysis_queues_restart',
         ]
     },
     tests_require=[],
