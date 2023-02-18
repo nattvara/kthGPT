@@ -1,10 +1,12 @@
 from config.settings import settings
+from datetime import timedelta
 from redis import Redis
 from rq import Queue
 import subprocess
 import logging
 import os
 
+from jobs import get_monitoring_queue
 import jobs.save_queue_info
 from config.settings import settings
 from config.logger import log
@@ -23,7 +25,7 @@ def get_queues():
     env = os.environ.copy()
     env['PYTHONUNBUFFERED'] = '1'
 
-    log().info(f'executing command [$ {" ".join(cmd)}]')
+    log('rq.worker').info(f'executing command [$ {" ".join(cmd)}]')
 
     process = subprocess.Popen(
         cmd,
@@ -48,7 +50,7 @@ def get_workers():
     env = os.environ.copy()
     env['PYTHONUNBUFFERED'] = '1'
 
-    log().info(f'executing command [$ {" ".join(cmd)}]')
+    log('rq.worker').info(f'executing command [$ {" ".join(cmd)}]')
 
     process = subprocess.Popen(
         cmd,
@@ -62,7 +64,7 @@ def get_workers():
 
 
 def job():
-    logger = logging.getLogger('rq.worker')
+    log('rq.worker').info('saving queue metrics')
 
     info = QueueInfo()
 
@@ -98,7 +100,13 @@ def job():
             info.workers_busy += 1
 
     info.save()
-    log().info('done.')
+
+    log('rq.worker').info('queueing next update in 30 seconds')
+
+    queue = next(get_monitoring_queue())
+    queue.enqueue_in(timedelta(seconds=30), jobs.save_queue_info.job)
+
+    log('rq.worker').info('done.')
 
 
 # Test run the job

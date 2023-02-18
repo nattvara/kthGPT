@@ -8,6 +8,7 @@ DOWNLOAD = 'download'
 EXTRACT = 'extract'
 TRANSCRIBE = 'transcribe'
 SUMMARISE = 'summarise'
+MONITORING = 'monitoring'
 
 
 def get_default_queue() -> Queue:
@@ -50,6 +51,15 @@ def get_summarise_queue() -> Queue:
     try:
         conn = get_connection()
         queue = Queue(SUMMARISE, connection=conn)
+        yield queue
+    finally:
+        queue.connection.close()
+
+
+def get_monitoring_queue() -> Queue:
+    try:
+        conn = get_connection()
+        queue = Queue(MONITORING, connection=conn)
         yield queue
     finally:
         queue.connection.close()
