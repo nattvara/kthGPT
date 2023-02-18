@@ -4,3 +4,4 @@ from .lecture import Lecture
 from .query import Query
 from .analysis import Analysis
 from .message import Message
+from .queue_info import QueueInfo
