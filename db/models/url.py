@@ -8,6 +8,7 @@ class URL(Base):
     url = peewee.CharField(null=False, unique=True)
     url_hash = peewee.CharField(index=True, unique=True, null=False)
     lecture_id = peewee.CharField(null=True)
+    approved = peewee.BooleanField(null=True)
 
     @staticmethod
     def make_sha(url: str) -> str:
