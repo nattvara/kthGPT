@@ -32,6 +32,9 @@ setup(
     entry_points={
         'console_scripts': [
             'create_db_schema = db.schema:create',
+            'create_migration = db.migrations:create_migration',
+            'migrate_up = db.migrations:run_migrations',
+            'migrate_down = db.migrations:rollback',
         ]
     },
     tests_require=[],
