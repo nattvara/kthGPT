@@ -88,16 +88,17 @@ def job():
         if 'monitoring' in line:
             info.queue_monitoring = int(split[len(split) - 1].strip())
 
-    worker_status = ''
     process = get_workers()
     for line in iter(process.stdout.readline, b''):
         line = line.decode()
-        worker_status += line
+        if 'idle' in line:
+            info.workers_idle += 1
 
-    info.workers = worker_status
+        if 'busy' in line:
+            info.workers_busy += 1
 
     info.save()
-    log().info('done')
+    log().info('done.')
 
 
 # Test run the job

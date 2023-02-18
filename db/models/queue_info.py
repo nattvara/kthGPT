@@ -12,4 +12,5 @@ class QueueInfo(Base):
     queue_download = peewee.IntegerField(null=False, default=0)
     queue_monitoring = peewee.IntegerField(null=False, default=0)
 
-    workers = peewee.TextField(null=False)
+    workers_idle = peewee.IntegerField(null=False, default=0)
+    workers_busy = peewee.IntegerField(null=False, default=0)
