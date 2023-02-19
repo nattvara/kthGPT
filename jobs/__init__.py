@@ -23,6 +23,7 @@ TRANSCRIBE = 'transcribe'
 SUMMARISE = 'summarise'
 MONITORING = 'monitoring'
 APPROVAL = 'approval'
+GPT = 'gpt'
 
 
 def get_default_queue() -> Queue:
