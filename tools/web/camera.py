@@ -26,8 +26,9 @@ async def save_photo_async_wrapper(url: str, lecture: Lecture) -> str:
 
         if lecture.source == lecture.Source.YOUTUBE:
             element = await page.query_selector(YOUTUBE_COOKIE_BTN_SELECTOR)
-            await element.click()
-            await asyncio.sleep(2)
+            if element is not None:
+                await element.click()
+                await asyncio.sleep(2)
 
         await asyncio.sleep(1)
         await page.screenshot(path=lecture.preview_filename())
