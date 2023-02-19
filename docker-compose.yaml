@@ -49,7 +49,7 @@ services:
       - db
       - queue
       - api
-    command: rq worker --with-scheduler --url="redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}" default download extract transcribe summarise monitoring
+    command: rq worker --with-scheduler --url="redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}" default download extract transcribe summarise monitoring approval
     deploy:
       replicas: 2
     volumes:
