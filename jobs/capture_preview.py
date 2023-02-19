@@ -19,7 +19,7 @@ def job(lecture_id: str, language: str):
     url = lecture.content_link()
     logger.info(f'taking photo of {url}')
 
-    save_photo(url, lecture.preview_filename())
+    save_photo(url, lecture)
     lecture.refresh()
     lecture.img_preview = lecture.preview_filename()
     lecture.save()
@@ -36,6 +36,6 @@ if __name__ == '__main__':
     ))
     queue.enqueue(
         jobs.capture_preview.job,
-        '0_blzql89t',
-        Lecture.Language.ENGLISH
+        'mn9LOFQc9IE',
+        Lecture.Language.SWEDISH
     )
