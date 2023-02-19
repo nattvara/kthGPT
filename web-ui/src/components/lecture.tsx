@@ -24,6 +24,7 @@ export interface Lecture {
   public_id: string
   language: string
   approved: boolean | null
+  source: string
   words: number | null
   length: number | null
   preview_uri: string | null

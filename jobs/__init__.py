@@ -99,6 +99,15 @@ def schedule_analysis_of_lecture(
     queue_transcribe: Queue = get_transcribe_queue,
     queue_summarise: Queue = get_summarise_queue,
 ):
+    if lecture.approved is None:
+        log().info(f'Scheduling approval of {lecture.public_id}')
+        schedule_approval_of_lecture(lecture)
+        return
+
+    if lecture.approved is False:
+        log().info(f'Lecture is not approved, canceling analysis {lecture.public_id}')
+        return
+
     log().info(f'Scheduling analysis of {lecture.public_id}')
 
     analysis = Analysis(lecture_id=lecture.id)
@@ -119,6 +128,12 @@ def schedule_analysis_of_lecture(
     job_4 = next(queue_summarise()).enqueue(summarise_transcript.job, lecture.public_id, lecture.language, job_timeout=summarise_transcript.TIMEOUT, depends_on=job_3)
 
     return analysis
+
+
+def schedule_approval_of_lecture(
+    lecture,
+):
+    print('do approval of ', lecture.public_id)
 
 
 def analysis_queues_restart():

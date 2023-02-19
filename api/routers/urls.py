@@ -55,7 +55,6 @@ def parse_url(
         url = URL(
             url=input_data.url,
             url_hash=URL.make_sha(input_data.url),
-            approved=True,
         )
 
         try:
@@ -75,7 +74,12 @@ def parse_url(
 
     lecture = get_lecture_by_public_id_and_language(url.lecture_id, lang)
     if lecture is None:
-        lecture = Lecture(public_id=url.lecture_id, language=lang)
+        lecture = Lecture(
+            public_id=url.lecture_id,
+            language=lang,
+            approved=True,
+            source=Lecture.Source.KTH,
+        )
         lecture.save()
 
     should_analyse = False
@@ -130,15 +134,33 @@ def parse_url(
         url = URL(
             url=input_data.url,
             url_hash=URL.make_sha(input_data.url),
-            approved=None,
             lecture_id=query_params['v'][0],
         )
         url.save()
 
     lecture = get_lecture_by_public_id_and_language(url.lecture_id, lang)
     if lecture is None:
-        lecture = Lecture(public_id=url.lecture_id, language=lang)
+        lecture = Lecture(
+            public_id=url.lecture_id,
+            language=lang,
+            source=Lecture.Source.YOUTUBE
+        )
         lecture.save()
+
+    should_analyse = False
+    analysis = lecture.get_last_analysis()
+
+    if analysis is None:
+        should_analyse = True
+    else:
+        if analysis.state == Analysis.State.FAILURE:
+            should_analyse = True
+
+        if analysis.seems_to_have_crashed():
+            should_analyse = True
+
+    if should_analyse:
+        analysis = schedule_analysis_of_lecture(lecture)
 
     return {
         'uri': url.lecture_uri(lang)

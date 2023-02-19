@@ -20,6 +20,7 @@ class Analysis(Base):
     class State:
         WAITING = 'waiting'
         IDLE = 'idle'
+        CLASSIFYING = 'classifying'
         FAILURE = 'failure'
         DOWNLOADING = 'downloading'
         EXTRACTING_AUDIO = 'extracting_audio'
@@ -49,6 +50,8 @@ class Analysis(Base):
         if self.state == self.State.IDLE:
             return False
         if self.state == self.State.FAILURE:
+            return False
+        if self.state == self.State.CLASSIFYING:
             return False
 
         msg = self.get_last_message()

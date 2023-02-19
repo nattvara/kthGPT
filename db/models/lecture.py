@@ -17,6 +17,8 @@ from .base import Base
 class Lecture(Base):
     public_id = peewee.CharField(null=False, index=True)
     language = peewee.CharField(null=False)
+    approved = peewee.BooleanField(null=True)
+    source = peewee.CharField(null=False, default='kth')
     length = peewee.IntegerField(null=False, default=0)
     words = peewee.IntegerField(null=False, default=0)
     img_preview = peewee.CharField(null=True)
@@ -25,20 +27,16 @@ class Lecture(Base):
     transcript_filepath = peewee.CharField(null=True)
     summary_filepath = peewee.CharField(null=True)
 
+    class Source:
+        KTH = 'kth'
+        YOUTUBE = 'youtube'
+
     class Language:
         ENGLISH = 'en'
         SWEDISH = 'sv'
 
     def content_link(self):
         return f'https://play.kth.se/media/{self.public_id}'
-
-    def is_approved(self):
-        urls = URL.filter(URL.lecture_id == self.public_id)
-        for url in urls:
-            if url.approved is not None:
-                return url.approved
-
-        return None
 
     def preview_filename(self):
         return writable_image_filepath(self.public_id, 'png')
@@ -139,7 +137,8 @@ class Lecture(Base):
         return {
             'public_id': self.public_id,
             'language': self.language,
-            'approved': self.is_approved(),
+            'approved': self.approved,
+            'source': self.source,
             'words': self.words,
             'length': self.length,
             'preview_uri': self.preview_uri(),
