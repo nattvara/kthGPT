@@ -12,6 +12,7 @@ from jobs import (
     extract_audio,
     transcribe_audio,
     summarise_transcript,
+    classify_video,
 )
 
 
@@ -99,18 +100,20 @@ def schedule_analysis_of_lecture(
     queue_transcribe: Queue = get_transcribe_queue,
     queue_summarise: Queue = get_summarise_queue,
 ):
-    log().info(f'Scheduling analysis of {lecture.public_id}')
+    if lecture.approved is False:
+        log().warning(f'Lecture is not approved, canceling analysis {lecture.public_id}')
+        return
 
     analysis = Analysis(lecture_id=lecture.id)
     analysis.save()
 
-    save_message_for_analysis(analysis, 'Analysis scheduled', 'Waiting for a worker to pick it up.')
+    if lecture.approved is None:
+        schedule_approval_of_lecture(lecture)
+        return
 
-    next(queue_default()).empty()
-    next(queue_download()).empty()
-    next(queue_extract()).empty()
-    next(queue_transcribe()).empty()
-    next(queue_summarise()).empty()
+    log().info(f'Scheduling analysis of {lecture.public_id}')
+
+    save_message_for_analysis(analysis, 'Analysis scheduled', 'Waiting for a worker to pick it up.')
 
     next(queue_default()).enqueue(capture_preview.job, lecture.public_id, lecture.language, job_timeout=capture_preview.TIMEOUT)
     job_1 = next(queue_download()).enqueue(download_lecture.job, lecture.public_id, lecture.language, job_timeout=download_lecture.TIMEOUT)
@@ -121,8 +124,32 @@ def schedule_analysis_of_lecture(
     return analysis
 
 
-def analysis_queues_restart():
+def schedule_approval_of_lecture(
+    lecture,
+    queue_approval: Queue = get_summarise_queue,
+):
+    log().info(f'Scheduling approval of {lecture.public_id}')
+
+    next(queue_approval()).enqueue(
+        classify_video.job,
+        lecture.public_id,
+        lecture.language,
+        job_timeout=classify_video.TIMEOUT,
+    )
+
+
+def analysis_queues_restart(
+    queue_download: Queue = get_download_queue,
+    queue_extract: Queue = get_extract_queue,
+    queue_transcribe: Queue = get_transcribe_queue,
+    queue_summarise: Queue = get_summarise_queue,
+):
     analysis = get_unfinished_analysis()
+
+    next(queue_download()).empty()
+    next(queue_extract()).empty()
+    next(queue_transcribe()).empty()
+    next(queue_summarise()).empty()
 
     lectures = []
 

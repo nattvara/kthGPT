@@ -1,155 +1,106 @@
-import {
-  BulbOutlined,
-  PlayCircleOutlined,
-  NotificationOutlined,
-  AudioOutlined,
-} from '@ant-design/icons';
 import styles from './selector.less';
 import {
-  Input,
   Row,
   Col,
   Space,
-  Button,
-  Radio,
   Image,
+  Card,
+  Steps,
 } from 'antd';
-import { notification } from 'antd';
-import { useMutation } from '@tanstack/react-query';
+import kthLogo from '@/assets/kth.svg';
+import youtubeLogo from '@/assets/youtube.svg';
 import { useState } from 'react';
-import apiClient from '@/http';
-import { history } from 'umi';
-import {
-  EVENT_FEELING_LUCKY,
-  emitEvent,
-  EVENT_SUBMIT_URL,
-} from '@/matomo';
-import enFlag from '@/assets/flag-en.svg';
-import svFlag from '@/assets/flag-sv.svg';
+import { CloudOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import KTH from './kth';
+import Youtube from './youtube';
 
+const SOURCE_KTH = 'kth';
+
+const SOURCE_YOUTUBE = 'youtube';
+
+
+const { Meta } = Card;
 
 export default function Selector() {
-  const [language, setLanguage] = useState('en');
-  const [url, setUrl] = useState('');
+  const [currentTab, setCurrentTab] = useState(0);
+  const [source, setSource] = useState<string | null>(null);
 
-  const [notificationApi, contextHolder] = notification.useNotification();
-
-  const { isLoading: isPosting, mutate: postUrl } = useMutation(
-    async () => {
-      return await apiClient.post(`/url`, {
-        url,
-        language,
-      });
-    },
-    {
-      onSuccess: (res: any) => {
-        const result = {
-          status: res.status + '-' + res.statusText,
-          headers: res.headers,
-          data: res.data,
-        };
-        history.push('/analyse' + result.data.uri);
-      },
-      onError: (err: any) => {
-        notificationApi['error']({
-          message: 'Failed to get lecture',
-          description: err.response.data.detail,
-        });
-      },
-    }
-  );
-
-  const { isLoading: isWaitingForRandom, mutate: requestRandom } = useMutation(
-    async () => {
-      return await apiClient.get(`/lectures?random=true`);
-    },
-    {
-      onSuccess: (res: any) => {
-        const result = {
-          status: res.status + '-' + res.statusText,
-          headers: res.headers,
-          data: res.data,
-        };
-        const lecture = result.data[0];
-        history.push(`/questions/lectures/${lecture.public_id}/${lecture.language}`);
-      },
-      onError: (err: any) => {
-        notificationApi['error']({
-          message: 'Failed to get a random lecture',
-          description: err.response.data.detail,
-        });
-      },
-    }
-  );
-
-  const submit = async () => {
-    await postUrl();
-    emitEvent(EVENT_SUBMIT_URL);
+  const goToTab = (newValue: number) => {
+    if (newValue === 1 && source === null) return;
+    setCurrentTab(newValue);
   };
 
-  const random = async () => {
-    await requestRandom();
-    emitEvent(EVENT_FEELING_LUCKY);
-  };
+  const selectSource = async (source: string) => {
+    await setSource(source);
+    setCurrentTab(1);
+  }
+
+  let sourcePretty = 'Select where the lecture is hosted';
+  if (source === SOURCE_KTH) {
+    sourcePretty = 'https://play.kth.se'
+  } else if (source === SOURCE_YOUTUBE) {
+    sourcePretty = 'https://youtube.com'
+  }
 
   return (
     <>
-      {contextHolder}
-      <Space direction='vertical' size='large' style={{width: '100%'}}>
+      <Space direction='vertical' size='large'>
         <Row>
-          <Col span={24}>
-            <Input
-              className={styles.hugeInput}
-              value={url}
-              onChange={e => setUrl(e.target.value)}
-              onPressEnter={submit}
-              placeholder='Enter video.. eg. https://play.kth.se/media/...'
-              prefix={<PlayCircleOutlined />} />
-          </Col>
+          <Steps
+          type="navigation"
+          size="small"
+          current={currentTab}
+          onChange={goToTab}
+          className="site-navigation-steps"
+          items={[
+            {
+              title: 'Lecture Source',
+              description: sourcePretty,
+              icon: <CloudOutlined />,
+            },
+            {
+              title: 'Video URL',
+              description: 'Enter URL to the video',
+              icon: <VideoCameraOutlined />,
+            },
+          ]}
+        />
         </Row>
-        <Row gutter={[10, 10]}>
-          <Col>
-            <Button onClick={submit} type='primary' icon={<BulbOutlined />} size='large' loading={isPosting}>
-              {!isPosting && <>Analyze</>}
-              {isPosting && <>Verifying video URL . . .</>}
-            </Button>
-          </Col>
-          <Col>
-            <Radio.Group onChange={e => setLanguage(e.target.value)} value={language} defaultValue='en' buttonStyle='solid' size='large'>
-              <Button type='text' size='large' style={{pointerEvents: 'none'}}>
-                <AudioOutlined /> Select lecture language:
-              </Button>
-              <Radio value='en'>
-                <Row justify='center' align='middle'>
-                  <Col><Image
-                    src={enFlag}
-                    height={30}
-                    preview={false}
-                    className={`${language !== 'en' ? styles.grayscale : ''} ${styles.flag}`}
-                  /></Col>
-                </Row>
-              </Radio>
-              <Radio value='sv'>
-                <Row justify='center' align='middle'>
-                  <Col><Image
-                    src={svFlag}
-                    height={30}
-                    preview={false}
-                    className={`${language !== 'sv' ? styles.grayscale : ''} ${styles.flag}`}
-                  /></Col>
-                </Row>
-              </Radio>
-            </Radio.Group>
-          </Col>
-          <Col>
-            <Button type='text' size='large' style={{pointerEvents: 'none'}}>
-              Click here to try on a random lecture:
-            </Button>
-          </Col>
-          <Button onClick={random} type='dashed' icon={<NotificationOutlined />} size='large' loading={isWaitingForRandom}>
-            I'm feeling lucky!
-          </Button>
-        </Row>
+
+        {currentTab === 0 &&
+          <Row>
+            <Space direction='horizontal'>
+              <Col>
+                <Card
+                  hoverable
+                  className={styles.source}
+                  onClick={() => selectSource(SOURCE_KTH)}
+                  cover={<Image preview={false} src={kthLogo} />}>
+                  <>
+                    <Meta title='KTH Play' />
+                  </>
+                </Card>
+              </Col>
+              <Col>
+                <Card
+                  hoverable
+                  className={styles.source}
+                  onClick={() => selectSource(SOURCE_YOUTUBE)}
+                  cover={<Image preview={false} src={youtubeLogo} />}>
+                  <>
+                    <Meta title='YouTube' />
+                  </>
+                </Card>
+              </Col>
+            </Space>
+          </Row>
+        }
+        {currentTab === 1 &&
+          <Row>
+          {source === SOURCE_KTH && <KTH />}
+          {source === SOURCE_YOUTUBE && <Youtube />}
+          </Row>
+        }
       </Space>
     </>
   );

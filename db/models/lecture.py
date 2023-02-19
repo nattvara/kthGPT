@@ -1,6 +1,7 @@
 import peewee
 import json
 
+
 from .analysis import Analysis
 from tools.files.paths import (
     writable_transcript_filepath,
@@ -9,12 +10,15 @@ from tools.files.paths import (
     writable_mp4_filepath,
     writable_mp3_filepath,
 )
+from db.models.url import URL
 from .base import Base
 
 
 class Lecture(Base):
     public_id = peewee.CharField(null=False, index=True)
     language = peewee.CharField(null=False)
+    approved = peewee.BooleanField(null=True)
+    source = peewee.CharField(null=False, default='kth')
     length = peewee.IntegerField(null=False, default=0)
     words = peewee.IntegerField(null=False, default=0)
     img_preview = peewee.CharField(null=True)
@@ -23,12 +27,20 @@ class Lecture(Base):
     transcript_filepath = peewee.CharField(null=True)
     summary_filepath = peewee.CharField(null=True)
 
+    class Source:
+        KTH = 'kth'
+        YOUTUBE = 'youtube'
+
     class Language:
         ENGLISH = 'en'
         SWEDISH = 'sv'
 
     def content_link(self):
-        return f'https://play.kth.se/media/{self.public_id}'
+        if self.source == self.Source.KTH:
+            return f'https://play.kth.se/media/{self.public_id}'
+        elif self.source == self.Source.YOUTUBE:
+            return f'https://www.youtube.com/watch?v={self.public_id}'
+        raise ValueError(f'unknown source {self.source}')
 
     def preview_filename(self):
         return writable_image_filepath(self.public_id, 'png')
@@ -129,6 +141,8 @@ class Lecture(Base):
         return {
             'public_id': self.public_id,
             'language': self.language,
+            'approved': self.approved,
+            'source': self.source,
             'words': self.words,
             'length': self.length,
             'preview_uri': self.preview_uri(),

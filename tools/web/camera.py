@@ -2,12 +2,17 @@ from playwright.async_api import async_playwright, TimeoutError as PlaywrightTim
 from playwright.async_api import async_playwright
 import asyncio
 
-
-def save_photo(url: str, filepath: str) -> str:
-    return asyncio.run(save_photo_async_wrapper(url, filepath))
+from db.models import Lecture
 
 
-async def save_photo_async_wrapper(url: str, filepath: str) -> str:
+YOUTUBE_COOKIE_BTN_SELECTOR = '[aria-label="Accept the use of cookies and other data for the purposes described"]'
+
+
+def save_photo(url: str, lecture: Lecture) -> str:
+    return asyncio.run(save_photo_async_wrapper(url, lecture))
+
+
+async def save_photo_async_wrapper(url: str, lecture: Lecture) -> str:
     async with async_playwright() as playwright:
         firefox = playwright.firefox
         browser = await firefox.launch()
@@ -18,6 +23,12 @@ async def save_photo_async_wrapper(url: str, filepath: str) -> str:
         except PlaywrightTimeoutError:
             # Sometime the browser waits for something unimportant
             pass
+
+        if lecture.source == lecture.Source.YOUTUBE:
+            element = await page.query_selector(YOUTUBE_COOKIE_BTN_SELECTOR)
+            await element.click()
+            await asyncio.sleep(2)
+
         await asyncio.sleep(1)
-        await page.screenshot(path=filepath)
+        await page.screenshot(path=lecture.preview_filename())
         await browser.close()

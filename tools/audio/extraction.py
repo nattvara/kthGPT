@@ -6,6 +6,12 @@ from tools.ffmpeg.progress import ProgressFFmpeg
 from db.models import Lecture, Analysis
 
 
+def extract_mp3_len(src_file: str) -> int:
+    total_duration = int(float(ffmpeg.probe(src_file)['format']['duration']))
+
+    return total_duration
+
+
 def extract_mp3_from_mp4(src_file: str, lecture: Lecture) -> str:
     logger = logging.getLogger('rq.worker')
 

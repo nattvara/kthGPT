@@ -20,6 +20,7 @@ class Analysis(Base):
     class State:
         WAITING = 'waiting'
         IDLE = 'idle'
+        CLASSIFYING = 'classifying'
         FAILURE = 'failure'
         DOWNLOADING = 'downloading'
         EXTRACTING_AUDIO = 'extracting_audio'
@@ -52,6 +53,9 @@ class Analysis(Base):
             return False
 
         msg = self.get_last_message()
+        if msg is None:
+            return True
+
         now = datetime.utcnow()
         diff = (now - msg.created_at).total_seconds()
 
