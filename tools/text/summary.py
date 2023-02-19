@@ -80,7 +80,25 @@ class Summary:
             prompt = prompts.create_text_to_summarise_chunk_swedish(self, chunk, include_summary)
         else:
             raise ValueError(f'unsupported language {lecture.language}')
-        response = ai.gpt3_safe(prompt, lecture)
+
+        response = ai.gpt3(
+            prompt,
+            time_to_live=60 * 60 * 10,  # 5 hrs
+            max_retries=10,
+            retry_interval=[
+                10,
+                30,
+                60,
+                2 * 60,
+                2 * 60,
+                10 * 60,
+                30 * 60,
+                2 * 60 * 60,
+                30 * 60,
+                30 * 60,
+            ]
+        )
+
         self.summaries[chunk.period] = response.replace('\n', ' ')
 
     def current_summary(self):
@@ -97,7 +115,24 @@ class Summary:
             prompt = prompts.create_text_to_summarise_summary_swedish(self)
         else:
             raise ValueError(f'unsupported language {self.lecture.language}')
-        response = ai.gpt3_safe(prompt, self.lecture)
+
+        response = ai.gpt3(
+            prompt,
+            time_to_live=60 * 60 * 10,  # 5 hrs
+            max_retries=10,
+            retry_interval=[
+                10,
+                30,
+                60,
+                2 * 60,
+                2 * 60,
+                10 * 60,
+                30 * 60,
+                2 * 60 * 60,
+                30 * 60,
+                30 * 60,
+            ]
+        )
 
         return response
 

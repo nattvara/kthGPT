@@ -2,14 +2,16 @@ import tempfile
 import logging
 import os.path
 
-from db.crud import get_lecture_by_public_id_and_language
 from tools.audio.extraction import extract_mp3_len
 from tools.audio.transcription import save_text
 from tools.youtube.download import download_mp3
 from tools.audio.shorten import shorten_mp3
 from db.models import Lecture, Analysis
 from tools.text import prompts, ai
-from config.logger import log
+from db.crud import (
+    get_lecture_by_public_id_and_language,
+    save_message_for_analysis
+)
 import jobs
 
 
@@ -66,7 +68,31 @@ def job(lecture_id: str, language: str):
     else:
         raise ValueError(f'unsupported value error {lecture.language}')
 
-    response = ai.gpt3(prompt)
+    try:
+        response = ai.gpt3(
+            prompt,
+            time_to_live=60 * 60 * 5,  # 5 hrs
+            max_retries=10,
+            retry_interval=[
+                10,
+                30,
+                60,
+                2 * 60,
+                10 * 60,
+                20 * 60,
+                30 * 60,
+                2 * 60 * 60,
+                30 * 60,
+                30 * 60,
+            ]
+        )
+    except Exception as e:
+        lecture.refresh()
+        analysis = lecture.get_last_analysis()
+        analysis.state = Analysis.State.FAILURE
+        analysis.save()
+        save_message_for_analysis(analysis, 'Classification failed', 'OpenAI is likely overloaded.')
+        raise e
 
     category_is_ok = False
     if prompts.CATEGORY_RECORDED_LECTURE.lower() in response.lower():

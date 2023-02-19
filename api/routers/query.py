@@ -53,9 +53,19 @@ def new_query(input_data: InputModel) -> OutputModel:
         else:
             raise ValueError(f'language {lecture.language} is not supported')
 
-
         try:
-            response = ai.gpt3(prompt)
+            response = ai.gpt3(
+                prompt,
+                time_to_live=60,
+                max_retries=2,
+                retry_interval=[10, 20]
+            )
+        except ai.GPTException as e:
+            log().error(e)
+            raise HTTPException(
+                status_code=500,
+                detail=str(e)
+            )
         except Exception as e:
             log().error(e)
             raise HTTPException(
