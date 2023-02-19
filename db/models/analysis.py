@@ -51,10 +51,11 @@ class Analysis(Base):
             return False
         if self.state == self.State.FAILURE:
             return False
-        if self.state == self.State.CLASSIFYING:
-            return False
 
         msg = self.get_last_message()
+        if msg is None:
+            return True
+
         now = datetime.utcnow()
         diff = (now - msg.created_at).total_seconds()
 
