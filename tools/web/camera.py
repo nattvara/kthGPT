@@ -27,6 +27,7 @@ async def save_photo_async_wrapper(url: str, lecture: Lecture) -> str:
             pass
 
         if lecture.source == lecture.Source.YOUTUBE:
+            await asyncio.sleep(5)
             for btn in [YOUTUBE_COOKIE_BTN_SELECTOR_1, YOUTUBE_COOKIE_BTN_SELECTOR_2]:
                 element = await page.query_selector(btn)
                 if element is not None:
