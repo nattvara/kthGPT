@@ -113,7 +113,6 @@ async def wait_for_response(job_id: str, connection: Queue, trigger_timout_after
             raise JobTimeoutException(f'reached job timeout limit of {trigger_timout_after}')
 
         status = job.get_status()
-        print(status)
         if status == 'finished':
             return job.result
 
