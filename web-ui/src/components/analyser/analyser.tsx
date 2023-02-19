@@ -140,8 +140,8 @@ export default function Analyser(props: AnalyserProps) {
 
   const { isLoading: isPosting, mutate: postUrl } = useMutation(
     async () => {
-      return await apiClient.post(`/url`, {
-        url: `https://play.kth.se/media/${id}`,
+      return await apiClient.post(`/url/${lecture!.source}`, {
+        url: lecture!.content_link,
         language,
       });
     },
