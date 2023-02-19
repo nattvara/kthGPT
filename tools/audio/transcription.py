@@ -1,5 +1,6 @@
 from db.crud import save_message_for_analysis
 from db.models import Lecture
+from typing import Optional
 import subprocess
 import logging
 import shutil
@@ -8,18 +9,25 @@ import re
 import os
 
 
-def save_text(mp3_file: str, lecture: Lecture):
+def save_text(
+    mp3_file: str,
+    lecture: Lecture,
+    output_dir: Optional[str] = None,
+    save_progress: bool = True
+):
     logger = logging.getLogger('rq.worker')
 
-    lecture.refresh()
-    analysis = lecture.get_last_analysis()
-    analysis.transcript_progress = 0
-    analysis.save()
+    if save_progress:
+        lecture.refresh()
+        analysis = lecture.get_last_analysis()
+        analysis.transcript_progress = 0
+        analysis.save()
 
     total_duration = int(float(ffmpeg.probe(mp3_file)['format']['duration']))
     logger.info(f'total duration {total_duration}s')
 
-    output_dir = lecture.transcript_dirname()
+    if output_dir is None:
+        output_dir = lecture.transcript_dirname()
 
     if os.path.isdir(output_dir):
         shutil.rmtree(output_dir, ignore_errors=False)
@@ -59,6 +67,9 @@ def save_text(mp3_file: str, lecture: Lecture):
     for line in iter(process.stdout.readline, b''):
         line = line.decode()
 
+        if not save_progress:
+            continue
+
         if not re.match(regex, line):
             continue
 
@@ -85,12 +96,13 @@ def save_text(mp3_file: str, lecture: Lecture):
             analysis.transcript_progress = progress
             analysis.save()
 
-    lecture.refresh()
-    lecture.transcript_filepath = output_dir
-    lecture.save()
+    if save_progress:
+        lecture.refresh()
+        lecture.transcript_filepath = output_dir
+        lecture.save()
 
-    analysis = lecture.get_last_analysis()
-    lecture.transcript_progress = 100
-    analysis.save()
+        analysis = lecture.get_last_analysis()
+        lecture.transcript_progress = 100
+        analysis.save()
 
     process.stdout.close()
