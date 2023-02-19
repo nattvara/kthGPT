@@ -30,6 +30,9 @@ def job(lecture_id: str, language: str):
     if lecture is None:
         raise ValueError(f'lecture {lecture_id} not found')
 
+    if lecture.source != Lecture.Source.YOUTUBE:
+        raise ValueError(f'classification only supports youtube lectures, source was {lecture.source}')
+
     lecture.refresh()
     analysis = lecture.get_last_analysis()
     analysis.state = Analysis.State.CLASSIFYING
