@@ -22,6 +22,7 @@ EXTRACT = 'extract'
 TRANSCRIBE = 'transcribe'
 SUMMARISE = 'summarise'
 MONITORING = 'monitoring'
+APPROVAL = 'approval'
 
 
 def get_default_queue() -> Queue:
@@ -78,6 +79,15 @@ def get_monitoring_queue() -> Queue:
         queue.connection.close()
 
 
+def get_approval_queue() -> Queue:
+    try:
+        conn = get_connection()
+        queue = Queue(APPROVAL, connection=conn)
+        yield queue
+    finally:
+        queue.connection.close()
+
+
 def get_connection() -> Queue:
     if settings.REDIS_PASSWORD is not None:
         return Redis(
@@ -126,7 +136,7 @@ def schedule_analysis_of_lecture(
 
 def schedule_approval_of_lecture(
     lecture,
-    queue_approval: Queue = get_summarise_queue,
+    queue_approval: Queue = get_approval_queue,
 ):
     log().info(f'Scheduling approval of {lecture.public_id}')
 
