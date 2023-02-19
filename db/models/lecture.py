@@ -36,7 +36,11 @@ class Lecture(Base):
         SWEDISH = 'sv'
 
     def content_link(self):
-        return f'https://play.kth.se/media/{self.public_id}'
+        if self.source == self.Source.KTH:
+            return f'https://play.kth.se/media/{self.public_id}'
+        elif self.source == self.Source.YOUTUBE:
+            return f'https://www.youtube.com/watch?v={self.public_id}'
+        raise ValueError(f'unknown source {self.source}')
 
     def preview_filename(self):
         return writable_image_filepath(self.public_id, 'png')
