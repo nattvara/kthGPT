@@ -5,7 +5,9 @@ import asyncio
 from db.models import Lecture
 
 
-YOUTUBE_COOKIE_BTN_SELECTOR = '[aria-label="Accept the use of cookies and other data for the purposes described"]'
+# The two different buttons that has been seen
+YOUTUBE_COOKIE_BTN_SELECTOR_1 = '[aria-label="Accept the use of cookies and other data for the purposes described"]'
+YOUTUBE_COOKIE_BTN_SELECTOR_2 = '[aria-label="Accept all"]'
 
 
 def save_photo(url: str, lecture: Lecture) -> str:
@@ -25,10 +27,11 @@ async def save_photo_async_wrapper(url: str, lecture: Lecture) -> str:
             pass
 
         if lecture.source == lecture.Source.YOUTUBE:
-            element = await page.query_selector(YOUTUBE_COOKIE_BTN_SELECTOR)
-            if element is not None:
-                await element.click()
-                await asyncio.sleep(2)
+            for btn in [YOUTUBE_COOKIE_BTN_SELECTOR_1, YOUTUBE_COOKIE_BTN_SELECTOR_2]:
+                element = await page.query_selector(btn)
+                if element is not None:
+                    await element.click()
+                    await asyncio.sleep(2)
 
         await asyncio.sleep(1)
         await page.screenshot(path=lecture.preview_filename())
