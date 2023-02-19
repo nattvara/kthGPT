@@ -1,3 +1,4 @@
+import ffmpeg
 import yt_dlp
 import os
 
@@ -44,3 +45,10 @@ def download_mp4(url: str, lecture: Lecture) -> str:
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
+
+    total_duration = int(float(ffmpeg.probe(output_filename)['format']['duration']))
+
+    lecture.refresh()
+    lecture.mp4_filepath = output_filename
+    lecture.length = total_duration
+    lecture.save()
