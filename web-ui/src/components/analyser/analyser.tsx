@@ -4,6 +4,7 @@ import {
   BulbOutlined,
   AudioOutlined,
   LoadingOutlined,
+  GithubFilled,
 } from '@ant-design/icons';
 import styles from './analyser.less';
 import {
@@ -18,6 +19,7 @@ import {
   Skeleton,
   Button,
   Tag,
+  Typography,
 } from 'antd';
 import { notification } from 'antd';
 import { useMutation } from '@tanstack/react-query';
@@ -26,6 +28,8 @@ import { useEffect, useState } from 'react';
 import apiClient from '@/http';
 import { history } from 'umi';
 import Preview from '../preview';
+
+const { Title, Paragraph } = Typography;
 
 const UPDATE_LECTURE_INTERVAL = 1000;
 const UPDATE_QUEUE_INTERVAL = 5000;
@@ -170,6 +174,10 @@ export default function Analyser(props: AnalyserProps) {
     postUrl();
   };
 
+  const openGithubIssues = () => {
+    window.open('https://github.com/nattvara/kthGPT/issues', '_blank');
+  }
+
   useEffect(() => {
     fetchLecture();
     fetchLectures();
@@ -224,7 +232,15 @@ export default function Analyser(props: AnalyserProps) {
           <>
             <Row justify='center'>
               <Col xs={24} sm={12}>
-                <strong>Since there is an infinite amount of youtube videos, lectures on youtube have to be approved before being analyzed. So they won't overflow they queue. It might take a while before kthGPT starts watching the lecture.</strong>
+                <Paragraph>
+                  Since kthGPT has limited capacity only relevant videos are allowed. kthGPT is currently trying to figure out if the video is relevant. Relevant videos are educational videos, such as recorded lectures, tutorials about math, programming etc.
+                </Paragraph>
+                <Paragraph>
+                  kthGPT will also not watch videos longer than 4 hours.
+                </Paragraph>
+                <Paragraph>
+                  <strong>This can take a few minutes.</strong>
+                </Paragraph>
               </Col>
             </Row>
           </>
@@ -239,16 +255,37 @@ export default function Analyser(props: AnalyserProps) {
     return <>
       <Result
         status='error'
-        title='The video was denied'
+        title='The video was denied by kthGPT'
         subTitle={
           <>
             <Row justify='center'>
-              <Col xs={24} sm={12}>
-                <strong>The video was denied by an admin. There is a few reasons why this could have happened. However, most likely this is because the video was off-topic. Youtube videos should be about a topic that is relevant for a course at KTH, which is the purpose of kthGPT.</strong>
+              <Col xs={24} sm={12} style={{textAlign: 'left'}}>
+                <Paragraph>
+                  <strong>Since kthGPT has limited capacity only relevant videos are allowed. </strong>
+                  kthGPT is using AI to determine which videos are relevant. And this video was denied.
+                  There is a few reasons why this could have happened. However, most likely this is because the video was off-topic.
+                </Paragraph>
+                <Paragraph>
+                  Youtube videos should be about a topic that is relevant for a course at KTH, which is the purpose of kthGPT.
+                </Paragraph>
+                <Paragraph>
+                  <strong>If you feel this video should be admitted </strong> please feel free to open an issue on github.
+                </Paragraph>
               </Col>
             </Row>
           </>
         }
+        extra={[
+          <Button
+            onClick={() => openGithubIssues()}
+            loading={isPosting}
+            type='primary'
+            key='btn'
+            icon={<GithubFilled />}
+            size='large'>
+            Open an issue
+          </Button>
+        ]}
       />
       <div className={styles.divider}></div>
       <div className={styles.divider}></div>

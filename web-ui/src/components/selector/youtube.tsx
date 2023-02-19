@@ -1,17 +1,15 @@
 import {
   BulbOutlined,
   PlayCircleOutlined,
-  NotificationOutlined,
-  AudioOutlined,
 } from '@ant-design/icons';
 import styles from './kth.less';
 import {
   Input,
   Row,
   Col,
-  Space,
   Button,
   Typography,
+  Space,
 } from 'antd';
 import { notification } from 'antd';
 import { useMutation } from '@tanstack/react-query';
@@ -64,7 +62,7 @@ export default function Youtube() {
   };
 
   return (
-    <div style={{width: '100%'}}>
+    <Space direction='vertical' size='large' style={{width: '100%'}}>
       {contextHolder}
       <Row>
         <Col span={24}>
@@ -78,14 +76,6 @@ export default function Youtube() {
         </Col>
       </Row>
       <Row gutter={[10, 10]}>
-        <Paragraph style={{padding: '5px'}}>
-          <blockquote>
-            <h4>A note about YouTube videos</h4>
-            <strong>Since there is an infinite amount of youtube videos, lectures on youtube will be approved before being analyzed. So they won't overflow they queue. It might take a few minutes before kthGPT starts watching the lecture.</strong>
-          </blockquote>
-        </Paragraph>
-      </Row>
-      <Row gutter={[10, 10]}>
         <Col>
           <Button onClick={submit} type='primary' icon={<BulbOutlined />} size='large' loading={isPosting}>
             {!isPosting && <>Analyze</>}
@@ -96,6 +86,6 @@ export default function Youtube() {
           <LanguageSelector onChange={e => setLanguage(e.target.value)} language={language} />
         </Col>
       </Row>
-    </div>
+    </Space>
   );
 }
