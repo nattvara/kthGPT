@@ -81,7 +81,7 @@ if __name__ == '__main__':
     ))
     queue.enqueue(
         jobs.summarise_transcript.job,
-        '0_8fs7zau6',
+        'ev_wkULk2sk',
         Lecture.Language.SWEDISH,
         job_timeout=TIMEOUT
     )

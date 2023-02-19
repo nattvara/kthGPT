@@ -96,7 +96,9 @@ class Summary:
                 2 * 60 * 60,
                 30 * 60,
                 30 * 60,
-            ]
+            ],
+            lecture_public_id=self.lecture.public_id,
+            lecture_language=self.lecture.language,
         )
 
         self.summaries[chunk.period] = response.replace('\n', ' ')
@@ -131,7 +133,9 @@ class Summary:
                 2 * 60 * 60,
                 30 * 60,
                 30 * 60,
-            ]
+            ],
+            lecture_public_id=self.lecture.public_id,
+            lecture_language=self.lecture.language,
         )
 
         return response

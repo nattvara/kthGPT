@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from openai.error import RateLimitError
+from typing import Optional
 from rq import Queue, Retry
 from redis import Redis
 from rq.job import Job
@@ -8,6 +9,7 @@ import asyncio
 
 from config.settings import settings
 from config.logger import log
+from db.models import Lecture
 import jobs.gpt_request
 
 
@@ -72,12 +74,16 @@ def gpt3(
     max_retries: int = 3,
     retry_interval: list = [10, 30, 60],
     queue_approval: Queue = get_gpt_queue,
+    lecture_public_id: Optional[str] = None,
+    lecture_language: Optional[str] = None,
 ) -> str:
     q = next(queue_approval())
 
     job = q.enqueue(
         jobs.gpt_request.job,
         prompt,
+        lecture_public_id,
+        lecture_language,
         ttl=time_to_live,
         retry=Retry(max=max_retries, interval=retry_interval)
     )
