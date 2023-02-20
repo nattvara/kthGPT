@@ -31,6 +31,11 @@ class AnalysisOutputModel(BaseModel):
     overall_progress: int
 
 
+class CourseOutputModel(BaseModel):
+    course_code: str
+    display_name: str
+
+
 class LectureOutputModel(BaseModel):
     public_id: str
     language: str
@@ -45,6 +50,7 @@ class LectureOutputModel(BaseModel):
     summary_uri: Union[str, None] = None
     content_link: Union[str, None] = None
     analysis: Union[AnalysisOutputModel, None] = None
+    courses: List[CourseOutputModel]
 
 
 class LectureSummaryOutputModel(BaseModel):

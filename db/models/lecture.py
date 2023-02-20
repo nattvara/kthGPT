@@ -2,7 +2,7 @@ import peewee
 import pytz
 import json
 
-
+from db.crud import find_all_courses_for_lecture_id
 from .analysis import Analysis
 from tools.files.paths import (
     writable_transcript_filepath,
@@ -11,7 +11,6 @@ from tools.files.paths import (
     writable_mp4_filepath,
     writable_mp3_filepath,
 )
-from db.models.url import URL
 from .base import Base
 
 
@@ -106,6 +105,15 @@ class Lecture(Base):
                 .order_by(Analysis.modified_at.desc())
                 .first())
 
+    def courses(self):
+        out = []
+
+        courses = find_all_courses_for_lecture_id(self.id)
+        for course in courses:
+            out.append(course.to_small_dict())
+
+        return out
+
     def refresh(self):
         update = Lecture.get(self.id)
         self.public_id = update.public_id
@@ -172,4 +180,5 @@ class Lecture(Base):
             'summary_uri': self.summary_uri(),
             'content_link': self.content_link(),
             'analysis': analysis,
+            'courses': self.courses(),
         }

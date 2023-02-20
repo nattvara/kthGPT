@@ -3,6 +3,7 @@ import peewee
 import re
 
 from .base import Base
+from .lecture import Lecture
 
 
 # for grouping courses such as SF19XY
@@ -20,6 +21,12 @@ class Course(Base):
     english_name = peewee.CharField(null=False)
     points = peewee.CharField(null=False)
     cycle = peewee.CharField(null=False)
+
+
+class CourseLectureRelation(Base):
+    lecture_id = peewee.ForeignKeyField(Lecture, null=False, backref='lecture', on_delete='cascade')
+    course_id = peewee.ForeignKeyField(Course, null=True, backref='course', on_delete='cascade')
+    group_id = peewee.ForeignKeyField(CourseGroup, null=True, backref='coursegroup', on_delete='cascade')
 
 
 # Wrapper around both course group and courses
@@ -99,4 +106,10 @@ class CourseWrapper:
             'alternate_course_codes': self.alternate_course_codes,
             'alternate_english_names': self.alternate_english_names,
             'alternate_swedish_names': self.alternate_swedish_names,
+        }
+
+    def to_small_dict(self) -> dict:
+        return {
+            'course_code': self.course_code,
+            'display_name': self.get_display_name(),
         }
