@@ -74,16 +74,16 @@ def gpt3(
     max_retries: int = 3,
     retry_interval: list = [10, 30, 60],
     queue_approval: Queue = get_gpt_queue,
-    lecture_public_id: Optional[str] = None,
-    lecture_language: Optional[str] = None,
+    analysis_id: Optional[int] = None,
+    query_id: Optional[int] = None,
 ) -> str:
     q = next(queue_approval())
 
     job = q.enqueue(
         jobs.gpt_request.job,
         prompt,
-        lecture_public_id,
-        lecture_language,
+        analysis_id,
+        query_id,
         ttl=time_to_live,
         retry=Retry(max=max_retries, interval=retry_interval)
     )

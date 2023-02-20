@@ -81,6 +81,9 @@ class Summary:
         else:
             raise ValueError(f'unsupported language {lecture.language}')
 
+        self.lecture.refresh()
+        analysis = self.lecture.get_last_analysis()
+
         response = ai.gpt3(
             prompt,
             time_to_live=60 * 60 * 10,  # 5 hrs
@@ -97,8 +100,7 @@ class Summary:
                 30 * 60,
                 30 * 60,
             ],
-            lecture_public_id=self.lecture.public_id,
-            lecture_language=self.lecture.language,
+            analysis_id=analysis.id,
         )
 
         self.summaries[chunk.period] = response.replace('\n', ' ')
@@ -118,6 +120,9 @@ class Summary:
         else:
             raise ValueError(f'unsupported language {self.lecture.language}')
 
+        self.lecture.refresh()
+        analysis = self.lecture.get_last_analysis()
+
         response = ai.gpt3(
             prompt,
             time_to_live=60 * 60 * 10,  # 5 hrs
@@ -134,8 +139,7 @@ class Summary:
                 30 * 60,
                 30 * 60,
             ],
-            lecture_public_id=self.lecture.public_id,
-            lecture_language=self.lecture.language,
+            analysis_id=analysis.id,
         )
 
         return response

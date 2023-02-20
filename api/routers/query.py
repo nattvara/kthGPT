@@ -58,7 +58,8 @@ def new_query(input_data: InputModel) -> OutputModel:
                 prompt,
                 time_to_live=60,
                 max_retries=2,
-                retry_interval=[10, 20]
+                retry_interval=[10, 20],
+                query_id=query.id,
             )
         except ai.GPTException as e:
             log().error(e)

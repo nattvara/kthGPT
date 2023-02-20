@@ -1,29 +1,35 @@
 from rq import Queue, Retry
+from typing import Optional
 from redis import Redis
 import logging
 
 from db.crud import (
-    get_lecture_by_public_id_and_language,
     save_message_for_analysis
 )
 from tools.text.openai import completion
+from db.models.analysis import Analysis
 from config.settings import settings
 from db.models import Lecture
 import jobs.gpt_request
 
 
-def job(prompt: str, lecture_id: str = None, language: str = None):
+def job(prompt: str, analysis_id: Optional[int] = None, query_id: Optional[int] = None):
     logger = logging.getLogger('rq.worker')
     try:
-        response = completion(prompt)
+        response, usage = completion(prompt)
+
+        if analysis_id is not None:
+            usage.analysis_id = analysis_id
+
+        if query_id is not None:
+            usage.query_id = query_id
+
+        usage.save()
+
     except Exception as e:
         logger.error(e)
-        if lecture_id is not None:
-            lecture = get_lecture_by_public_id_and_language(lecture_id, language)
-            if lecture is None:
-                raise ValueError(f'lecture {lecture_id} not found')
-
-            analysis = lecture.get_last_analysis()
+        if analysis_id is not None:
+            analysis = Analysis.get(analysis_id)
             save_message_for_analysis(analysis, 'OpenAI Error', 'GPT-3 Error from OpenAI, it is likely overloaded. Retrying in a little while...')
         raise e
     return response
