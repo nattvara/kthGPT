@@ -1,4 +1,5 @@
 import peewee
+import pytz
 import json
 
 
@@ -127,11 +128,18 @@ class Lecture(Base):
         else:
             state = None
             overall_progress = 0
+
+        date = self.date
+        if date is not None:
+            tz = pytz.timezone('UTC')
+            date = tz.localize(self.date, is_dst=None)
+            date = date.isoformat()
+
         return {
             'public_id': self.public_id,
             'language': self.language,
             'title': self.title,
-            'date': self.date,
+            'date': date,
             'state': state,
             'content_link': self.content_link(),
             'overall_progress': overall_progress,
@@ -144,6 +152,12 @@ class Lecture(Base):
         else:
             analysis = None
 
+        date = self.date
+        if date is not None:
+            tz = pytz.timezone('UTC')
+            date = tz.localize(self.date, is_dst=None)
+            date = date.isoformat()
+
         return {
             'public_id': self.public_id,
             'language': self.language,
@@ -152,7 +166,7 @@ class Lecture(Base):
             'words': self.words,
             'length': self.length,
             'title': self.title,
-            'date': self.date,
+            'date': date,
             'preview_uri': self.preview_uri(),
             'transcript_uri': self.transcript_uri(),
             'summary_uri': self.summary_uri(),

@@ -27,6 +27,8 @@ export interface Lecture {
   source: string
   words: number | null
   length: number | null
+  title: string | null
+  date: Date | null
   preview_uri: string | null
   transcript_uri: string | null
   summary_uri: string | null

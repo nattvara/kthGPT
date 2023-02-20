@@ -36,6 +36,11 @@ export default function Preview(props: PreviewProps) {
     flagIcon = enFlag;
   }
 
+  let dateString = '';
+  if (lecture.date !== null) {
+    dateString = new Date(lecture.date).toISOString().split('T')[0];
+  }
+
   return (
     <Card
       hoverable
@@ -52,7 +57,14 @@ export default function Preview(props: PreviewProps) {
           </>
         }>
       <>
-        <Meta title='Lecture' description={<>
+        <Meta title={
+          lecture.title === null ? '' : lecture.title
+        } description={<>
+          {lecture.date !== null &&
+            <Row>
+              <strong>{dateString}</strong>
+            </Row>
+          }
           <Row>
             {lecture.content_link}
           </Row>

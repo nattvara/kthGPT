@@ -34,6 +34,8 @@ class AnalysisOutputModel(BaseModel):
 class LectureOutputModel(BaseModel):
     public_id: str
     language: str
+    title: Union[str, None] = None
+    date: Union[str, None] = None
     approved: Union[bool, None] = None
     source: str
     words: int
@@ -48,6 +50,8 @@ class LectureOutputModel(BaseModel):
 class LectureSummaryOutputModel(BaseModel):
     public_id: str
     language: str
+    title: Union[str, None] = None
+    date: Union[str, None] = None
     state: Union[str, None] = None
     content_link: Union[str, None] = None
     overall_progress: int
