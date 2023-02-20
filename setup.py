@@ -37,6 +37,7 @@ setup(
             'migrate_down = db.migrations:rollback',
             'analysis_queues_restart = jobs:analysis_queues_restart',
             'dispatch_fetch_metadata_for_all_lectures = jobs.cmd:fetch_metadata_for_all_lectures',
+            'dispatch_capture_preview_for_all_lectures = jobs.cmd:capture_preview_for_all_lectures',
         ]
     },
     tests_require=[],
