@@ -1,6 +1,12 @@
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
+from typing import List, Optional
+from urllib.parse import urlparse
 from config.logger import log
+from datetime import datetime
+from bs4 import BeautifulSoup
+from urllib import request
 import asyncio
+import re
 
 
 PLAY_BTN_CLASS = '.largePlayBtn'
@@ -43,3 +49,29 @@ async def get_m3u8_async_wrapper(url: str) -> str:
         await browser.close()
 
     return m3u8
+
+
+def scrape_title_from_page(url: str) -> str:
+    html = request.urlopen(url).read().decode('utf8')
+    soup = BeautifulSoup(html, 'html.parser')
+    title = soup.find('title')
+    return title.string
+
+
+def scrape_posted_date_from_kthplay(url: str) -> Optional[datetime]:
+    html = request.urlopen(url).read().decode('utf8')
+    soup = BeautifulSoup(html, 'html.parser')
+
+    regex = re.compile('date:((\s|\d)*),')
+
+    # Looking for a <script> tag containing a date on the form:
+    #   date: 1613124505,
+    matched_strings = soup.find_all(text=regex)
+    if len(matched_strings) == 0:
+        return None
+
+    script_tag = matched_strings[0]
+    ts = re.search(regex, script_tag).group(1).strip()
+
+    if ts is not None:
+        return datetime.fromtimestamp(int(ts))

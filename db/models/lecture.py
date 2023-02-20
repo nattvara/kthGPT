@@ -21,6 +21,8 @@ class Lecture(Base):
     source = peewee.CharField(null=False, default='kth')
     length = peewee.IntegerField(null=False, default=0)
     words = peewee.IntegerField(null=False, default=0)
+    title = peewee.CharField(null=True)
+    date = peewee.TimestampField(null=True)
     img_preview = peewee.CharField(null=True)
     mp4_filepath = peewee.CharField(null=True)
     mp3_filepath = peewee.CharField(null=True)
@@ -109,6 +111,8 @@ class Lecture(Base):
         self.language = update.language
         self.length = update.length
         self.words = update.words
+        self.title = update.title
+        self.date = update.date
         self.img_preview = update.img_preview
         self.mp4_filepath = update.mp4_filepath
         self.mp3_filepath = update.mp3_filepath
@@ -126,6 +130,8 @@ class Lecture(Base):
         return {
             'public_id': self.public_id,
             'language': self.language,
+            'title': self.title,
+            'date': self.date,
             'state': state,
             'content_link': self.content_link(),
             'overall_progress': overall_progress,
@@ -145,6 +151,8 @@ class Lecture(Base):
             'source': self.source,
             'words': self.words,
             'length': self.length,
+            'title': self.title,
+            'date': self.date,
             'preview_uri': self.preview_uri(),
             'transcript_uri': self.transcript_uri(),
             'summary_uri': self.summary_uri(),
