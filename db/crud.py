@@ -49,3 +49,22 @@ def create_query(lecture: models.Lecture, query_string: str) -> models.Query:
 def save_message_for_analysis(analysis: models.Analysis, title: str, body: Union[str, None] = None):
     msg = models.Message(analysis_id=analysis.id, title=title, body=body)
     msg.save()
+
+
+# Course
+def find_course_by_course_code(code: str) -> Union[models.Course, None]:
+    return models.Course.filter(models.Course.course_code == code).first()
+
+
+def get_all_courses() -> List[models.CourseWrapper]:
+    out = []
+
+    courses = models.Course.filter(models.Course.group_id == None)
+    for course in courses:
+        out.append(models.CourseWrapper.from_course(course))
+
+    courses_groups = models.CourseGroup.select()
+    for group in courses_groups:
+        out.append(models.CourseWrapper.from_course_group(group))
+
+    return out
