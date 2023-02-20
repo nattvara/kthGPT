@@ -35,8 +35,8 @@ def get_unfinished_analysis() -> List[models.Lecture]:
 
 
 # Query
-def get_query_by_sha(lecture: models.Lecture, sha: str) -> models.Query:
-    return models.Query.filter(models.Query.lecture_id == lecture.id).filter(models.Query.query_hash == sha).first()
+def get_most_recent_query_by_sha(lecture: models.Lecture, sha: str) -> models.Query:
+    return models.Query.filter(models.Query.lecture_id == lecture.id).filter(models.Query.query_hash == sha).order_by(models.Query.modified_at.desc()).first()
 
 
 def create_query(lecture: models.Lecture, query_string: str) -> models.Query:

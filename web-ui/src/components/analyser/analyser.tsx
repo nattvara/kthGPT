@@ -71,11 +71,11 @@ const prettyTimeElapsedString = (date: Date) => {
     return 'over 1h ago';
   }
 
-  if (seconds < 5) {
-    return 'Just now';
-  }
-
   if (minutes === 0) {
+    if (seconds < 5) {
+      return 'Just now';
+    }
+
     return `${seconds}s ago`;
   }
 

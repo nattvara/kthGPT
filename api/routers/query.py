@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 from db.crud import (
     get_lecture_by_public_id_and_language,
-    get_query_by_sha,
+    get_most_recent_query_by_sha,
     create_query,
 )
 import tools.text.prompts as prompts
@@ -39,13 +39,15 @@ def new_query(input_data: InputModel) -> OutputModel:
     if lecture is None:
         raise HTTPException(status_code=404)
 
-    query = get_query_by_sha(lecture, Query.make_sha(input_data.query_string))
+    query = get_most_recent_query_by_sha(lecture, Query.make_sha(input_data.query_string))
     if query is None:
         query = create_query(lecture, input_data.query_string)
 
     cached = True
     if query.response is None or input_data.override_cache is True:
         cached = False
+        query = create_query(lecture, input_data.query_string)
+
         if lecture.language == lecture.Language.ENGLISH:
             prompt = prompts.create_query_text_english(query, lecture)
         elif lecture.language == lecture.Language.SWEDISH:
@@ -53,9 +55,20 @@ def new_query(input_data: InputModel) -> OutputModel:
         else:
             raise ValueError(f'language {lecture.language} is not supported')
 
-
         try:
-            response = ai.gpt3(prompt)
+            response = ai.gpt3(
+                prompt,
+                time_to_live=60,
+                max_retries=2,
+                retry_interval=[10, 20],
+                query_id=query.id,
+            )
+        except ai.GPTException as e:
+            log().error(e)
+            raise HTTPException(
+                status_code=500,
+                detail=str(e)
+            )
         except Exception as e:
             log().error(e)
             raise HTTPException(

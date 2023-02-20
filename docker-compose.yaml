@@ -37,6 +37,24 @@ services:
     volumes:
       - queue:/data
 
+  queue_worker_gpt:
+    image: kthgpt_main
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - queue
+      - api
+    command: rq worker --with-scheduler --url="redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}" gpt
+    deploy:
+      replicas: 2
+    volumes:
+      - shared:/shared
+
   queue_worker:
     image: kthgpt_main
     build:
