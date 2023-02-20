@@ -1,8 +1,5 @@
 import {
-  ClockCircleOutlined,
-  NumberOutlined,
   BulbOutlined,
-  AudioOutlined,
   LoadingOutlined,
   GithubFilled,
 } from '@ant-design/icons';
@@ -11,14 +8,11 @@ import {
   Row,
   Col,
   Space,
-  Alert,
   Card,
   Result,
   Progress,
-  Statistic,
   Skeleton,
   Button,
-  Tag,
   Typography,
 } from 'antd';
 import { notification } from 'antd';
@@ -28,8 +22,9 @@ import { useEffect, useState } from 'react';
 import apiClient from '@/http';
 import { history } from 'umi';
 import Preview from '../preview';
+import LectureProgress from './lecture-progress';
 
-const { Title, Paragraph } = Typography;
+const { Paragraph } = Typography;
 
 const UPDATE_LECTURE_INTERVAL = 1000;
 const UPDATE_QUEUE_INTERVAL = 5000;
@@ -37,49 +32,6 @@ const UPDATE_QUEUE_INTERVAL = 5000;
 interface AnalyserProps {
   id: string
   language: string
-}
-
-const prettyLengthString = (seconds: number) => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-
-  return `${hours}h ${minutes}min`;
-}
-
-const prettyLanguageString = (slug: string) => {
-  if (slug === 'en') return 'English';
-  if (slug === 'sv') return 'Swedish';
-  return 'Unknown';
-}
-
-const prettyTimeElapsedString = (date: Date) => {
-  const currentDate = new Date();
-  const elapsedTime = currentDate.getTime() - date.getTime();
-  let seconds = Math.floor(elapsedTime / 1000);
-  const minutes = Math.floor(seconds / 60);
-  seconds = seconds % 60;
-
-  if (minutes > 180) {
-    return 'long ago...';
-  }
-
-  if (minutes > 120) {
-    return 'over 2h ago';
-  }
-
-  if (minutes > 60) {
-    return 'over 1h ago';
-  }
-
-  if (minutes === 0) {
-    if (seconds < 5) {
-      return 'Just now';
-    }
-
-    return `${seconds}s ago`;
-  }
-
-  return `${minutes}min ${seconds}s ago`;
 }
 
 export default function Analyser(props: AnalyserProps) {
@@ -370,108 +322,15 @@ export default function Analyser(props: AnalyserProps) {
                 </Col>
               </Row>
             }
-            <Row gutter={[20, 20]} justify='center' align='middle'>
+            <Row gutter={[20, 20]} justify='start' align='middle'>
               <Col sm={24} md={24} lg={12}>
                 <Preview lecture={lecture}></Preview>
               </Col>
-              <Col sm={24} md={24} lg={12}>
-                <Row justify='center' align='middle'>
-                  <Progress
-                    type='circle'
-                    percent={lecture.analysis?.overall_progress}
-                    className={styles.circle} />
-                </Row>
-                <Row justify='center' align='middle'>
-                  <Col>
-                    <h1>Lecture progress</h1>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-            {
-              lecture.analysis !== null &&
-              lecture.analysis?.last_message !== null &&
-              lecture.analysis?.state !== 'ready' &&
-              <Row gutter={[20, 10]}>
-                <Col>
-                  <Tag className={styles.tag} icon={<ClockCircleOutlined />} color='#108ee9'>
-                    {prettyTimeElapsedString(new Date(lecture.analysis?.last_message?.timestamp!))}
-                  </Tag>
-                  <Alert
-                    message={
-                      <>
-                        <Space direction='horizontal' size='small'>
-                          <strong>{lecture.analysis?.last_message?.title}</strong>
-                          <span>{lecture.analysis?.last_message?.body}</span>
-                        </Space>
-                      </>
-                    }
-                    type='info'
-                    showIcon
-                  />
-                </Col>
-              </Row>
-            }
-            <Row gutter={[20, 10]}>
-              <Col span={24}>
-                Downloading video
-                <Progress
-                  percent={lecture.analysis?.mp4_progress}
-                  showInfo={lecture.analysis?.mp4_progress != 0} />
-
-                Extracting audio
-                <Progress
-                  percent={lecture.analysis?.mp3_progress}
-                  showInfo={lecture.analysis?.mp3_progress != 0} />
-
-                Transcribing lecture
-                <Progress
-                  percent={lecture.analysis?.transcript_progress}
-                  showInfo={lecture.analysis?.transcript_progress != 0} />
-
-                Generating summary
-                <Progress
-                  percent={lecture.analysis?.summary_progress}
-                  showInfo={lecture.analysis?.summary_progress != 0} />
-              </Col>
             </Row>
 
-            <Space direction='vertical' size='small'>
-              <Row gutter={[20, 10]}>
-                {lecture.length !== 0 &&
-                  <Col>
-                    <Card size='small'>
-                      <Statistic
-                        title='Length'
-                        value={prettyLengthString(lecture.length!)}
-                        prefix={<ClockCircleOutlined />}
-                      />
-                    </Card>
-                  </Col>
-                }
-                {lecture.words !== 0 &&
-                  <Col>
-                    <Card size='small'>
-                      <Statistic
-                        title='Number of words'
-                        value={lecture.words!}
-                        suffix='words'
-                        prefix={<NumberOutlined />}
-                      />
-                    </Card>
-                  </Col>
-                }
-                <Col>
-                  <Card size='small'>
-                    <Statistic
-                      title='Language'
-                      value={prettyLanguageString(lecture.language!)}
-                      prefix={<AudioOutlined />}
-                    />
-                  </Card>
-                </Col>
-              </Row>
-            </Space>
+            <Row>
+              <LectureProgress lecture={lecture} />
+            </Row>
           </Space>
         </Col>
 

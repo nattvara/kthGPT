@@ -12,13 +12,20 @@ import { makeUrl } from '@/http';
 import { EVENT_GOTO_LECTURE, emitEvent } from '@/matomo';
 import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';
-import { AudioOutlined } from '@ant-design/icons';
+import { AudioOutlined, ClockCircleOutlined, NumberOutlined } from '@ant-design/icons';
 
 interface PreviewProps {
   lecture: Lecture
 }
 
 const { Meta } = Card;
+
+const prettyLengthString = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+
+  return `${hours}h ${minutes}min`;
+}
 
 export default function Preview(props: PreviewProps) {
   const { lecture } = props;
@@ -83,6 +90,30 @@ export default function Preview(props: PreviewProps) {
               </Col>
             </Space>
           </Row>
+          {lecture.length !== 0 &&
+            <Row justify='start' align='middle'>
+              <Space direction='horizontal'>
+                <Col>
+                  <h3 className={styles.length}><ClockCircleOutlined /> Length</h3>
+                </Col>
+                <Col>
+                  {prettyLengthString(lecture.length!)}
+                </Col>
+              </Space>
+            </Row>
+          }
+          {lecture.words !== 0 &&
+            <Row justify='start' align='middle' className={styles.stat}>
+              <Space direction='horizontal'>
+                <Col>
+                  <h3 className={styles.words}><NumberOutlined /> Words</h3>
+                </Col>
+                <Col>
+                  {lecture.words!.toLocaleString('sv')}
+                </Col>
+              </Space>
+            </Row>
+          }
         </>} />
       </>
     </Card>
