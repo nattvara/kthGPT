@@ -1,7 +1,9 @@
+from typing import Tuple
 import tiktoken
 import openai
 
 from config.settings import settings
+from db.models import TokenUsage
 
 
 MODEL = 'text-davinci-003'
@@ -20,7 +22,7 @@ def get_max_tokens(prompt: str) -> int:
     return 4000 - len(encoder.encode(prompt))
 
 
-def completion(prompt: str) -> str:
+def completion(prompt: str) -> Tuple[str, TokenUsage]:
     tokens = get_max_tokens(prompt)
     if tokens < 0:
         raise TokenLimitExceededException(f'to many tokens ({tokens})')
@@ -35,4 +37,9 @@ def completion(prompt: str) -> str:
     except Exception as e:
         raise UnexpectedOpenAIException(e)
 
-    return completion['choices'][0]['text'].strip()
+    usage = TokenUsage(
+        completion_tokens=completion['usage']['completion_tokens'],
+        prompt_tokens=completion['usage']['prompt_tokens'],
+        total_tokens=completion['usage']['total_tokens'],
+    )
+    return completion['choices'][0]['text'].strip(), usage
