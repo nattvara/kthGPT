@@ -41,6 +41,11 @@ class Settings(BaseSettings):
     REDIS_PORT: str
     REDIS_PASSWORD: Union[str, None] = None
 
+    OPENSEARCH_HOST: str
+    OPENSEARCH_PORT: str
+    OPENSEARCH_USERNAME: str
+    OPENSEARCH_PASSWORD: str
+
     class Config:
         case_sensitive = True
         env_file = '.env'
