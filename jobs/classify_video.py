@@ -84,7 +84,8 @@ def job(lecture_id: str, language: str):
                 2 * 60 * 60,
                 30 * 60,
                 30 * 60,
-            ]
+            ],
+            analysis_id=analysis.id,
         )
     except Exception as e:
         lecture.refresh()
