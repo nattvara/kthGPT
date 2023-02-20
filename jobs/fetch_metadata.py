@@ -8,6 +8,9 @@ from tools.web.crawler import (
     scrape_title_from_page,
 )
 
+# 5 mins
+TIMEOUT = 5 * 60
+
 
 def job(lecture_id: str, language: str):
     logger = logging.getLogger('rq.worker')
