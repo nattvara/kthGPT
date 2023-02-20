@@ -43,6 +43,8 @@ class CourseWrapper:
         alternate_course_codes: List[str] = [],
         alternate_english_names: List[str] = [],
         alternate_swedish_names: List[str] = [],
+        course_id: Optional[int] = None,
+        course_group_id: Optional[int] = None,
     ) -> None:
         self.course_code = course_code
         self.swedish_name = swedish_name
@@ -53,6 +55,8 @@ class CourseWrapper:
         self.alternate_course_codes = alternate_course_codes
         self.alternate_english_names = alternate_english_names
         self.alternate_swedish_names = alternate_swedish_names
+        self.course_id = course_id
+        self.course_group_id = course_group_id
 
     class Source:
         COURSE = 1
@@ -66,6 +70,7 @@ class CourseWrapper:
             points=course.points,
             cycle=course.cycle,
             source=CourseWrapper.Source.COURSE,
+            course_id=course.id,
         )
 
     def from_course_group(group: CourseGroup):
@@ -86,6 +91,7 @@ class CourseWrapper:
             alternate_course_codes=alternate_course_codes,
             alternate_english_names=alternate_english_names,
             alternate_swedish_names=alternate_swedish_names,
+            course_group_id=group.id,
         )
 
     def get_display_name(self) -> str:

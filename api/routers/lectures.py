@@ -4,9 +4,18 @@ from pydantic import BaseModel
 from datetime import datetime
 import random as rand
 
-from db.crud import get_all_lectures, get_lecture_by_public_id_and_language
 from db.models import Lecture, Analysis
 from db import get_db
+from db.crud import (
+    create_relation_between_lecture_and_course_group,
+    find_relation_between_lecture_and_course_group,
+    create_relation_between_lecture_and_course,
+    find_relation_between_lecture_and_course,
+    get_lecture_by_public_id_and_language,
+    delete_lecture_course_relation,
+    find_course_code,
+    get_all_lectures,
+)
 
 router = APIRouter()
 
@@ -141,3 +150,53 @@ def get_transcript(public_id: str, language: str):
         content=lecture.summary_text(),
         media_type='text/plain'
     )
+
+
+class PostCourseInputModel(BaseModel):
+    course_code: str
+
+
+@router.post('/lectures/{public_id}/{language}/course', dependencies=[Depends(get_db)])
+def add_course_to_lecture(public_id: str, language: str, input_data: PostCourseInputModel) -> LectureOutputModel:
+    lecture = get_lecture_by_public_id_and_language(public_id, language)
+    if lecture is None:
+        raise HTTPException(status_code=404)
+
+    code = input_data.course_code
+
+    course = find_course_code(code)
+    if course is None:
+        raise HTTPException(status_code=400, detail='invalid course code')
+
+    if lecture.has_course(code):
+        return lecture.to_dict()
+
+    if course.source == course.Source.COURSE_GROUP:
+        create_relation_between_lecture_and_course_group(lecture.id, course.course_group_id)
+    elif course.source == course.Source.COURSE:
+        create_relation_between_lecture_and_course(lecture.id, course.course_id)
+
+    return lecture.to_dict()
+
+
+@router.delete('/lectures/{public_id}/{language}/course/{course_code}', dependencies=[Depends(get_db)])
+def add_course_to_lecture(public_id: str, language: str, course_code: str) -> LectureOutputModel:
+    lecture = get_lecture_by_public_id_and_language(public_id, language)
+    if lecture is None:
+        raise HTTPException(status_code=404)
+
+    course = find_course_code(course_code)
+    if course is None:
+        raise HTTPException(status_code=400, detail='invalid course code')
+
+    if not lecture.has_course(course_code):
+        raise HTTPException(status_code=404)
+
+    if course.source == course.Source.COURSE_GROUP:
+        relation = find_relation_between_lecture_and_course_group(lecture.id, course.course_group_id)
+    elif course.source == course.Source.COURSE:
+        relation = find_relation_between_lecture_and_course(lecture.id, course.course_id)
+
+    delete_lecture_course_relation(relation.id)
+
+    return lecture.to_dict()

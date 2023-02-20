@@ -77,9 +77,24 @@ def get_all_courses():
     return out
 
 
-def find_all_courses_for_lecture_id(id: int):
+def find_course_code(course_code: str):
+    from db.models.course import Course, CourseGroup, CourseWrapper
     out = []
+
+    course = Course.filter(Course.course_code == course_code).first()
+    if course is not None:
+        return CourseWrapper.from_course(course)
+
+    course = CourseGroup.filter(CourseGroup.course_code == course_code).first()
+    if course is not None:
+        return CourseWrapper.from_course_group(course)
+
+    return None
+
+
+def find_all_courses_for_lecture_id(id: int):
     from db.models.course import Course, CourseGroup, CourseWrapper, CourseLectureRelation
+    out = []
     relations = CourseLectureRelation.filter(CourseLectureRelation.lecture_id == id)
     for relation in relations:
         if relation.course_id is not None:
@@ -92,3 +107,36 @@ def find_all_courses_for_lecture_id(id: int):
             )
 
     return out
+
+
+def create_relation_between_lecture_and_course(lecture_id: int, course_id: int):
+    from db.models.course import CourseLectureRelation
+    relation = CourseLectureRelation(
+        lecture_id=lecture_id,
+        course_id=course_id,
+    )
+    relation.save()
+
+
+def create_relation_between_lecture_and_course_group(lecture_id: int, group_id: int):
+    from db.models.course import CourseLectureRelation
+    relation = CourseLectureRelation(
+        lecture_id=lecture_id,
+        group_id=group_id
+    )
+    relation.save()
+
+
+def find_relation_between_lecture_and_course(lecture_id: int, course_id: int):
+    from db.models.course import CourseLectureRelation
+    return CourseLectureRelation.filter(CourseLectureRelation.lecture_id == lecture_id).filter(CourseLectureRelation.course_id == course_id).first()
+
+
+def find_relation_between_lecture_and_course_group(lecture_id: int, group_id: int):
+    from db.models.course import CourseLectureRelation
+    return CourseLectureRelation.filter(CourseLectureRelation.lecture_id == lecture_id).filter(CourseLectureRelation.group_id == group_id).first()
+
+
+def delete_lecture_course_relation(id: int):
+    from db.models.course import CourseLectureRelation
+    return CourseLectureRelation.delete().where(CourseLectureRelation.id == id).execute()

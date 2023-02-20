@@ -114,6 +114,12 @@ class Lecture(Base):
 
         return out
 
+    def has_course(self, course_code: str):
+        for course in self.courses():
+            if course['course_code'] == course_code:
+                return True
+        return False
+
     def refresh(self):
         update = Lecture.get(self.id)
         self.public_id = update.public_id
