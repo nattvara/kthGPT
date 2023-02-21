@@ -36,6 +36,9 @@ docker-compose up
 
 # Seed the database
 docker exec -it api sh -c "create_db_schema"
+
+# Download the course list
+docker exec -it api sh -c "fetch_kth_courses"
 ```
 
 The application should now be available on [http://localhost:1337](http://localhost:1337).
@@ -79,6 +82,12 @@ Start the redis server (used as backend for the job server).
 
 ```bash
 docker run --name redis -d -p 6379:6379 redis redis-server --requirepass redis
+```
+
+Start the OpenSearch index.
+
+```bash
+docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" --name opensearch -d opensearchproject/opensearch:latest
 ```
 
 Start a queue worker.

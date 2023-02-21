@@ -37,6 +37,14 @@ services:
     volumes:
       - queue:/data
 
+  search:
+    image: opensearchproject/opensearch:latest
+    restart: always
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+
   queue_worker_gpt:
     image: kthgpt_main
     build:
