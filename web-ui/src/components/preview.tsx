@@ -90,7 +90,7 @@ export default function Preview(props: PreviewProps) {
                   <Col>
                     <Image
                       src={flagIcon}
-                      height={30}
+                      height={20}
                       className={styles.flag}
                       preview={false}
                       />
