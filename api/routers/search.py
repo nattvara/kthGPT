@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from fastapi import Depends, APIRouter, HTTPException
 from pydantic import BaseModel
 
@@ -10,6 +10,7 @@ router = APIRouter()
 
 class InputModel(BaseModel):
     query: str
+    limit: Optional[int] = None
 
 
 class CourseOutputModel(BaseModel):
@@ -22,6 +23,9 @@ def parse_url(
     input_data: InputModel,
 ) -> List[CourseOutputModel]:
 
-    response = wildcard_search(input_data.query)
+    if input_data.query == '':
+        return []
+
+    response = wildcard_search(input_data.query, input_data.limit)
 
     return response
