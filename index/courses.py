@@ -1,3 +1,5 @@
+from typing import Optional
+
 from . import client, clean_response
 from db.models import CourseWrapper
 
@@ -21,7 +23,10 @@ def index(course: CourseWrapper):
     )
 
 
-def wildcard_search(search_string: str):
+def wildcard_search(search_string: str, limit: Optional[int] = None):
+    if limit is None:
+        limit = 10
+
     output_fields = [
         'course_code',
         'display_name',
@@ -41,6 +46,7 @@ def wildcard_search(search_string: str):
                 ]
             }
         },
+        'size': limit,
         'fields': output_fields,
         '_source': False,
     }
