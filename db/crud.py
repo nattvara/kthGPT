@@ -24,6 +24,18 @@ def get_all_lectures():
     return lectures
 
 
+def get_unfinished_lectures():
+    from db.models.lecture import Lecture, Analysis
+    lectures = get_all_lectures()
+
+    out = []
+    for lecture in lectures:
+        if lecture.get_last_analysis().state != Analysis.State.READY:
+            out.append(lecture)
+
+    return out
+
+
 # Analysis
 def get_unfinished_analysis():
     from db.models.analysis import Analysis

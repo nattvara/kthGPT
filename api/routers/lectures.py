@@ -13,6 +13,7 @@ from db.crud import (
     find_relation_between_lecture_and_course,
     get_lecture_by_public_id_and_language,
     delete_lecture_course_relation,
+    get_unfinished_lectures,
     find_course_code,
     get_all_lectures,
 )
@@ -73,13 +74,30 @@ class LectureSummaryOutputModel(BaseModel):
 
 
 @router.get('/lectures', dependencies=[Depends(get_db)])
-def get_all(summary: Union[bool, None] = None, random: Union[bool, None] = None) -> List[Union[LectureOutputModel, LectureSummaryOutputModel]]:
-    lectures = get_all_lectures()
+def get_all(
+    summary: Union[bool, None] = None,
+    only_unfinished: Union[bool, None] = None,
+    include_denied: Union[bool, None] = False,
+    include_failed: Union[bool, None] = False,
+    random: Union[bool, None] = None,
+) -> List[Union[LectureOutputModel, LectureSummaryOutputModel]]:
+    if only_unfinished:
+        lectures = get_unfinished_lectures()
+    else:
+        lectures = get_all_lectures()
 
     out = []
     for lecture in lectures:
         if random and lecture.get_last_analysis().state != Analysis.State.READY:
             continue
+
+        if lecture.get_last_analysis().state == Analysis.State.DENIED:
+            if not include_denied:
+                continue
+
+        if lecture.get_last_analysis().state == Analysis.State.FAILURE:
+            if not include_failed:
+                continue
 
         if summary:
             out.append(lecture.to_summary_dict())

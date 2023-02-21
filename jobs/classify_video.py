@@ -106,6 +106,10 @@ def job(lecture_id: str, language: str):
 
     if category_is_ok:
         jobs.schedule_analysis_of_lecture(lecture)
+    else:
+        analysis = lecture.get_last_analysis()
+        analysis.state = Analysis.State.DENIED
+        analysis.save()
 
     temp_path.close()
 

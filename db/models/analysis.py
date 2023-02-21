@@ -21,6 +21,7 @@ class Analysis(Base):
         WAITING = 'waiting'
         IDLE = 'idle'
         CLASSIFYING = 'classifying'
+        DENIED = 'denied'
         FAILURE = 'failure'
         DOWNLOADING = 'downloading'
         EXTRACTING_AUDIO = 'extracting_audio'
