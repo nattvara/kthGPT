@@ -23,6 +23,9 @@ def parse_url(
     input_data: InputModel,
 ) -> List[CourseOutputModel]:
 
+    if input_data.limit > 40:
+        raise HTTPException(status_code=400, detail='Cannot search for that many courses')
+
     if input_data.query == '':
         return []
 
