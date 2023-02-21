@@ -162,6 +162,9 @@ def add_course_to_lecture(public_id: str, language: str, input_data: PostCourseI
     if lecture is None:
         raise HTTPException(status_code=404)
 
+    if not lecture.courses_can_be_changed():
+        raise HTTPException(status_code=400, detail='A lectures courses can only be changed within the first day of being added')
+
     code = input_data.course_code
 
     course = find_course_code(code)
@@ -170,6 +173,10 @@ def add_course_to_lecture(public_id: str, language: str, input_data: PostCourseI
 
     if lecture.has_course(code):
         return lecture.to_dict()
+
+    limit = 10
+    if len(lecture.courses()) >= limit:
+        raise HTTPException(status_code=400, detail=f'Too many courses. A lecture cannot have more than {limit} courses.')
 
     if course.source == course.Source.COURSE_GROUP:
         create_relation_between_lecture_and_course_group(lecture.id, course.course_group_id)
@@ -184,6 +191,9 @@ def add_course_to_lecture(public_id: str, language: str, course_code: str) -> Le
     lecture = get_lecture_by_public_id_and_language(public_id, language)
     if lecture is None:
         raise HTTPException(status_code=404)
+
+    if not lecture.courses_can_be_changed():
+        raise HTTPException(status_code=400, detail='A lectures courses can only be changed within the first day of being added')
 
     course = find_course_code(course_code)
     if course is None:

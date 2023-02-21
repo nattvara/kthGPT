@@ -92,6 +92,12 @@ def find_course_code(course_code: str):
     return None
 
 
+def find_all_courses_relations_for_lecture_id(id: int):
+    from db.models.course import CourseLectureRelation
+    relations = CourseLectureRelation.filter(CourseLectureRelation.lecture_id == id)
+    return relations
+
+
 def find_all_courses_for_lecture_id(id: int):
     from db.models.course import Course, CourseGroup, CourseWrapper, CourseLectureRelation
     out = []

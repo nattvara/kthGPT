@@ -1,8 +1,8 @@
+from datetime import datetime, timedelta
 import peewee
 import pytz
 import json
 
-from db.crud import find_all_courses_for_lecture_id
 from .analysis import Analysis
 from tools.files.paths import (
     writable_transcript_filepath,
@@ -12,6 +12,10 @@ from tools.files.paths import (
     writable_mp3_filepath,
 )
 from .base import Base
+from db.crud import (
+    find_all_courses_relations_for_lecture_id,
+    find_all_courses_for_lecture_id,
+)
 
 
 class Lecture(Base):
@@ -119,6 +123,33 @@ class Lecture(Base):
             if course['course_code'] == course_code:
                 return True
         return False
+
+    def courses_can_be_changed(self) -> bool:
+        # If a lecture hasn't got any courses, they can always be added
+        if len(self.courses()) == 0:
+            return True
+
+        relations = find_all_courses_relations_for_lecture_id(self.id)
+        oldest_relation = None
+        for relation in relations:
+            if oldest_relation is None:
+                oldest_relation = relation.created_at
+                continue
+
+            if relation.created_at < oldest_relation:
+                oldest_relation = relation.created_at
+
+        now = datetime.utcnow()
+
+        # If a lecture has courses, and they where added 10 minutes ago
+        # they can be changed. So an old lecture can have courses added
+        relation_expires_at = oldest_relation + timedelta(minutes=10)
+        if now < relation_expires_at:
+            return True
+
+        # otherwise a lectures courses cannot be changed after 1 day
+        expires_at = self.created_at + timedelta(days=1)
+        return now < expires_at
 
     def refresh(self):
         update = Lecture.get(self.id)
