@@ -180,9 +180,13 @@ class Lecture(Base):
             date = tz.localize(self.date, is_dst=None)
             date = date.isoformat()
 
+        tz = pytz.timezone('UTC')
+        created_at = tz.localize(self.created_at, is_dst=None)
+
         return {
             'public_id': self.public_id,
             'language': self.language,
+            'created_at': created_at.isoformat(),
             'title': self.title,
             'date': date,
             'state': state,
@@ -203,9 +207,13 @@ class Lecture(Base):
             date = tz.localize(self.date, is_dst=None)
             date = date.isoformat()
 
+        tz = pytz.timezone('UTC')
+        created_at = tz.localize(self.created_at, is_dst=None)
+
         return {
             'public_id': self.public_id,
             'language': self.language,
+            'created_at': created_at.isoformat(),
             'approved': self.approved,
             'source': self.source,
             'words': self.words,
