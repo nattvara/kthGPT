@@ -128,7 +128,7 @@ export default function Preview(props: PreviewProps) {
               </div>
             }
             {lecture.courses.map(course =>
-              <div className={`${styles.meta} ${styles.course}`}>
+              <div key={course.course_code} className={`${styles.meta} ${styles.course}`}>
                 <Row justify='start' align='middle' className={styles.stat}>
                   <Space direction='horizontal'>
                     <Col>

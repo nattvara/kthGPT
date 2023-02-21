@@ -8,12 +8,11 @@ import {
   Row,
   Col,
   Space,
-  Card,
   Result,
-  Progress,
   Skeleton,
   Button,
   Typography,
+  Alert,
 } from 'antd';
 import { notification } from 'antd';
 import { useMutation } from '@tanstack/react-query';
@@ -38,10 +37,10 @@ interface AnalyserProps {
 export default function Analyser(props: AnalyserProps) {
   const { id, language } = props;
 
-  const [notificationApi, contextHolder] = notification.useNotification();
-  const [lecture, setLecture] = useState<Lecture | null>(null);
-  const [lectures, setLectures] = useState<Lecture[]>([]);
-  const [notFound, setNotFound] = useState<boolean | null>(null);
+  const [ notificationApi, contextHolder ] = notification.useNotification();
+  const [ lecture, setLecture ] = useState<Lecture | null>(null);
+  const [ unfinishedLectures, setUnfinishedLectures ] = useState<Lecture[]>([]);
+  const [ notFound, setNotFound ] = useState<boolean | null>(null);
 
   const { mutate: fetchLecture } = useMutation(
     async () => {
@@ -69,9 +68,9 @@ export default function Analyser(props: AnalyserProps) {
     }
   );
 
-  const { mutate: fetchLectures } = useMutation(
+  const { mutate: fetchUnfinishedLectures } = useMutation(
     async () => {
-      return await apiClient.get(`/lectures?summary=true`);
+      return await apiClient.get(`/lectures?summary=true&only_unfinished=true`);
     },
     {
       onSuccess: (res: any) => {
@@ -80,7 +79,7 @@ export default function Analyser(props: AnalyserProps) {
           headers: res.headers,
           data: res.data,
         };
-        setLectures(result.data);
+        setUnfinishedLectures(result.data);
       },
       onError: (err: any) => {
         notificationApi['error']({
@@ -133,7 +132,7 @@ export default function Analyser(props: AnalyserProps) {
 
   useEffect(() => {
     fetchLecture();
-    fetchLectures();
+    fetchUnfinishedLectures();
   }, [id, language]);
 
   useEffect(() => {
@@ -146,7 +145,7 @@ export default function Analyser(props: AnalyserProps) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchLectures();
+      fetchUnfinishedLectures();
     }, UPDATE_QUEUE_INTERVAL);
 
     return () => clearInterval(interval);
@@ -333,25 +332,30 @@ export default function Analyser(props: AnalyserProps) {
             </Row>
 
             <Row>
-              <LectureProgress lecture={lecture} />
+              <Col xs={24} sm={17}>
+                <LectureProgress lecture={lecture} />
+              </Col>
+              {unfinishedLectures.length - 1 > 0 &&
+                <>
+                  <Col xs={0} sm={1}></Col>
+                  <Col xs={24} sm={6}>
+                    <Alert
+                      message={
+                        <>
+                          kthGPT has limited capacity. Currently there is
+                          <strong> {unfinishedLectures.length - 1} </strong>
+                          other lectures being analyzed. view the progress
+                          <Button style={{margin: 0, padding: '2px'}} type='link'><strong>here</strong></Button>
+                        </>
+                      }
+                      type='info'
+                      showIcon
+                    />
+                  </Col>
+                </>
+              }
             </Row>
           </Space>
-        </Col>
-
-        <Col sm={24}>
-          <Card title='Current Queue' className={styles.queue_container}>
-            <div className={styles.queue}>
-              {lectures.map(lecture =>
-                <div style={{width: '95%'}} key={lecture.public_id}>
-                  <span>{lecture.content_link}</span>
-                  <Progress
-                    percent={lecture.overall_progress!}
-                    className={styles.previous_lecture}
-                    strokeColor='#aaa' />
-                </div>
-              )}
-            </div>
-          </Card>
         </Col>
       </Row>
 
