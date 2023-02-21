@@ -345,7 +345,7 @@ export default function Analyser(props: AnalyserProps) {
                           kthGPT has limited capacity. Currently there is
                           <strong> {unfinishedLectures.length - 1} </strong>
                           other lectures being analyzed. view the progress
-                          <Link href='/queue'><strong> here </strong></Link>
+                          <Link href='/queue' target='_blank'><strong> here </strong></Link>
                         </>
                       }
                       type='info'
