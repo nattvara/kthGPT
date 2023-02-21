@@ -24,7 +24,7 @@ import Preview from '../preview';
 import LectureProgress from './lecture-progress';
 import CourseSelector from './course-selector';
 
-const { Paragraph } = Typography;
+const { Paragraph, Link } = Typography;
 
 const UPDATE_LECTURE_INTERVAL = 1000;
 const UPDATE_QUEUE_INTERVAL = 5000;
@@ -345,11 +345,7 @@ export default function Analyser(props: AnalyserProps) {
                           kthGPT has limited capacity. Currently there is
                           <strong> {unfinishedLectures.length - 1} </strong>
                           other lectures being analyzed. view the progress
-                          <Button
-                            style={{margin: 0, padding: '2px'}}
-                            type='link'
-                            onClick={() => history.push('/queue')}
-                          ><strong>here</strong></Button>
+                          <Link href='/queue'><strong> here </strong></Link>
                         </>
                       }
                       type='info'
