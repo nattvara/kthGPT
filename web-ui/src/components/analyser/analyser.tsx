@@ -23,6 +23,7 @@ import apiClient from '@/http';
 import { history } from 'umi';
 import Preview from '../preview';
 import LectureProgress from './lecture-progress';
+import CourseSelector from './course-selector';
 
 const { Paragraph } = Typography;
 
@@ -312,7 +313,7 @@ export default function Analyser(props: AnalyserProps) {
       }
 
       <Row gutter={[20, 20]}>
-        <Col sm={24} md={12}>
+        <Col sm={24} md={20}>
           <Space direction='vertical' size='large'>
             {lecture.analysis?.state !== 'ready' && lecture.analysis?.state !== 'failure' &&
               <Row>
@@ -322,9 +323,12 @@ export default function Analyser(props: AnalyserProps) {
                 </Col>
               </Row>
             }
-            <Row gutter={[20, 20]} justify='start' align='middle'>
+            <Row gutter={[20, 20]} justify='start' align='top'>
               <Col sm={24} md={24} lg={12}>
                 <Preview lecture={lecture}></Preview>
+              </Col>
+              <Col sm={24} md={24} lg={12}>
+                <CourseSelector lecture={lecture} onLectureUpdated={lecture => setLecture(lecture)} />
               </Col>
             </Row>
 
@@ -334,7 +338,7 @@ export default function Analyser(props: AnalyserProps) {
           </Space>
         </Col>
 
-        <Col sm={24} md={12}>
+        <Col sm={24}>
           <Card title='Current Queue' className={styles.queue_container}>
             <div className={styles.queue}>
               {lectures.map(lecture =>

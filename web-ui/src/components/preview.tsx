@@ -12,7 +12,12 @@ import { makeUrl } from '@/http';
 import { EVENT_GOTO_LECTURE, emitEvent } from '@/matomo';
 import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';
-import { AudioOutlined, ClockCircleOutlined, NumberOutlined } from '@ant-design/icons';
+import {
+  AudioOutlined,
+  BookOutlined,
+  ClockCircleOutlined,
+  NumberOutlined,
+} from '@ant-design/icons';
 
 interface PreviewProps {
   lecture: Lecture
@@ -75,45 +80,65 @@ export default function Preview(props: PreviewProps) {
           <Row>
             {lecture.content_link}
           </Row>
-          <Row justify='start' align='middle'>
-            <Space direction='horizontal'>
-              <Col>
-                <h3 className={styles.language}><AudioOutlined /> Language</h3>
-              </Col>
-              <Col>
-                <Image
-                  src={flagIcon}
-                  height={30}
-                  className={styles.flag}
-                  preview={false}
-                  />
-              </Col>
-            </Space>
-          </Row>
-          {lecture.length !== 0 &&
-            <Row justify='start' align='middle'>
-              <Space direction='horizontal'>
-                <Col>
-                  <h3 className={styles.length}><ClockCircleOutlined /> Length</h3>
-                </Col>
-                <Col>
-                  {prettyLengthString(lecture.length!)}
-                </Col>
-              </Space>
-            </Row>
-          }
-          {lecture.words !== 0 &&
-            <Row justify='start' align='middle' className={styles.stat}>
-              <Space direction='horizontal'>
-                <Col>
-                  <h3 className={styles.words}><NumberOutlined /> Words</h3>
-                </Col>
-                <Col>
-                  {lecture.words!.toLocaleString('sv')}
-                </Col>
-              </Space>
-            </Row>
-          }
+          <div className={styles.meta_container}>
+            <div className={styles.meta}>
+              <Row justify='start' align='middle'>
+                <Space direction='horizontal'>
+                  <Col>
+                    <h3 className={styles.language}><AudioOutlined /> Language</h3>
+                  </Col>
+                  <Col>
+                    <Image
+                      src={flagIcon}
+                      height={30}
+                      className={styles.flag}
+                      preview={false}
+                      />
+                  </Col>
+                </Space>
+              </Row>
+            </div>
+
+            {lecture.length !== 0 &&
+              <div className={styles.meta}>
+                <Row justify='start' align='middle'>
+                  <Space direction='horizontal'>
+                    <Col>
+                      <h3 className={styles.length}><ClockCircleOutlined /> Length</h3>
+                    </Col>
+                    <Col>
+                      {prettyLengthString(lecture.length!)}
+                    </Col>
+                  </Space>
+                </Row>
+              </div>
+            }
+            {lecture.words !== 0 &&
+              <div className={styles.meta}>
+                <Row justify='start' align='middle' className={styles.stat}>
+                  <Space direction='horizontal'>
+                    <Col>
+                      <h3 className={styles.words}><NumberOutlined /> Words</h3>
+                    </Col>
+                    <Col>
+                      {lecture.words!.toLocaleString('sv')}
+                    </Col>
+                  </Space>
+                </Row>
+              </div>
+            }
+            {lecture.courses.map(course =>
+              <div className={`${styles.meta} ${styles.course}`}>
+                <Row justify='start' align='middle' className={styles.stat}>
+                  <Space direction='horizontal'>
+                    <Col>
+                      <h3 className={styles.course}><BookOutlined /> {course.course_code}</h3>
+                    </Col>
+                  </Space>
+                </Row>
+              </div>
+            )}
+        </div>
         </>} />
       </>
     </Card>

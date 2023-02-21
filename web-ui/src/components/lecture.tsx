@@ -5,6 +5,11 @@ interface Message {
   body: string | null
 }
 
+export interface Course {
+  course_code: string
+  display_name: string
+}
+
 interface Analysis {
   id: number
   created_at: Date
@@ -29,6 +34,7 @@ export interface Lecture {
   length: number | null
   title: string | null
   date: Date | null
+  courses: Course[]
   preview_uri: string | null
   transcript_uri: string | null
   summary_uri: string | null
