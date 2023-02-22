@@ -176,7 +176,7 @@ export default function CourseBrowser() {
                             async () => {
                               await setStep(1);
                               await setSelectedCourse(course.course_code);
-                              doLectureSearch();
+                              searchLectures('');
                             }
                           }>View Lectures <RightOutlined /></Button>
                       </Row>
