@@ -68,13 +68,13 @@ class LectureSummaryOutputModel(BaseModel):
     public_id: str
     language: str
     source: str
-    created_at: str
+    created_at: Union[str, None] = None
     title: Union[str, None] = None
     date: Union[str, None] = None
     state: Union[str, None] = None
-    frozen: bool
+    frozen: Union[bool, None] = None
     content_link: Union[str, None] = None
-    overall_progress: int
+    overall_progress: Union[int, None] = None
 
 
 @router.get('/lectures', dependencies=[Depends(get_db)])
