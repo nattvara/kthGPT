@@ -12,12 +12,35 @@ import styles from './queue-table.less';
 import { ColumnsType } from 'antd/es/table';
 import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';
+import kthLogo from '@/assets/kth.svg';
+import youtubeLogo from '@/assets/youtube.svg';
 
 const UPDATE_INTERVAL = 1000;
 
 const { Link } = Typography;
 
 const columns: ColumnsType<Lecture> = [
+  {
+    title: 'Source',
+    dataIndex: 'source',
+    render: (source: string) => {
+      let icon = '';
+      if (source === 'youtube') {
+        icon = youtubeLogo;
+      }
+      else if (source === 'kth') {
+        icon = kthLogo;
+      }
+      return (
+        <Image
+          src={icon}
+          height={30}
+          className={styles.logo}
+          preview={false}
+        />
+      );
+    },
+  },
   {
     title: 'Title',
     dataIndex: 'title',
@@ -34,10 +57,10 @@ const columns: ColumnsType<Lecture> = [
     dataIndex: 'language',
     render: (val: string) => {
       let flagIcon = '';
-      if (val == 'sv') {
+      if (val === 'sv') {
         flagIcon = svFlag;
       }
-      else if (val == 'en') {
+      else if (val === 'en') {
         flagIcon = enFlag;
       }
       return (
@@ -57,7 +80,7 @@ const columns: ColumnsType<Lecture> = [
       const d = new Date(val);
       const date = d.toDateString();
       const time = d.toLocaleTimeString('sv');
-      return <>{date}, {time}</>
+      return <>{date}, {time}</>;
     }
   },
   {
@@ -67,7 +90,17 @@ const columns: ColumnsType<Lecture> = [
       val = val.replaceAll('_', ' ');
 
       const titleCase = val.toLowerCase().replace(/(^|\s)\S/g, (match) => match.toUpperCase());
-      return <>{titleCase}</>
+      return <>{titleCase}</>;
+    }
+  },
+  {
+    title: 'Frozen',
+    dataIndex: 'frozen',
+    render: (isFrozen: boolean) => {
+      if (isFrozen) {
+        return <>Yes</>;
+      }
+      return <>No</>;
     }
   },
   {

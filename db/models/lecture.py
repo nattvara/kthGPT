@@ -169,9 +169,11 @@ class Lecture(Base):
         a = self.get_last_analysis()
         if a is not None:
             state = a.state
+            frozen = a.seems_to_have_crashed()
             overall_progress = a.overall_progress()
         else:
             state = None
+            frozen = False
             overall_progress = 0
 
         date = self.date
@@ -186,10 +188,12 @@ class Lecture(Base):
         return {
             'public_id': self.public_id,
             'language': self.language,
+            'source': self.source,
             'created_at': created_at.isoformat(),
             'title': self.title,
             'date': date,
             'state': state,
+            'frozen': frozen,
             'content_link': self.content_link(),
             'overall_progress': overall_progress,
         }

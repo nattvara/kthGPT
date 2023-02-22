@@ -67,10 +67,12 @@ class LectureOutputModel(BaseModel):
 class LectureSummaryOutputModel(BaseModel):
     public_id: str
     language: str
+    source: str
     created_at: str
     title: Union[str, None] = None
     date: Union[str, None] = None
     state: Union[str, None] = None
+    frozen: bool
     content_link: Union[str, None] = None
     overall_progress: int
 

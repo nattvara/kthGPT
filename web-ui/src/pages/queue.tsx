@@ -20,7 +20,7 @@ export default function QueuePage() {
     <>
       <Frame>
         <>
-          <Title level={3}>Current Analysis Queue</Title>
+          <Title level={3}>Current queue of videos for kthGPT to watch</Title>
           <QueueTable />
         </>
       </Frame>
