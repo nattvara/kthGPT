@@ -1,6 +1,7 @@
 import {
   BulbOutlined,
   PlayCircleOutlined,
+  WarningOutlined,
 } from '@ant-design/icons';
 import styles from './kth.less';
 import {
@@ -26,7 +27,7 @@ import LanguageSelector from './language-selector';
 const { Title, Paragraph } = Typography;
 
 export default function Youtube() {
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState(null);
   const [url, setUrl] = useState('');
 
   const [notificationApi, contextHolder] = notification.useNotification();
@@ -57,6 +58,14 @@ export default function Youtube() {
   );
 
   const submit = async () => {
+    if (language === null) {
+      notificationApi['warning']({
+        icon: <WarningOutlined />,
+        message: 'You must select a language for the lecture',
+        description: 'Choose either English or Swedish',
+      });
+      return;
+    }
     await postUrl();
     emitEvent(EVENT_SUBMIT_URL);
   };
