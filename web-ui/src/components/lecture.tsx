@@ -8,6 +8,7 @@ interface Message {
 export interface Course {
   course_code: string
   display_name: string
+  lectures: null | number
 }
 
 interface Analysis {

@@ -6,19 +6,22 @@ import {
   Image,
   Card,
   Steps,
+  Typography,
+  Divider,
 } from 'antd';
 import kthLogo from '@/assets/kth.svg';
 import youtubeLogo from '@/assets/youtube.svg';
 import { useState } from 'react';
-import { CloudOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { CloudOutlined, FileSearchOutlined, VideoCameraAddOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import KTH from './kth';
 import Youtube from './youtube';
+import CourseBrowser from './course-browser';
 
 const SOURCE_KTH = 'kth';
 
 const SOURCE_YOUTUBE = 'youtube';
 
-
+const { Title } = Typography;
 const { Meta } = Card;
 
 export default function Selector() {
@@ -43,65 +46,20 @@ export default function Selector() {
   }
 
   return (
-    <>
-      <Space direction='vertical' size='large'>
-        <Row>
-          <Steps
-          type="navigation"
-          size="small"
-          current={currentTab}
-          onChange={goToTab}
-          className="site-navigation-steps"
-          items={[
-            {
-              title: 'Lecture Source',
-              description: sourcePretty,
-              icon: <CloudOutlined />,
-            },
-            {
-              title: 'Video URL',
-              description: 'Enter URL to the video',
-              icon: <VideoCameraOutlined />,
-            },
-          ]}
-        />
-        </Row>
+    <Row>
+      <Col xs={24} sm={11}>
+        <Title level={2}>Browse courses <FileSearchOutlined /></Title>
+        <Title level={5} className={styles.subtitle}>There are 45 lectures in 3 courses</Title>
 
-        {currentTab === 0 &&
-          <Row>
-            <Space direction='horizontal'>
-              <Col>
-                <Card
-                  hoverable
-                  className={styles.source}
-                  onClick={() => selectSource(SOURCE_KTH)}
-                  cover={<Image preview={false} src={kthLogo} />}>
-                  <>
-                    <Meta title='KTH Play' />
-                  </>
-                </Card>
-              </Col>
-              <Col>
-                <Card
-                  hoverable
-                  className={styles.source}
-                  onClick={() => selectSource(SOURCE_YOUTUBE)}
-                  cover={<Image preview={false} src={youtubeLogo} />}>
-                  <>
-                    <Meta title='YouTube' />
-                  </>
-                </Card>
-              </Col>
-            </Space>
-          </Row>
-        }
-        {currentTab === 1 &&
-          <Row>
-          {source === SOURCE_KTH && <KTH />}
-          {source === SOURCE_YOUTUBE && <Youtube />}
-          </Row>
-        }
-      </Space>
-    </>
+        <CourseBrowser />
+      </Col>
+      <Col xs={0} sm={2} className={styles.divider}>
+        <Divider type='vertical' />
+      </Col>
+      <Col xs={24} sm={11}>
+        <Title level={2}>...or add a lecture <VideoCameraAddOutlined /></Title>
+        <Title level={5} className={styles.subtitle}>Ask kthGPT to watch a new lecture</Title>
+      </Col>
+    </Row>
   );
 }
