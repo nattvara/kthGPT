@@ -22,7 +22,7 @@ class CourseOutputModel(BaseModel):
 
 
 @router.post('/search/course', dependencies=[Depends(get_db)])
-def parse_url(
+def search_course(
     input_data: InputModelSearchCourse,
     include_lectures: Optional[bool] = None,
     lecture_count_above_or_equal: Optional[int] = 0,
@@ -59,13 +59,13 @@ class InputModelSearchCourseCode(BaseModel):
 
 
 @router.post('/search/course/{course_code}', dependencies=[Depends(get_db)])
-def parse_url(
+def search_lecture(
     course_code: str,
     input_data: InputModelSearchCourseCode,
 ) -> List[LectureSummaryOutputModel]:
 
     if input_data.query == '':
-        return []
+        input_data.query = '*'
 
     if course_code == 'no_course':
         response = lecture_index.term_query_no_courses()
