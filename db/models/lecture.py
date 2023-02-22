@@ -165,6 +165,25 @@ class Lecture(Base):
         self.transcript_filepath = update.transcript_filepath
         self.summary_filepath = update.summary_filepath
 
+    def to_doc(self):
+        course_codes = []
+        for course in self.courses():
+            course_codes.append(course['course_code'])
+
+        return {
+            'public_id': self.public_id,
+            'language': self.language,
+            'approved': self.approved,
+            'source': self.source,
+            'words': self.words,
+            'length': self.length,
+            'title': self.title,
+            'preview_uri': self.preview_uri(),
+            'content_link': self.content_link(),
+            'courses': course_codes,
+            'no_course': len(course_codes) == 0
+        }
+
     def to_summary_dict(self):
         a = self.get_last_analysis()
         if a is not None:
