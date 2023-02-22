@@ -12,7 +12,8 @@ import {
 } from 'antd';
 import {
   DeleteOutlined,
-  PlusCircleFilled
+  PlusCircleFilled,
+  WarningOutlined,
 } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -116,7 +117,8 @@ function NonAddedCourse(props: NonAddedCourseProps) {
       });
     } catch (err: any) {
       notificationApi['error']({
-        message: 'Failed to course',
+        icon: <WarningOutlined />,
+        message: 'Course was not added',
         description: err.response.data.detail,
       });
     } finally {
@@ -166,8 +168,9 @@ function AddedCourse(props: AddedCourseProps) {
       const response = await apiClient.delete(`/lectures/${lecture.public_id}/${lecture.language}/course/${course_code}`);
       onLectureUpdated(response.data);
     } catch (err: any) {
-      notificationApi['error']({
-        message: 'Failed to remove course',
+      notificationApi['warning']({
+        icon: <WarningOutlined />,
+        message: 'Course was not removed',
         description: err.response.data.detail,
       });
     } finally {
