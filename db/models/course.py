@@ -2,6 +2,11 @@ from typing import List, Optional
 import peewee
 import re
 
+from db.crud import (
+    find_all_courses_relations_for_course_group_id,
+    find_all_courses_relations_for_course_id,
+)
+
 from .base import Base
 from .lecture import Lecture
 
@@ -101,6 +106,12 @@ class CourseWrapper:
             return self.swedish_name
         return self.english_name
 
+    def get_number_of_lectures(self):
+        if self.source == CourseWrapper.Source.COURSE:
+            return len(find_all_courses_relations_for_course_id(self.course_id))
+        if self.source == CourseWrapper.Source.COURSE_GROUP:
+            return len(find_all_courses_relations_for_course_group_id(self.course_group_id))
+
     def to_doc(self) -> dict:
         return {
             'course_code': self.course_code,
@@ -112,6 +123,7 @@ class CourseWrapper:
             'alternate_course_codes': self.alternate_course_codes,
             'alternate_english_names': self.alternate_english_names,
             'alternate_swedish_names': self.alternate_swedish_names,
+            'lectures': self.get_number_of_lectures(),
         }
 
     def to_small_dict(self) -> dict:

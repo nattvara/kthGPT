@@ -23,7 +23,13 @@ def index(course: CourseWrapper):
     )
 
 
-def wildcard_search(search_string: str, limit: Optional[int] = None):
+def wildcard_search(
+    search_string: str,
+    limit: Optional[int] = None,
+    include_lectures: Optional[bool] = False,
+    lecture_count_above_or_equal: Optional[int] = 0,
+    unlimited: Optional[bool] = False,
+):
     if limit is None:
         limit = 10
 
@@ -32,24 +38,44 @@ def wildcard_search(search_string: str, limit: Optional[int] = None):
         'display_name',
     ]
 
+    if include_lectures:
+        output_fields.append('lectures')
+
     query = {
         'query': {
-            'query_string': {
-                'query': f'{search_string}*',
-                'fields': [
-                    'course_code',
-                    'swedish_name',
-                    'english_name',
-                    'alternate_course_codes',
-                    'alternate_english_names',
-                    'alternate_swedish_names',
-                ]
+            'bool': {
+                'must': [
+                    {
+                        'range': {
+                            'lectures': {
+                                'gte': lecture_count_above_or_equal,
+                            },
+                        }
+                    }
+                ],
+                'filter': {
+                    'query_string': {
+                        'query': f'{search_string}*',
+                        'fields': [
+                            'course_code',
+                            'swedish_name',
+                            'english_name',
+                            'alternate_course_codes',
+                            'alternate_english_names',
+                            'alternate_swedish_names',
+                        ],
+                    }
+                }
             }
         },
-        'size': limit,
         'fields': output_fields,
         '_source': False,
     }
+
+    if unlimited:
+        query['size'] = 1337  # not actually unlimited
+    else:
+        query['size'] = limit
 
     response = client.search(
         index=INDEX_NAME,

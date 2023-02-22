@@ -24,6 +24,18 @@ def get_all_lectures():
     return lectures
 
 
+def get_all_ready_lectures():
+    from db.models.lecture import Analysis
+    lectures = get_all_lectures()
+
+    out = []
+    for lecture in lectures:
+        if lecture.get_last_analysis().state == Analysis.State.READY:
+            out.append(lecture)
+
+    return out
+
+
 def get_unfinished_lectures():
     from db.models.lecture import Lecture, Analysis
     lectures = get_all_lectures()
@@ -93,15 +105,27 @@ def find_course_code(course_code: str):
     from db.models.course import Course, CourseGroup, CourseWrapper
     out = []
 
-    course = Course.filter(Course.course_code == course_code).first()
-    if course is not None:
-        return CourseWrapper.from_course(course)
-
     course = CourseGroup.filter(CourseGroup.course_code == course_code).first()
     if course is not None:
         return CourseWrapper.from_course_group(course)
 
+    course = Course.filter(Course.course_code == course_code).first()
+    if course is not None:
+        return CourseWrapper.from_course(course)
+
     return None
+
+
+def find_all_courses_relations_for_course_group_id(id: int):
+    from db.models.course import CourseLectureRelation
+    relations = CourseLectureRelation.filter(CourseLectureRelation.group_id == id)
+    return relations
+
+
+def find_all_courses_relations_for_course_id(id: int):
+    from db.models.course import CourseLectureRelation
+    relations = CourseLectureRelation.filter(CourseLectureRelation.course_id == id)
+    return relations
 
 
 def find_all_courses_relations_for_lecture_id(id: int):
