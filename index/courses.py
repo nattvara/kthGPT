@@ -41,6 +41,8 @@ def wildcard_search(
     if include_lectures:
         output_fields.append('lectures')
 
+    query_string = f"*{'*'.join(search_string.split(' '))}*"
+
     query = {
         'query': {
             'bool': {
@@ -55,7 +57,7 @@ def wildcard_search(
                 ],
                 'filter': {
                     'query_string': {
-                        'query': f'{search_string}*',
+                        'query': query_string,
                         'fields': [
                             'course_code',
                             'swedish_name',

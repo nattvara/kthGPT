@@ -37,6 +37,8 @@ def wildcard_search_course_code(search_string: str, course_code: str):
         'courses',
     ]
 
+    query_string = f"*{'*'.join(search_string.split(' '))}*"
+
     query = {
         'query': {
             'bool': {
@@ -49,7 +51,11 @@ def wildcard_search_course_code(search_string: str, course_code: str):
                 ],
                 'filter': {
                     'query_string': {
-                        'query': f'{search_string}*'
+                        'query': query_string,
+                        'fields': [
+                            'source',
+                            'title',
+                        ]
                     }
                 }
             }
