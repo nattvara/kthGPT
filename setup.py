@@ -40,6 +40,7 @@ setup(
             'dispatch_capture_preview_for_all_lectures = jobs.cmd:capture_preview_for_all_lectures',
             'fetch_kth_courses = courses.cmd:fetch_kth_courses',
             'index_all_courses = index.cmd:index_all_courses',
+            'index_all_lectures = index.cmd:index_all_lectures',
         ]
     },
     tests_require=[],

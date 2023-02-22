@@ -1,16 +1,30 @@
 from tqdm import tqdm
 
-from index.courses import index, clean
-from db.crud import get_all_courses
-from db.models import Course
+import index.courses as courses_index
+import index.lecture as lecture_index
+from db.crud import (
+    get_all_ready_lectures,
+    get_all_courses,
+)
 
 
 def index_all_courses():
     print('re-indexing all courses')
 
     courses = get_all_courses()
-    clean()
+    courses_index.clean()
     with tqdm(total=len(courses)) as pbar:
         for course in courses:
-            index(course)
+            courses_index.index(course)
+            pbar.update(1)
+
+
+def index_all_lectures():
+    print('re-indexing all lectures')
+
+    lectures = get_all_ready_lectures()
+    lecture_index.clean()
+    with tqdm(total=len(lectures)) as pbar:
+        for lecture in lectures:
+            lecture_index.index(lecture)
             pbar.update(1)
