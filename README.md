@@ -34,9 +34,6 @@ export DOCKER_DEFAULT_PLATFORM=linux/amd64
 # Start the application
 docker-compose up
 
-# Seed the database
-docker exec -it api sh -c "create_db_schema"
-
 # Download the course list
 docker exec -it api sh -c "fetch_kth_courses"
 ```
