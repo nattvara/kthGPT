@@ -25,6 +25,7 @@ import {
   EVENT_ASKED_QUESTION_NO_CACHE,
   emitEvent,
 } from '@/matomo';
+import CourseSelector from '../analyser/course-selector';
 
 interface QuestionsProps {
   id: string
@@ -193,11 +194,33 @@ export default function Questions(props: QuestionsProps) {
     placeholder = 'Skriv en fråga om föreläsningen...';
   }
 
+  let smLeft;
+  let smRight;
+  let mdLeft;
+  let mdRight;
+  let lgLeft;
+  let lgRight;
+  if (lecture.courses_can_change) {
+    smLeft = 24;
+    smRight = 24;
+    mdLeft = 12;
+    mdRight = 12;
+    lgLeft = 12;
+    lgRight = 12;
+  } else {
+    smLeft = 24;
+    smRight = 24;
+    mdLeft = 16;
+    mdRight = 8;
+    lgLeft = 17;
+    lgRight = 7;
+  }
+
   return (
     <>
       {contextHolder}
       <Row>
-        <Col sm={24} md={15} lg={18}>
+        <Col sm={smLeft} md={mdLeft} lg={lgLeft}>
           <Space direction='vertical' size='large' style={{width: '100%'}}>
             <Row>
               <Col span={24}>
@@ -256,78 +279,85 @@ export default function Questions(props: QuestionsProps) {
               )}
             </Row>
           </Space>
+          <Row>
+            <Col span={24}>
+              {error !== '' &&
+                <>
+                  <Result
+                    status='500'
+                    title='Sorry, something went wrong.'
+                    subTitle={error}
+                    extra={
+                      <Button
+                        onClick={() => askQuestion()}
+                        loading={isMakingQuery}
+                        type='primary'
+                        size='large'
+                      >
+                        <ReloadOutlined /> Try Again
+                      </Button>
+                    }
+                  />
+                </>
+              }
+              {isMakingQuery &&
+                <>
+                  <Skeleton active paragraph={{ rows: randomInt(1, 8) }} />
+                  <Skeleton active paragraph={{ rows: randomInt(6, 10) }} />
+                  <Skeleton active paragraph={{ rows: randomInt(1, 4) }} />
+                  <Skeleton active paragraph={{ rows: randomInt(2, 8) }} />
+                </>
+              }
+              {!isMakingQuery && response !== '' &&
+                <>
+                  <Row gutter={[20, 20]}>
+                    <Col span={24}>
+                      <pre className={styles.response}>
+                        {response}
+                      </pre>
+                    </Col>
+                  </Row>
+
+                  <div className={styles.divider}></div>
+
+                  {wasCached &&
+                    <Row justify='end' align='middle' gutter={[10, 10]}>
+                      <Button type='text' size='small' style={{pointerEvents: 'none'}}>
+                        This response was cached. Click here to override the cache
+                      </Button>
+                      <Button
+                        onClick={() => askQuestionWithoutCache()}
+                        loading={isMakingQuery}
+                        type='dashed'
+                        size='small'
+                        icon={<ReloadOutlined />}
+                      >
+                        New Response
+                      </Button>
+                    </Row>
+                  }
+                </>
+              }
+            </Col>
+          </Row>
+          <Row>
+            <div className={styles.divider}></div>
+            <div className={styles.divider}></div>
+            <div className={styles.divider}></div>
+          </Row>
         </Col>
-        <Col sm={24} md={9} lg={6}>
+        <Col sm={smRight} md={mdRight} lg={lgRight}>
           <div className={styles.preview_container}>
-            <Preview lecture={lecture}></Preview>
+            {lecture.courses_can_change &&
+              <Row>
+                <CourseSelector lecture={lecture} onLectureUpdated={lecture => setLecture(lecture)} />
+              </Row>
+            }
+            <Row>
+                <Preview lecture={lecture}></Preview>
+            </Row>
           </div>
         </Col>
-      </Row>
-      <Row>
-        <Col sm={24} md={15} lg={18}>
-          {error !== '' &&
-            <>
-              <Result
-                status='500'
-                title='Sorry, something went wrong.'
-                subTitle={error}
-                extra={
-                  <Button
-                    onClick={() => askQuestion()}
-                    loading={isMakingQuery}
-                    type='primary'
-                    size='large'
-                  >
-                    <ReloadOutlined /> Try Again
-                  </Button>
-                }
-              />
-            </>
-          }
-          {isMakingQuery &&
-            <>
-              <Skeleton active paragraph={{ rows: randomInt(1, 8) }} />
-              <Skeleton active paragraph={{ rows: randomInt(6, 10) }} />
-              <Skeleton active paragraph={{ rows: randomInt(1, 4) }} />
-              <Skeleton active paragraph={{ rows: randomInt(2, 8) }} />
-            </>
-          }
-          {!isMakingQuery && response !== '' &&
-            <>
-              <Row gutter={[20, 20]}>
-                <Col span={24}>
-                  <pre className={styles.response}>
-                    {response}
-                  </pre>
-                </Col>
-              </Row>
-
-              <div className={styles.divider}></div>
-
-              {wasCached &&
-                <Row justify='end' align='middle' gutter={[10, 10]}>
-                  <Button type='text' size='small' style={{pointerEvents: 'none'}}>
-                    This response was cached. Click here to override the cache
-                  </Button>
-                  <Button
-                    onClick={() => askQuestionWithoutCache()}
-                    loading={isMakingQuery}
-                    type='dashed'
-                    size='small'
-                    icon={<ReloadOutlined />}
-                  >
-                    New Response
-                  </Button>
-                </Row>
-              }
-            </>
-          }
-        </Col>
-      </Row>
-      <Row>
-        <div className={styles.divider}></div>
-        <div className={styles.divider}></div>
-        <div className={styles.divider}></div>
       </Row>
     </>
   );

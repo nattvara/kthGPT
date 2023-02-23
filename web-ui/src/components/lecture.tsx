@@ -38,6 +38,7 @@ export interface Lecture {
   title: string | null
   date: Date | null
   courses: Course[]
+  courses_can_change: boolean
   preview_uri: string | null
   transcript_uri: string | null
   summary_uri: string | null
