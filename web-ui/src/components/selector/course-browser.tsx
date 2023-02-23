@@ -6,20 +6,34 @@ import {
   Space,
   Col,
   Button,
-  Divider,
+  Typography,
 } from 'antd';
-import { BulbOutlined, LeftOutlined, RightOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import {
+  BulbOutlined,
+  LeftOutlined,
+  RightOutlined,
+  VideoCameraOutlined
+} from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import apiClient from '@/http';
 import { history } from 'umi';
+import { PreviewCompact } from '../preview';
 
 const { Search } = Input;
+const { Link } = Typography;
 
 const AUTO_UPDATE_INTERVAL = 10000;
 
 
-export default function CourseBrowser() {
+interface CourseBrowserProps {
+  lecturesWithoutCourses: number
+}
+
+
+export default function CourseBrowser(props: CourseBrowserProps) {
+  const { lecturesWithoutCourses } = props;
+
   const [ step, setStep ] = useState<number>(0);
   const [ courseQuery, setCourseQuery ] = useState<string>('');
   const [ lectureQuery, setLectureQuery ] = useState<string>('');
@@ -41,7 +55,7 @@ export default function CourseBrowser() {
         result.data.push({
           course_code: 'no_course',
           display_name: 'Untagged Lectures',
-          lectures: 0,
+          lectures: lecturesWithoutCourses,
         });
         setCourses(result.data);
       },
@@ -79,9 +93,15 @@ export default function CourseBrowser() {
     doLectureSearch();
   };
 
+  const goToCourse = async (courseCode: string) => {
+    await setStep(1);
+    await setSelectedCourse(courseCode);
+    searchLectures('');
+  };
+
   useEffect(() => {
     searchCourses('');
-  }, []);
+  }, [lecturesWithoutCourses]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -111,7 +131,7 @@ export default function CourseBrowser() {
           </Col>
           <Col span={12}>
             <Row className={styles.search_bar_container}>
-              <Col span={5}>
+              <Col xs={10} sm={8} md={10} lg={7} xl={5}>
                 <Button
                   size='large'
                   type='primary'
@@ -120,7 +140,7 @@ export default function CourseBrowser() {
                     setSelectedCourse('');
                   }}><LeftOutlined /> Back</Button>
               </Col>
-              <Col offset={1} span={18}>
+              <Col offset={1} xs={13} sm={14} md={13} lg={16} xl={18}>
                 <Search
                   style={{width: '100%'}}
                   placeholder='Search for a lecture...'
@@ -144,16 +164,17 @@ export default function CourseBrowser() {
             <Space direction='vertical' size='large'>
               {courses.map(course => {
                 if (courseQuery !== '' && course.course_code === 'no_course') {
+                  // hide the no_course course if any search input is entered
                   return <div key={course.course_code}></div>;
                 }
 
                 return (
-                  <Row key={course.course_code}>
-                    <Col span={16}>
+                  <Row key={course.course_code} className={styles.course} onClick={() => goToCourse(course.course_code)}>
+                    <Col span={20}>
                       <Row>
                         <Col>
                           {course.course_code !== 'no_course' &&
-                            <span className={styles.course_name}><strong>{course.course_code}</strong> - {course.display_name}</span>
+                            <Link className={styles.course_name}><strong>{course.course_code}</strong> - {course.display_name}</Link>
                           }
                           {course.course_code === 'no_course' &&
                             <span className={styles.course_name}>{course.display_name}</span>
@@ -168,17 +189,12 @@ export default function CourseBrowser() {
                         </Col>
                       </Row>
                     </Col>
-                    <Col span={8}>
+                    <Col span={4}>
                       <Row justify='end'>
                         <Button
                           type='default'
-                          onClick={
-                            async () => {
-                              await setStep(1);
-                              await setSelectedCourse(course.course_code);
-                              searchLectures('');
-                            }
-                          }>View Lectures <RightOutlined /></Button>
+                          shape='circle'
+                          onClick={() => goToCourse(course.course_code)}><RightOutlined /></Button>
                       </Row>
                     </Col>
                   </Row>
@@ -188,30 +204,19 @@ export default function CourseBrowser() {
           </Col>
           <Col span={12} className={`${styles.content} ${styles.animate_height} ${step === 0 ? styles.collapsed : ''}`}>
             <Space direction='vertical' size='large'>
-              {lectures.map(lecture => {
+              {lectures.map((lecture, index) => {
                 return (
                   <Row key={lecture.public_id + lecture.language}>
-                    <Col span={16}>
-                      <Row>
-                        <Col>
-                          <span className={styles.course_name}><strong>{lecture.title}</strong></span>
-                        </Col>
-                      </Row>
-                      <Row className={styles.course_meta}>
-                        <Col>
-                          Info
-                        </Col>
-                      </Row>
+                    <Col span={2} className={styles.row_number}>
+                      {index + 1}
                     </Col>
-                    <Col span={8}>
-                      <Row justify='end'>
-                        <Button
-                          type='dashed'
-                          onClick={() => {
-                              history.push(`/questions/lectures/${lecture.public_id}/${lecture.language}`)
-                            }
-                          }>Go to lecture <BulbOutlined /></Button>
-                      </Row>
+                    <Col span={22}>
+                      <PreviewCompact
+                        lecture={lecture}
+                        onClick={() => {
+                          history.push(`/questions/lectures/${lecture.public_id}/${lecture.language}`)
+                        }}
+                      />
                     </Col>
                   </Row>
                 );

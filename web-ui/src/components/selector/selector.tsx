@@ -8,14 +8,16 @@ import {
   Steps,
   Typography,
   Divider,
+  Statistic,
 } from 'antd';
 import kthLogo from '@/assets/kth.svg';
 import youtubeLogo from '@/assets/youtube.svg';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CloudOutlined, FileSearchOutlined, VideoCameraAddOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import KTH from './kth';
 import Youtube from './youtube';
 import CourseBrowser from './course-browser';
+import apiClient from '@/http';
 
 const SOURCE_KTH = 'kth';
 
@@ -24,9 +26,17 @@ const SOURCE_YOUTUBE = 'youtube';
 const { Title } = Typography;
 const { Meta } = Card;
 
+interface Stats {
+  courses: number
+  lectures: number
+  lectures_without_courses: number
+}
+
+
 export default function Selector() {
-  const [currentTab, setCurrentTab] = useState(0);
-  const [source, setSource] = useState<string | null>(null);
+  const [ currentTab, setCurrentTab ] = useState(0);
+  const [ source, setSource ] = useState<string | null>(null);
+  const [ stats, setStats ] = useState<Stats>({});
 
   const goToTab = (newValue: number) => {
     if (newValue === 1 && source === null) return;
@@ -45,19 +55,35 @@ export default function Selector() {
     sourcePretty = 'https://youtube.com'
   }
 
+  const fetchStats = async () => {
+    try {
+      const response = await apiClient.get('/stats');
+      await setStats(response.data);
+    } catch (err: any) {
+      console.log(err);
+    }
+  }
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
   return (
     <Row>
       <Col xs={24} sm={11}>
-        <Title level={2}>Browse courses <FileSearchOutlined /></Title>
-        <Title level={5} className={styles.subtitle}>There are 45 lectures in 3 courses</Title>
+        <Title level={2}>Find a lecture <FileSearchOutlined /></Title>
+        <Title
+          level={5}
+          className={styles.subtitle}
+        >kthGPT has already watched <Statistic value={stats.lectures} /> lectures from <Statistic value={stats.courses} /> courses</Title>
 
-        <CourseBrowser />
+        <CourseBrowser lecturesWithoutCourses={stats.lectures_without_courses} />
       </Col>
       <Col xs={0} sm={2} className={styles.divider}>
         <Divider type='vertical' />
       </Col>
       <Col xs={24} sm={11}>
-        <Title level={2}>...or add a lecture <VideoCameraAddOutlined /></Title>
+        <Title level={2}>...or add a new lecture <VideoCameraAddOutlined /></Title>
         <Title level={5} className={styles.subtitle}>Ask kthGPT to watch a new lecture</Title>
       </Col>
     </Row>

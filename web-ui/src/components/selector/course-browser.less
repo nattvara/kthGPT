@@ -1,6 +1,15 @@
 
+.course {
+  cursor: pointer;
+}
+
 .course_name {
   font-size: 18px;
+  color: black !important;
+
+  &:hover {
+    color: grey !important;
+  }
 }
 
 .search_container {
@@ -15,10 +24,16 @@
   }
 }
 
+.row_number {
+  font-weight: 600;
+  text-align: center;
+  padding-top: 30px;
+}
+
 .search_inner_container {
   position: relative;
   width: 200% !important;
-  transition: left .05s ease-out;
+  transition: left .1s ease-out;
   left: 0;
 
   &.left {
@@ -49,7 +64,7 @@
 .result_inner_container {
   position: relative;
   width: 200% !important;
-  transition: left .08s ease-out;
+  transition: left .12s ease-out;
   left: 0;
 
   .search_bar_container {
@@ -64,6 +79,8 @@
     padding-top: 20px;
     padding-right: 44px;
     padding-left: 2px;
+    min-height: 550px;
+    padding-bottom: 100px;
 
     > div {
       width: 100% !important;
