@@ -32,9 +32,9 @@ function Frame(props: FrameProps) {
     <>
       <Row>
         <Col span={24}>
-          <div className={styles.hero} onClick={() => history.push('/')}>
+          <div className={styles.hero}>
             <Row justify={'center'}>
-              <Space direction='horizontal' size='small'>
+              <Space className={styles.logo_container} direction='horizontal' size='small' onClick={() => history.push('/')}>
                 <Image
                   height={100}
                   width={100}
