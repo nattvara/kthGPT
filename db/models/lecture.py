@@ -41,6 +41,19 @@ class Lecture(Base):
         ENGLISH = 'en'
         SWEDISH = 'sv'
 
+    def save(self, *args, **kwargs):
+        self.reindex()
+        return super(Lecture, self).save(*args, **kwargs)
+
+    def reindex(self):
+        if self.id is not None:
+            a = self.get_last_analysis()
+            if a is not None:
+                if a.state == Analysis.State.READY:
+                    from jobs import get_metadata_queue, index_lecture
+                    q = next(get_metadata_queue())
+                    q.enqueue(index_lecture.job, self.public_id, self.language)
+
     def content_link(self):
         if self.source == self.Source.KTH:
             return f'https://play.kth.se/media/{self.public_id}'
