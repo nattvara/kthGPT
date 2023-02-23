@@ -10,18 +10,16 @@ import {
 import { Lecture } from '@/components/lecture';
 import { makeUrl } from '@/http';
 import { EVENT_GOTO_LECTURE, emitEvent } from '@/matomo';
-import svFlag from '@/assets/flag-sv.svg';
-import enFlag from '@/assets/flag-en.svg';
 import {
   AudioOutlined,
   BookOutlined,
   ClockCircleOutlined,
   NumberOutlined,
 } from '@ant-design/icons';
-
-interface PreviewProps {
-  lecture: Lecture
-}
+import svFlag from '@/assets/flag-sv.svg';
+import enFlag from '@/assets/flag-en.svg';
+import kthLogo from '@/assets/kth.svg';
+import youtubeLogo from '@/assets/youtube.svg';
 
 const { Meta } = Card;
 
@@ -31,6 +29,90 @@ const prettyLengthString = (seconds: number) => {
 
   return `${hours}h ${minutes}min`;
 }
+
+
+interface PreviewCompactProps {
+  lecture: Lecture
+  onClick: Function
+}
+
+
+export function PreviewCompact(props: PreviewCompactProps) {
+  const { lecture, onClick } = props;
+
+  let flagIcon = '';
+  if (lecture.language == 'sv') {
+    flagIcon = svFlag;
+  }
+  else if (lecture.language == 'en') {
+    flagIcon = enFlag;
+  }
+
+  let dateString = '';
+  if (lecture.date !== null) {
+    dateString = new Date(lecture.date).toISOString().split('T')[0];
+  }
+
+  let icon = '';
+  if (lecture.source === 'youtube') {
+    icon = youtubeLogo;
+  }
+  else if (lecture.source === 'kth') {
+    icon = kthLogo;
+  }
+
+  return (
+    <Card
+      className={styles.compact}
+      hoverable
+      onClick={() => onClick()}
+    >
+      <Row>
+        <Col span={8}>
+          <div className={styles.image}>
+            <Spin tip="Loading..." spinning={lecture.preview_uri === null}>
+              <Image
+                preview={false}
+                src={lecture.preview_uri === null ? '' : makeUrl(lecture.preview_uri!)} />
+            </Spin>
+          </div>
+        </Col>
+        <Col span={16} className={styles.body}>
+          <Row className={styles.title}><strong>{lecture.title}</strong></Row>
+          <Row align='middle' justify='start'>
+            <Space direction='horizontal'>
+              <Col>
+                <strong>{dateString}</strong>
+              </Col>
+              <Col>
+                <Image
+                  src={flagIcon}
+                  height={18}
+                  className={styles.flag}
+                  preview={false}
+                  />
+              </Col>
+              <Col>
+                <Image
+                  src={icon}
+                  height={18}
+                  className={styles.logo}
+                  preview={false}
+                />
+              </Col>
+            </Space>
+          </Row>
+        </Col>
+      </Row>
+    </Card>
+  );
+}
+
+
+interface PreviewProps {
+  lecture: Lecture
+}
+
 
 export default function Preview(props: PreviewProps) {
   const { lecture } = props;
@@ -99,7 +181,7 @@ export default function Preview(props: PreviewProps) {
               </Row>
             </div>
 
-            {lecture.length !== 0 &&
+            {lecture.length &&
               <div className={styles.meta}>
                 <Row justify='start' align='middle'>
                   <Space direction='horizontal'>
@@ -113,7 +195,7 @@ export default function Preview(props: PreviewProps) {
                 </Row>
               </div>
             }
-            {lecture.words !== 0 &&
+            {lecture.words &&
               <div className={styles.meta}>
                 <Row justify='start' align='middle' className={styles.stat}>
                   <Space direction='horizontal'>
@@ -127,7 +209,7 @@ export default function Preview(props: PreviewProps) {
                 </Row>
               </div>
             }
-            {lecture.courses.map(course =>
+            {lecture.courses && lecture.courses.map(course =>
               <div key={course.course_code} className={`${styles.meta} ${styles.course}`}>
                 <Row justify='start' align='middle' className={styles.stat}>
                   <Space direction='horizontal'>
