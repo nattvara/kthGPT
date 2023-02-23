@@ -6,7 +6,6 @@ from db.crud import (
     find_all_courses_relations_for_course_group_id,
     find_all_courses_relations_for_course_id,
 )
-
 from .base import Base
 from .lecture import Lecture
 
@@ -98,6 +97,11 @@ class CourseWrapper:
             alternate_swedish_names=alternate_swedish_names,
             course_group_id=group.id,
         )
+
+    def reindex(self):
+        from jobs import get_metadata_queue, index_course
+        q = next(get_metadata_queue())
+        q.enqueue(index_course.job, self.course_code)
 
     def get_display_name(self) -> str:
         regex = re.compile(r'\D*(\d)(\d)*')
