@@ -207,6 +207,9 @@ def add_course_to_lecture(public_id: str, language: str, input_data: PostCourseI
     elif course.source == course.Source.COURSE:
         create_relation_between_lecture_and_course(lecture.id, course.course_id)
 
+    lecture.reindex()
+    course.reindex()
+
     return lecture.to_dict()
 
 
@@ -232,5 +235,8 @@ def add_course_to_lecture(public_id: str, language: str, course_code: str) -> Le
         relation = find_relation_between_lecture_and_course(lecture.id, course.course_id)
 
     delete_lecture_course_relation(relation.id)
+
+    lecture.reindex()
+    course.reindex()
 
     return lecture.to_dict()
