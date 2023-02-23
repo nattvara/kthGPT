@@ -13,6 +13,7 @@ from api.routers import (
     lectures,
     query,
     search,
+    stats,
 )
 
 
@@ -34,6 +35,7 @@ def main():
     app.include_router(lectures.router)
     app.include_router(query.router)
     app.include_router(search.router)
+    app.include_router(stats.router)
 
     # Reset the monitoring queue and restart the workers
     queue = next(get_monitoring_queue())

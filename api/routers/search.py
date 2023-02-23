@@ -28,9 +28,11 @@ def search_course(
     lecture_count_above_or_equal: Optional[int] = 0,
 ) -> List[CourseOutputModel]:
 
+    sort_by_lecture_count = False
     unlimited = False
     if lecture_count_above_or_equal >= 1:
         unlimited = True
+        sort_by_lecture_count = True
 
     if not unlimited:
         if input_data.limit is None:
@@ -49,6 +51,7 @@ def search_course(
         include_lectures=include_lectures,
         lecture_count_above_or_equal=lecture_count_above_or_equal,
         unlimited=unlimited,
+        sort_by_lecture_count=sort_by_lecture_count,
     )
 
     return response

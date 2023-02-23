@@ -10,7 +10,10 @@ def clean_response(response: dict, fields: List[str]) -> List[dict]:
     for hit in hits:
         item = {}
         for field in fields:
-            item[field] = hit['fields'][field][0]
+            if field not in hit['fields']:
+                item[field] = None
+            else:
+                item[field] = hit['fields'][field][0]
         out.append(item)
     return out
 

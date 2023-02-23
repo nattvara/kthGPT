@@ -29,6 +29,7 @@ def wildcard_search(
     include_lectures: Optional[bool] = False,
     lecture_count_above_or_equal: Optional[int] = 0,
     unlimited: Optional[bool] = False,
+    sort_by_lecture_count: Optional[bool] = False,
 ):
     if limit is None:
         limit = 10
@@ -79,9 +80,36 @@ def wildcard_search(
     else:
         query['size'] = limit
 
+    if sort_by_lecture_count:
+        query['sort'] = {
+            'lectures': {
+                'order': 'desc',
+            }
+        }
+
     response = client.search(
         index=INDEX_NAME,
         body=query,
     )
 
     return clean_response(response, output_fields)
+
+
+def at_least_one_lecture_count() -> int:
+    query = {
+        'query': {
+            'range': {
+                'lectures': {
+                    'gte': 1,
+                },
+            }
+        },
+        'size': 0,
+    }
+
+    response = client.search(
+        index=INDEX_NAME,
+        body=query,
+    )
+
+    return response['hits']['total']['value']

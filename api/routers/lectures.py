@@ -74,6 +74,7 @@ class LectureSummaryOutputModel(BaseModel):
     state: Union[str, None] = None
     frozen: Union[bool, None] = None
     content_link: Union[str, None] = None
+    preview_uri: Union[str, None] = None
     overall_progress: Union[int, None] = None
 
 

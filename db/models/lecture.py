@@ -176,6 +176,7 @@ class Lecture(Base):
             'approved': self.approved,
             'source': self.source,
             'words': self.words,
+            'date': self.date,
             'length': self.length,
             'title': self.title,
             'preview_uri': self.preview_uri(),
