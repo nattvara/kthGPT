@@ -250,4 +250,5 @@ class Lecture(Base):
             'content_link': self.content_link(),
             'analysis': analysis,
             'courses': self.courses(),
+            'courses_can_change': self.courses_can_be_changed(),
         }

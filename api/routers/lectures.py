@@ -62,6 +62,7 @@ class LectureOutputModel(BaseModel):
     content_link: Union[str, None] = None
     analysis: Union[AnalysisOutputModel, None] = None
     courses: List[CourseOutputModel]
+    courses_can_change: bool
 
 
 class LectureSummaryOutputModel(BaseModel):
