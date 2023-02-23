@@ -2,29 +2,20 @@ import styles from './selector.less';
 import {
   Row,
   Col,
-  Space,
-  Image,
-  Card,
-  Steps,
   Typography,
   Divider,
   Statistic,
 } from 'antd';
-import kthLogo from '@/assets/kth.svg';
-import youtubeLogo from '@/assets/youtube.svg';
 import { useEffect, useState } from 'react';
-import { CloudOutlined, FileSearchOutlined, VideoCameraAddOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import KTH from './kth';
-import Youtube from './youtube';
+import {
+  FileSearchOutlined,
+  VideoCameraAddOutlined,
+} from '@ant-design/icons';
 import CourseBrowser from './course-browser';
 import apiClient from '@/http';
-
-const SOURCE_KTH = 'kth';
-
-const SOURCE_YOUTUBE = 'youtube';
+import LectureAdder from './lecture-adder';
 
 const { Title } = Typography;
-const { Meta } = Card;
 
 interface Stats {
   courses: number
@@ -34,26 +25,11 @@ interface Stats {
 
 
 export default function Selector() {
-  const [ currentTab, setCurrentTab ] = useState(0);
-  const [ source, setSource ] = useState<string | null>(null);
-  const [ stats, setStats ] = useState<Stats>({});
-
-  const goToTab = (newValue: number) => {
-    if (newValue === 1 && source === null) return;
-    setCurrentTab(newValue);
-  };
-
-  const selectSource = async (source: string) => {
-    await setSource(source);
-    setCurrentTab(1);
-  }
-
-  let sourcePretty = 'Select where the lecture is hosted';
-  if (source === SOURCE_KTH) {
-    sourcePretty = 'https://play.kth.se'
-  } else if (source === SOURCE_YOUTUBE) {
-    sourcePretty = 'https://youtube.com'
-  }
+  const [ stats, setStats ] = useState<Stats>({
+    courses: 0,
+    lectures: 0,
+    lectures_without_courses: 0,
+  });
 
   const fetchStats = async () => {
     try {
@@ -69,7 +45,7 @@ export default function Selector() {
   }, []);
 
   return (
-    <Row>
+    <Row className={styles.selector}>
       <Col xs={24} sm={11}>
         <Title level={2}>Find a lecture <FileSearchOutlined /></Title>
         <Title
@@ -85,6 +61,8 @@ export default function Selector() {
       <Col xs={24} sm={11}>
         <Title level={2}>...or add a new lecture <VideoCameraAddOutlined /></Title>
         <Title level={5} className={styles.subtitle}>Ask kthGPT to watch a new lecture</Title>
+
+        <LectureAdder />
       </Col>
     </Row>
   );
