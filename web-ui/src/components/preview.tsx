@@ -180,8 +180,7 @@ export default function Preview(props: PreviewProps) {
                 </Space>
               </Row>
             </div>
-
-            {lecture.length &&
+            {lecture.length !== null && lecture.length !== 0 &&
               <div className={styles.meta}>
                 <Row justify='start' align='middle'>
                   <Space direction='horizontal'>
@@ -195,7 +194,7 @@ export default function Preview(props: PreviewProps) {
                 </Row>
               </div>
             }
-            {lecture.words &&
+            {lecture.words !== null && lecture.words !== 0 &&
               <div className={styles.meta}>
                 <Row justify='start' align='middle' className={styles.stat}>
                   <Space direction='horizontal'>
