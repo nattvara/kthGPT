@@ -14,6 +14,8 @@ COPY config ./config
 COPY db ./db
 COPY jobs ./jobs
 COPY tools ./tools
+COPY courses ./courses
+COPY index ./index
 COPY setup.py .
 COPY requirements.txt .
 
