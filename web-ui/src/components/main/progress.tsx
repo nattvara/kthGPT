@@ -3,11 +3,18 @@ import {
   Steps,
   Layout,
 } from 'antd';
+import { history } from 'umi';
 
 const { Sider } = Layout;
 
 export default function Progress(props: {step: number}) {
-  const {step} = props;
+  const { step } = props;
+
+  const onChange = (value: number) => {
+    if (value === 0) {
+      history.push('/');
+    }
+  };
 
   return (
     <>
@@ -16,14 +23,15 @@ export default function Progress(props: {step: number}) {
           direction='vertical'
           className={styles.steps}
           current={step}
+          onChange={onChange}
           items={[
             {
               title: 'Select Lecture',
-              description: 'Provide a recorded lecture for kthGPT to watch'
+              description: 'Select a lecture for kthGPT to watch'
             },
             {
-              title: 'Analyse Lecture',
-              description: 'kthGPT will watch and analyse the lecture'
+              title: 'Watch Lecture',
+              description: 'kthGPT will watch and analyze the lecture'
             },
             {
               title: 'Ask Questions',

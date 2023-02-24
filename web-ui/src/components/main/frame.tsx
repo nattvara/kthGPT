@@ -10,6 +10,7 @@ import {
 } from 'antd';
 import kthLogo from '../../assets/logo.svg';
 import Progress from './progress';
+import { history } from 'umi';
 
 
 const GITHUB_URL = 'https://github.com/nattvara/kthGPT';
@@ -33,7 +34,7 @@ function Frame(props: FrameProps) {
         <Col span={24}>
           <div className={styles.hero}>
             <Row justify={'center'}>
-              <Space direction='horizontal' size='small'>
+              <Space className={styles.logo_container} direction='horizontal' size='small' onClick={() => history.push('/')}>
                 <Image
                   height={100}
                   width={100}

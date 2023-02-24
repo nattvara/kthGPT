@@ -1,8 +1,5 @@
 import {
-  ClockCircleOutlined,
-  NumberOutlined,
   BulbOutlined,
-  AudioOutlined,
   LoadingOutlined,
   GithubFilled,
 } from '@ant-design/icons';
@@ -11,15 +8,11 @@ import {
   Row,
   Col,
   Space,
-  Alert,
-  Card,
   Result,
-  Progress,
-  Statistic,
   Skeleton,
   Button,
-  Tag,
   Typography,
+  Alert,
 } from 'antd';
 import { notification } from 'antd';
 import { useMutation } from '@tanstack/react-query';
@@ -28,8 +21,10 @@ import { useEffect, useState } from 'react';
 import apiClient from '@/http';
 import { history } from 'umi';
 import Preview from '../preview';
+import LectureProgress from './lecture-progress';
+import CourseSelector from './course-selector';
 
-const { Title, Paragraph } = Typography;
+const { Paragraph, Link } = Typography;
 
 const UPDATE_LECTURE_INTERVAL = 1000;
 const UPDATE_QUEUE_INTERVAL = 5000;
@@ -39,56 +34,13 @@ interface AnalyserProps {
   language: string
 }
 
-const prettyLengthString = (seconds: number) => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-
-  return `${hours}h ${minutes}min`;
-}
-
-const prettyLanguageString = (slug: string) => {
-  if (slug === 'en') return 'English';
-  if (slug === 'sv') return 'Swedish';
-  return 'Unknown';
-}
-
-const prettyTimeElapsedString = (date: Date) => {
-  const currentDate = new Date();
-  const elapsedTime = currentDate.getTime() - date.getTime();
-  let seconds = Math.floor(elapsedTime / 1000);
-  const minutes = Math.floor(seconds / 60);
-  seconds = seconds % 60;
-
-  if (minutes > 180) {
-    return 'long ago...';
-  }
-
-  if (minutes > 120) {
-    return 'over 2h ago';
-  }
-
-  if (minutes > 60) {
-    return 'over 1h ago';
-  }
-
-  if (minutes === 0) {
-    if (seconds < 5) {
-      return 'Just now';
-    }
-
-    return `${seconds}s ago`;
-  }
-
-  return `${minutes}min ${seconds}s ago`;
-}
-
 export default function Analyser(props: AnalyserProps) {
   const { id, language } = props;
 
-  const [notificationApi, contextHolder] = notification.useNotification();
-  const [lecture, setLecture] = useState<Lecture | null>(null);
-  const [lectures, setLectures] = useState<Lecture[]>([]);
-  const [notFound, setNotFound] = useState<boolean | null>(null);
+  const [ notificationApi, contextHolder ] = notification.useNotification();
+  const [ lecture, setLecture ] = useState<Lecture | null>(null);
+  const [ unfinishedLectures, setUnfinishedLectures ] = useState<Lecture[]>([]);
+  const [ notFound, setNotFound ] = useState<boolean | null>(null);
 
   const { mutate: fetchLecture } = useMutation(
     async () => {
@@ -116,9 +68,9 @@ export default function Analyser(props: AnalyserProps) {
     }
   );
 
-  const { mutate: fetchLectures } = useMutation(
+  const { mutate: fetchUnfinishedLectures } = useMutation(
     async () => {
-      return await apiClient.get(`/lectures?summary=true`);
+      return await apiClient.get(`/lectures?summary=true&only_unfinished=true`);
     },
     {
       onSuccess: (res: any) => {
@@ -127,7 +79,7 @@ export default function Analyser(props: AnalyserProps) {
           headers: res.headers,
           data: res.data,
         };
-        setLectures(result.data);
+        setUnfinishedLectures(result.data);
       },
       onError: (err: any) => {
         notificationApi['error']({
@@ -180,7 +132,7 @@ export default function Analyser(props: AnalyserProps) {
 
   useEffect(() => {
     fetchLecture();
-    fetchLectures();
+    fetchUnfinishedLectures();
   }, [id, language]);
 
   useEffect(() => {
@@ -193,7 +145,7 @@ export default function Analyser(props: AnalyserProps) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchLectures();
+      fetchUnfinishedLectures();
     }, UPDATE_QUEUE_INTERVAL);
 
     return () => clearInterval(interval);
@@ -360,7 +312,7 @@ export default function Analyser(props: AnalyserProps) {
       }
 
       <Row gutter={[20, 20]}>
-        <Col sm={24} md={12}>
+        <Col sm={24} md={20}>
           <Space direction='vertical' size='large'>
             {lecture.analysis?.state !== 'ready' && lecture.analysis?.state !== 'failure' &&
               <Row>
@@ -370,125 +322,40 @@ export default function Analyser(props: AnalyserProps) {
                 </Col>
               </Row>
             }
-            <Row gutter={[20, 20]} justify='center' align='middle'>
+            <Row gutter={[20, 20]} justify='start' align='top'>
               <Col sm={24} md={24} lg={12}>
                 <Preview lecture={lecture}></Preview>
               </Col>
               <Col sm={24} md={24} lg={12}>
-                <Row justify='center' align='middle'>
-                  <Progress
-                    type='circle'
-                    percent={lecture.analysis?.overall_progress}
-                    className={styles.circle} />
-                </Row>
-                <Row justify='center' align='middle'>
-                  <Col>
-                    <h1>Lecture progress</h1>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-            {
-              lecture.analysis !== null &&
-              lecture.analysis?.last_message !== null &&
-              lecture.analysis?.state !== 'ready' &&
-              <Row gutter={[20, 10]}>
-                <Col>
-                  <Tag className={styles.tag} icon={<ClockCircleOutlined />} color='#108ee9'>
-                    {prettyTimeElapsedString(new Date(lecture.analysis?.last_message?.timestamp!))}
-                  </Tag>
-                  <Alert
-                    message={
-                      <>
-                        <Space direction='horizontal' size='small'>
-                          <strong>{lecture.analysis?.last_message?.title}</strong>
-                          <span>{lecture.analysis?.last_message?.body}</span>
-                        </Space>
-                      </>
-                    }
-                    type='info'
-                    showIcon
-                  />
-                </Col>
-              </Row>
-            }
-            <Row gutter={[20, 10]}>
-              <Col span={24}>
-                Downloading video
-                <Progress
-                  percent={lecture.analysis?.mp4_progress}
-                  showInfo={lecture.analysis?.mp4_progress != 0} />
-
-                Extracting audio
-                <Progress
-                  percent={lecture.analysis?.mp3_progress}
-                  showInfo={lecture.analysis?.mp3_progress != 0} />
-
-                Transcribing lecture
-                <Progress
-                  percent={lecture.analysis?.transcript_progress}
-                  showInfo={lecture.analysis?.transcript_progress != 0} />
-
-                Generating summary
-                <Progress
-                  percent={lecture.analysis?.summary_progress}
-                  showInfo={lecture.analysis?.summary_progress != 0} />
+                <CourseSelector lecture={lecture} onLectureUpdated={lecture => setLecture(lecture)} />
               </Col>
             </Row>
 
-            <Space direction='vertical' size='small'>
-              <Row gutter={[20, 10]}>
-                {lecture.length !== 0 &&
-                  <Col>
-                    <Card size='small'>
-                      <Statistic
-                        title='Length'
-                        value={prettyLengthString(lecture.length!)}
-                        prefix={<ClockCircleOutlined />}
-                      />
-                    </Card>
-                  </Col>
-                }
-                {lecture.words !== 0 &&
-                  <Col>
-                    <Card size='small'>
-                      <Statistic
-                        title='Number of words'
-                        value={lecture.words!}
-                        suffix='words'
-                        prefix={<NumberOutlined />}
-                      />
-                    </Card>
-                  </Col>
-                }
-                <Col>
-                  <Card size='small'>
-                    <Statistic
-                      title='Language'
-                      value={prettyLanguageString(lecture.language!)}
-                      prefix={<AudioOutlined />}
+            <Row>
+              <Col xs={24} sm={17}>
+                <LectureProgress lecture={lecture} />
+              </Col>
+              {unfinishedLectures.length - 1 > 0 &&
+                <>
+                  <Col xs={0} sm={1}></Col>
+                  <Col xs={24} sm={6}>
+                    <Alert
+                      message={
+                        <>
+                          kthGPT has limited capacity. Currently there is
+                          <strong> {unfinishedLectures.length - 1} </strong>
+                          other lectures being analyzed. view the progress
+                          <Link href='/queue' target='_blank'><strong> here </strong></Link>
+                        </>
+                      }
+                      type='info'
+                      showIcon
                     />
-                  </Card>
-                </Col>
-              </Row>
-            </Space>
+                  </Col>
+                </>
+              }
+            </Row>
           </Space>
-        </Col>
-
-        <Col sm={24} md={12}>
-          <Card title='Current Queue' className={styles.queue_container}>
-            <div className={styles.queue}>
-              {lectures.map(lecture =>
-                <div style={{width: '95%'}} key={lecture.public_id}>
-                  <span>{lecture.content_link}</span>
-                  <Progress
-                    percent={lecture.overall_progress!}
-                    className={styles.previous_lecture}
-                    strokeColor='#aaa' />
-                </div>
-              )}
-            </div>
-          </Card>
         </Col>
       </Row>
 

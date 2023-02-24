@@ -34,8 +34,8 @@ export DOCKER_DEFAULT_PLATFORM=linux/amd64
 # Start the application
 docker-compose up
 
-# Seed the database
-docker exec -it api sh -c "create_db_schema"
+# Download the course list
+docker exec -it api sh -c "fetch_kth_courses"
 ```
 
 The application should now be available on [http://localhost:1337](http://localhost:1337).
@@ -81,10 +81,17 @@ Start the redis server (used as backend for the job server).
 docker run --name redis -d -p 6379:6379 redis redis-server --requirepass redis
 ```
 
+Start the OpenSearch index.
+
+```bash
+docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" --name opensearch -d opensearchproject/opensearch:latest
+```
+
 Start a queue worker.
 
 ```bash
-rq worker --with-scheduler --url='redis://:redis@localhost:6379' default download extract transcribe summarise monitoring approval gpt
+rq worker --with-scheduler --url='redis://:redis@localhost:6379' default download extract transcribe summarise monitoring approval metadata
+rq worker --with-scheduler --url='redis://:redis@localhost:6379' gpt # gpt queue must run on at least one separate worker
 ```
 
 Start the web server.

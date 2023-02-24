@@ -1,6 +1,19 @@
 version: "3.8"
 
 services:
+  init_db:
+    image: kthgpt_main
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - db
+    volumes:
+      - shared:/shared
+    command: create_db_schema && migrate_up
+
   api:
     image: kthgpt_main
     build:
@@ -37,6 +50,14 @@ services:
     volumes:
       - queue:/data
 
+  search:
+    image: opensearchproject/opensearch:latest
+    restart: always
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+
   queue_worker_gpt:
     image: kthgpt_main
     build:
@@ -67,7 +88,7 @@ services:
       - db
       - queue
       - api
-    command: rq worker --with-scheduler --url="redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}" default download extract transcribe summarise monitoring approval
+    command: rq worker --with-scheduler --url="redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}" default download extract transcribe summarise monitoring approval metadata
     deploy:
       replicas: 2
     volumes:

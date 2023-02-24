@@ -4,9 +4,19 @@ from pydantic import BaseModel
 from datetime import datetime
 import random as rand
 
-from db.crud import get_all_lectures, get_lecture_by_public_id_and_language
 from db.models import Lecture, Analysis
 from db import get_db
+from db.crud import (
+    create_relation_between_lecture_and_course_group,
+    find_relation_between_lecture_and_course_group,
+    create_relation_between_lecture_and_course,
+    find_relation_between_lecture_and_course,
+    get_lecture_by_public_id_and_language,
+    delete_lecture_course_relation,
+    get_unfinished_lectures,
+    find_course_code,
+    get_all_lectures,
+)
 
 router = APIRouter()
 
@@ -31,9 +41,17 @@ class AnalysisOutputModel(BaseModel):
     overall_progress: int
 
 
+class CourseOutputModel(BaseModel):
+    course_code: str
+    display_name: str
+
+
 class LectureOutputModel(BaseModel):
     public_id: str
     language: str
+    created_at: str
+    title: Union[str, None] = None
+    date: Union[str, None] = None
     approved: Union[bool, None] = None
     source: str
     words: int
@@ -43,24 +61,49 @@ class LectureOutputModel(BaseModel):
     summary_uri: Union[str, None] = None
     content_link: Union[str, None] = None
     analysis: Union[AnalysisOutputModel, None] = None
+    courses: List[CourseOutputModel]
+    courses_can_change: bool
 
 
 class LectureSummaryOutputModel(BaseModel):
     public_id: str
     language: str
+    source: str
+    created_at: Union[str, None] = None
+    title: Union[str, None] = None
+    date: Union[str, None] = None
     state: Union[str, None] = None
+    frozen: Union[bool, None] = None
     content_link: Union[str, None] = None
-    overall_progress: int
+    preview_uri: Union[str, None] = None
+    overall_progress: Union[int, None] = None
 
 
 @router.get('/lectures', dependencies=[Depends(get_db)])
-def get_all(summary: Union[bool, None] = None, random: Union[bool, None] = None) -> List[Union[LectureOutputModel, LectureSummaryOutputModel]]:
-    lectures = get_all_lectures()
+def get_all(
+    summary: Union[bool, None] = None,
+    only_unfinished: Union[bool, None] = None,
+    include_denied: Union[bool, None] = False,
+    include_failed: Union[bool, None] = False,
+    random: Union[bool, None] = None,
+) -> List[Union[LectureOutputModel, LectureSummaryOutputModel]]:
+    if only_unfinished:
+        lectures = get_unfinished_lectures()
+    else:
+        lectures = get_all_lectures()
 
     out = []
     for lecture in lectures:
         if random and lecture.get_last_analysis().state != Analysis.State.READY:
             continue
+
+        if lecture.get_last_analysis().state == Analysis.State.DENIED:
+            if not include_denied:
+                continue
+
+        if lecture.get_last_analysis().state == Analysis.State.FAILURE:
+            if not include_failed:
+                continue
 
         if summary:
             out.append(lecture.to_summary_dict())
@@ -131,3 +174,69 @@ def get_transcript(public_id: str, language: str):
         content=lecture.summary_text(),
         media_type='text/plain'
     )
+
+
+class PostCourseInputModel(BaseModel):
+    course_code: str
+
+
+@router.post('/lectures/{public_id}/{language}/course', dependencies=[Depends(get_db)])
+def add_course_to_lecture(public_id: str, language: str, input_data: PostCourseInputModel) -> LectureOutputModel:
+    lecture = get_lecture_by_public_id_and_language(public_id, language)
+    if lecture is None:
+        raise HTTPException(status_code=404)
+
+    if not lecture.courses_can_be_changed():
+        raise HTTPException(status_code=400, detail='A lectures courses can only be changed within the first day of being added')
+
+    code = input_data.course_code
+
+    course = find_course_code(code)
+    if course is None:
+        raise HTTPException(status_code=400, detail='invalid course code')
+
+    if lecture.has_course(code):
+        return lecture.to_dict()
+
+    limit = 10
+    if len(lecture.courses()) >= limit:
+        raise HTTPException(status_code=400, detail=f'Too many courses. A lecture cannot have more than {limit} courses.')
+
+    if course.source == course.Source.COURSE_GROUP:
+        create_relation_between_lecture_and_course_group(lecture.id, course.course_group_id)
+    elif course.source == course.Source.COURSE:
+        create_relation_between_lecture_and_course(lecture.id, course.course_id)
+
+    lecture.reindex()
+    course.reindex()
+
+    return lecture.to_dict()
+
+
+@router.delete('/lectures/{public_id}/{language}/course/{course_code}', dependencies=[Depends(get_db)])
+def add_course_to_lecture(public_id: str, language: str, course_code: str) -> LectureOutputModel:
+    lecture = get_lecture_by_public_id_and_language(public_id, language)
+    if lecture is None:
+        raise HTTPException(status_code=404)
+
+    if not lecture.courses_can_be_changed():
+        raise HTTPException(status_code=400, detail='A lectures courses can only be changed within the first day of being added')
+
+    course = find_course_code(course_code)
+    if course is None:
+        raise HTTPException(status_code=400, detail='invalid course code')
+
+    if not lecture.has_course(course_code):
+        raise HTTPException(status_code=404)
+
+    if course.source == course.Source.COURSE_GROUP:
+        relation = find_relation_between_lecture_and_course_group(lecture.id, course.course_group_id)
+    elif course.source == course.Source.COURSE:
+        relation = find_relation_between_lecture_and_course(lecture.id, course.course_id)
+
+    delete_lecture_course_relation(relation.id)
+
+    lecture.reindex()
+    course.reindex()
+
+    return lecture.to_dict()

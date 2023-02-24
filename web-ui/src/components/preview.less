@@ -7,11 +7,81 @@
   }
 }
 
+.compact {
+  width: 100%;
+  margin-left: 10px;
+  padding: 0;
+  overflow: hidden;
+
+  > div {
+    padding: 0 !important;
+  }
+
+  * .image{
+    height: 80px;
+    overflow: hidden;
+    * img {
+      height: 80px;
+      width: auto;
+    }
+    border-right: 3px #ddd solid;
+  }
+
+  * .logo {
+    height: 18px !important;
+    border-radius: 3px;
+  }
+
+  * .body {
+    padding: 5px;
+  }
+
+  * .title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+
+.stat * h3 {
+  margin: 0;
+  padding: 0;
+}
+
 .language {
   color: black;
+}
+
+.length {
+  color: black;
+}
+
+.words {
+  color: black;
+}
+
+.course {
+  color: black;
+  min-width: 0px !important;
 }
 
 .flag {
   width: 100% !important;
   height: 50px;
+  border-radius: 3px;
+}
+
+.meta_container {
+  width: 100%;
+}
+
+.meta {
+  min-width: 150px;
+  float: left;
+  display: block;
+  margin-right: 20px;
+  margin-top: 5px;
 }

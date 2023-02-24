@@ -1,6 +1,7 @@
+from datetime import datetime, timedelta
 import peewee
+import pytz
 import json
-
 
 from .analysis import Analysis
 from tools.files.paths import (
@@ -10,8 +11,11 @@ from tools.files.paths import (
     writable_mp4_filepath,
     writable_mp3_filepath,
 )
-from db.models.url import URL
 from .base import Base
+from db.crud import (
+    find_all_courses_relations_for_lecture_id,
+    find_all_courses_for_lecture_id,
+)
 
 
 class Lecture(Base):
@@ -21,6 +25,8 @@ class Lecture(Base):
     source = peewee.CharField(null=False, default='kth')
     length = peewee.IntegerField(null=False, default=0)
     words = peewee.IntegerField(null=False, default=0)
+    title = peewee.CharField(null=True)
+    date = peewee.TimestampField(null=True)
     img_preview = peewee.CharField(null=True)
     mp4_filepath = peewee.CharField(null=True)
     mp3_filepath = peewee.CharField(null=True)
@@ -34,6 +40,19 @@ class Lecture(Base):
     class Language:
         ENGLISH = 'en'
         SWEDISH = 'sv'
+
+    def save(self, *args, **kwargs):
+        self.reindex()
+        return super(Lecture, self).save(*args, **kwargs)
+
+    def reindex(self):
+        if self.id is not None:
+            a = self.get_last_analysis()
+            if a is not None:
+                if a.state == Analysis.State.READY:
+                    from jobs import get_metadata_queue, index_lecture
+                    q = next(get_metadata_queue())
+                    q.enqueue(index_lecture.job, self.public_id, self.language)
 
     def content_link(self):
         if self.source == self.Source.KTH:
@@ -103,30 +122,111 @@ class Lecture(Base):
                 .order_by(Analysis.modified_at.desc())
                 .first())
 
+    def courses(self):
+        out = []
+
+        courses = find_all_courses_for_lecture_id(self.id)
+        for course in courses:
+            out.append(course.to_small_dict())
+
+        return out
+
+    def has_course(self, course_code: str):
+        for course in self.courses():
+            if course['course_code'] == course_code:
+                return True
+        return False
+
+    def courses_can_be_changed(self) -> bool:
+        # If a lecture hasn't got any courses, they can always be added
+        if len(self.courses()) == 0:
+            return True
+
+        relations = find_all_courses_relations_for_lecture_id(self.id)
+        oldest_relation = None
+        for relation in relations:
+            if oldest_relation is None:
+                oldest_relation = relation.created_at
+                continue
+
+            if relation.created_at < oldest_relation:
+                oldest_relation = relation.created_at
+
+        now = datetime.utcnow()
+
+        # If a lecture has courses, and they where added 10 minutes ago
+        # they can be changed. So an old lecture can have courses added
+        relation_expires_at = oldest_relation + timedelta(minutes=10)
+        if now < relation_expires_at:
+            return True
+
+        # otherwise a lectures courses cannot be changed after 1 day
+        expires_at = self.created_at + timedelta(days=1)
+        return now < expires_at
+
     def refresh(self):
         update = Lecture.get(self.id)
         self.public_id = update.public_id
         self.language = update.language
         self.length = update.length
         self.words = update.words
+        self.title = update.title
+        self.date = update.date
         self.img_preview = update.img_preview
         self.mp4_filepath = update.mp4_filepath
         self.mp3_filepath = update.mp3_filepath
         self.transcript_filepath = update.transcript_filepath
         self.summary_filepath = update.summary_filepath
 
+    def to_doc(self):
+        course_codes = []
+        for course in self.courses():
+            course_codes.append(course['course_code'])
+
+        return {
+            'public_id': self.public_id,
+            'language': self.language,
+            'approved': self.approved,
+            'source': self.source,
+            'words': self.words,
+            'date': self.date,
+            'length': self.length,
+            'title': self.title,
+            'preview_uri': self.preview_uri(),
+            'content_link': self.content_link(),
+            'courses': course_codes,
+            'no_course': len(course_codes) == 0
+        }
+
     def to_summary_dict(self):
         a = self.get_last_analysis()
         if a is not None:
             state = a.state
+            frozen = a.seems_to_have_crashed()
             overall_progress = a.overall_progress()
         else:
             state = None
+            frozen = False
             overall_progress = 0
+
+        date = self.date
+        if date is not None:
+            tz = pytz.timezone('UTC')
+            date = tz.localize(self.date, is_dst=None)
+            date = date.isoformat()
+
+        tz = pytz.timezone('UTC')
+        created_at = tz.localize(self.created_at, is_dst=None)
+
         return {
             'public_id': self.public_id,
             'language': self.language,
+            'source': self.source,
+            'created_at': created_at.isoformat(),
+            'title': self.title,
+            'date': date,
             'state': state,
+            'frozen': frozen,
             'content_link': self.content_link(),
             'overall_progress': overall_progress,
         }
@@ -138,16 +238,30 @@ class Lecture(Base):
         else:
             analysis = None
 
+        date = self.date
+        if date is not None:
+            tz = pytz.timezone('UTC')
+            date = tz.localize(self.date, is_dst=None)
+            date = date.isoformat()
+
+        tz = pytz.timezone('UTC')
+        created_at = tz.localize(self.created_at, is_dst=None)
+
         return {
             'public_id': self.public_id,
             'language': self.language,
+            'created_at': created_at.isoformat(),
             'approved': self.approved,
             'source': self.source,
             'words': self.words,
             'length': self.length,
+            'title': self.title,
+            'date': date,
             'preview_uri': self.preview_uri(),
             'transcript_uri': self.transcript_uri(),
             'summary_uri': self.summary_uri(),
             'content_link': self.content_link(),
             'analysis': analysis,
+            'courses': self.courses(),
+            'courses_can_change': self.courses_can_be_changed(),
         }

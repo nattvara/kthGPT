@@ -28,7 +28,7 @@ class OutputModel(BaseModel):
 
 
 @router.post('/url/kth', dependencies=[Depends(get_db)])
-def parse_url(
+def parse_kth_url(
     input_data: InputModel,
 ) -> OutputModel:
     if input_data.url.strip() == '':
@@ -103,7 +103,7 @@ def parse_url(
 
 
 @router.post('/url/youtube', dependencies=[Depends(get_db)])
-def parse_url(
+def parse_youtube_url(
     input_data: InputModel,
 ) -> OutputModel:
     if input_data.url.strip() == '':

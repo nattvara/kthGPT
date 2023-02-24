@@ -3,11 +3,18 @@ from datetime import datetime, timedelta
 from logging.config import dictConfig
 from fastapi import FastAPI
 
-from api.routers import index, urls, lectures, query
 from config.logger import LogConfig, log
 from jobs import get_monitoring_queue
 from config.settings import settings
 import jobs.save_queue_info
+from api.routers import (
+    index,
+    urls,
+    lectures,
+    query,
+    search,
+    stats,
+)
 
 
 def main():
@@ -27,6 +34,8 @@ def main():
     app.include_router(urls.router)
     app.include_router(lectures.router)
     app.include_router(query.router)
+    app.include_router(search.router)
+    app.include_router(stats.router)
 
     # Reset the monitoring queue and restart the workers
     queue = next(get_monitoring_queue())

@@ -13,6 +13,7 @@ from jobs import (
     transcribe_audio,
     summarise_transcript,
     classify_video,
+    fetch_metadata,
 )
 
 
@@ -24,6 +25,7 @@ SUMMARISE = 'summarise'
 MONITORING = 'monitoring'
 APPROVAL = 'approval'
 GPT = 'gpt'
+METADATA = 'metadata'
 
 
 def get_default_queue() -> Queue:
@@ -89,6 +91,15 @@ def get_approval_queue() -> Queue:
         queue.connection.close()
 
 
+def get_metadata_queue() -> Queue:
+    try:
+        conn = get_connection()
+        queue = Queue(METADATA, connection=conn)
+        yield queue
+    finally:
+        queue.connection.close()
+
+
 def get_connection() -> Queue:
     if settings.REDIS_PASSWORD is not None:
         return Redis(
@@ -110,6 +121,7 @@ def schedule_analysis_of_lecture(
     queue_extract: Queue = get_extract_queue,
     queue_transcribe: Queue = get_transcribe_queue,
     queue_summarise: Queue = get_summarise_queue,
+    queue_metadata: Queue = get_metadata_queue,
 ):
     if lecture.approved is False:
         log().warning(f'Lecture is not approved, canceling analysis {lecture.public_id}')
@@ -126,7 +138,8 @@ def schedule_analysis_of_lecture(
 
     save_message_for_analysis(analysis, 'Analysis scheduled', 'Waiting for a worker to pick it up.')
 
-    next(queue_default()).enqueue(capture_preview.job, lecture.public_id, lecture.language, job_timeout=capture_preview.TIMEOUT)
+    next(get_metadata_queue()).enqueue(capture_preview.job, lecture.public_id, lecture.language, job_timeout=capture_preview.TIMEOUT)
+    next(get_metadata_queue()).enqueue(fetch_metadata.job, lecture.public_id, lecture.language, job_timeout=fetch_metadata.TIMEOUT)
     job_1 = next(queue_download()).enqueue(download_lecture.job, lecture.public_id, lecture.language, job_timeout=download_lecture.TIMEOUT)
     job_2 = next(queue_extract()).enqueue(extract_audio.job, lecture.public_id, lecture.language, job_timeout=extract_audio.TIMEOUT, depends_on=job_1)
     job_3 = next(queue_transcribe()).enqueue(transcribe_audio.job, lecture.public_id, lecture.language, job_timeout=transcribe_audio.TIMEOUT, depends_on=job_2)

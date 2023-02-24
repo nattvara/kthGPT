@@ -9,8 +9,6 @@ from db.models import Lecture
 def download_mp3(url: str, output_file: str) -> str:
     log('rq.worker').info(f'downloading {url} to {output_file}')
 
-    print(url, output_file)
-
     ydl_opts = {
         'format': 'bestaudio/best',
         'postprocessors': [{

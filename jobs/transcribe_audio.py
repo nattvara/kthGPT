@@ -9,8 +9,8 @@ from db.models import Lecture, Analysis
 import jobs.transcribe_audio
 
 
-# 2hr timeout
-TIMEOUT = 2 * 60 * 60
+# 5hr timeout
+TIMEOUT = 5 * 60 * 60
 
 
 def job(lecture_id: str, language: str):

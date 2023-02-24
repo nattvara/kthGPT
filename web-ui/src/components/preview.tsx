@@ -10,15 +10,109 @@ import {
 import { Lecture } from '@/components/lecture';
 import { makeUrl } from '@/http';
 import { EVENT_GOTO_LECTURE, emitEvent } from '@/matomo';
+import {
+  AudioOutlined,
+  BookOutlined,
+  ClockCircleOutlined,
+  NumberOutlined,
+} from '@ant-design/icons';
 import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';
-import { AudioOutlined } from '@ant-design/icons';
+import kthLogo from '@/assets/kth.svg';
+import youtubeLogo from '@/assets/youtube.svg';
+
+const { Meta } = Card;
+
+const prettyLengthString = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+
+  return `${hours}h ${minutes}min`;
+}
+
+
+interface PreviewCompactProps {
+  lecture: Lecture
+  onClick: Function
+}
+
+
+export function PreviewCompact(props: PreviewCompactProps) {
+  const { lecture, onClick } = props;
+
+  let flagIcon = '';
+  if (lecture.language == 'sv') {
+    flagIcon = svFlag;
+  }
+  else if (lecture.language == 'en') {
+    flagIcon = enFlag;
+  }
+
+  let dateString = '';
+  if (lecture.date !== null) {
+    dateString = new Date(lecture.date).toISOString().split('T')[0];
+  }
+
+  let icon = '';
+  if (lecture.source === 'youtube') {
+    icon = youtubeLogo;
+  }
+  else if (lecture.source === 'kth') {
+    icon = kthLogo;
+  }
+
+  return (
+    <Card
+      className={styles.compact}
+      hoverable
+      onClick={() => onClick()}
+    >
+      <Row>
+        <Col span={8}>
+          <div className={styles.image}>
+            <Spin tip="Loading..." spinning={lecture.preview_uri === null}>
+              <Image
+                preview={false}
+                src={lecture.preview_uri === null ? '' : makeUrl(lecture.preview_uri!)} />
+            </Spin>
+          </div>
+        </Col>
+        <Col span={16} className={styles.body}>
+          <Row className={styles.title}><strong>{lecture.title}</strong></Row>
+          <Row align='middle' justify='start'>
+            <Space direction='horizontal'>
+              <Col>
+                <strong>{dateString}</strong>
+              </Col>
+              <Col>
+                <Image
+                  src={flagIcon}
+                  height={18}
+                  className={styles.flag}
+                  preview={false}
+                  />
+              </Col>
+              <Col>
+                <Image
+                  src={icon}
+                  height={18}
+                  className={styles.logo}
+                  preview={false}
+                />
+              </Col>
+            </Space>
+          </Row>
+        </Col>
+      </Row>
+    </Card>
+  );
+}
+
 
 interface PreviewProps {
   lecture: Lecture
 }
 
-const { Meta } = Card;
 
 export default function Preview(props: PreviewProps) {
   const { lecture } = props;
@@ -34,6 +128,11 @@ export default function Preview(props: PreviewProps) {
   }
   else if (lecture.language == 'en') {
     flagIcon = enFlag;
+  }
+
+  let dateString = '';
+  if (lecture.date !== null) {
+    dateString = new Date(lecture.date).toISOString().split('T')[0];
   }
 
   return (
@@ -52,25 +151,75 @@ export default function Preview(props: PreviewProps) {
           </>
         }>
       <>
-        <Meta title='Lecture' description={<>
+        <Meta title={
+          lecture.title === null ? '' : lecture.title
+        } description={<>
+          {lecture.date !== null &&
+            <Row>
+              <strong>{dateString}</strong>
+            </Row>
+          }
           <Row>
             {lecture.content_link}
           </Row>
-          <Row justify='start' align='middle'>
-            <Space direction='horizontal'>
-              <Col>
-                <h3 className={styles.language}><AudioOutlined /> Language</h3>
-              </Col>
-              <Col>
-                <Image
-                  src={flagIcon}
-                  height={30}
-                  className={styles.flag}
-                  preview={false}
-                  />
-              </Col>
-            </Space>
-          </Row>
+          <div className={styles.meta_container}>
+            <div className={styles.meta}>
+              <Row justify='start' align='middle'>
+                <Space direction='horizontal'>
+                  <Col>
+                    <h3 className={styles.language}><AudioOutlined /> Language</h3>
+                  </Col>
+                  <Col>
+                    <Image
+                      src={flagIcon}
+                      height={20}
+                      className={styles.flag}
+                      preview={false}
+                      />
+                  </Col>
+                </Space>
+              </Row>
+            </div>
+            {lecture.length !== null && lecture.length !== 0 &&
+              <div className={styles.meta}>
+                <Row justify='start' align='middle'>
+                  <Space direction='horizontal'>
+                    <Col>
+                      <h3 className={styles.length}><ClockCircleOutlined /> Length</h3>
+                    </Col>
+                    <Col>
+                      {prettyLengthString(lecture.length!)}
+                    </Col>
+                  </Space>
+                </Row>
+              </div>
+            }
+            {lecture.words !== null && lecture.words !== 0 &&
+              <div className={styles.meta}>
+                <Row justify='start' align='middle' className={styles.stat}>
+                  <Space direction='horizontal'>
+                    <Col>
+                      <h3 className={styles.words}><NumberOutlined /> Words</h3>
+                    </Col>
+                    <Col>
+                      {lecture.words!.toLocaleString('sv')}
+                    </Col>
+                  </Space>
+                </Row>
+              </div>
+            }
+            {lecture.courses && lecture.courses.map(course =>
+              <div key={course.course_code} className={`${styles.meta} ${styles.course}`}>
+                <Row justify='start' align='middle' className={styles.stat}>
+                  <Space direction='horizontal'>
+                    <Col>
+                      <h3 className={styles.course}><BookOutlined /> {course.course_code}</h3>
+                    </Col>
+                  </Space>
+                </Row>
+              </div>
+            )}
+        </div>
         </>} />
       </>
     </Card>
