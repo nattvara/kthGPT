@@ -113,6 +113,7 @@ export default function DeniedTable() {
         for (let i = 0; i < res.data.length; i++) {
           const lecture = res.data[i];
           lecture.combined_public_id_and_lang = `${lecture.public_id}/${lecture.language}`;
+          lecture['key'] = lecture.combined_public_id_and_lang;
         }
         setLectures(result.data);
       },
