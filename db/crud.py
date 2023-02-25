@@ -63,24 +63,6 @@ def get_unfinished_lectures():
     return out
 
 
-# Analysis
-def get_unfinished_analysis():
-    from db.models.analysis import Analysis
-    analysis = Analysis.filter(
-        Analysis.state != Analysis.State.READY
-    ).filter(
-        Analysis.state != Analysis.State.DENIED
-    ).order_by(
-        Analysis.created_at.desc()
-    )
-
-    out = []
-    for a in analysis:
-        out.append(a)
-
-    return out
-
-
 # Query
 def get_most_recent_query_by_sha(lecture, sha: str) :
     from db.models.query import Query
