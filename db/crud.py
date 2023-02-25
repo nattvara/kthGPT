@@ -36,6 +36,18 @@ def get_all_ready_lectures():
     return out
 
 
+def get_all_denied_lectures():
+    from db.models.lecture import Analysis
+    lectures = get_all_lectures()
+
+    out = []
+    for lecture in lectures:
+        if lecture.get_last_analysis().state == Analysis.State.DENIED:
+            out.append(lecture)
+
+    return out
+
+
 def get_unfinished_lectures():
     from db.models.lecture import Lecture, Analysis
     lectures = get_all_lectures()
