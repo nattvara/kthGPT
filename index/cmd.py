@@ -13,6 +13,7 @@ def index_all_courses():
 
     courses = get_all_courses()
     courses_index.clean()
+    courses_index.create()
     with tqdm(total=len(courses)) as pbar:
         for course in courses:
             courses_index.index(course)
@@ -24,6 +25,7 @@ def index_all_lectures():
 
     lectures = get_all_ready_lectures()
     lecture_index.clean()
+    lecture_index.create()
     with tqdm(total=len(lectures)) as pbar:
         for lecture in lectures:
             lecture_index.index(lecture)

@@ -40,11 +40,12 @@ def search_course(
         if input_data.limit > 40:
             raise HTTPException(status_code=400, detail='Cannot search for that many courses')
 
+    apply_filter = True
     if input_data.query == '':
         if not unlimited:
             return []
 
-        input_data.query == '*'
+        apply_filter = False
 
     response = courses_index.wildcard_search(
         input_data.query,
@@ -52,6 +53,7 @@ def search_course(
         lecture_count_above_or_equal=lecture_count_above_or_equal,
         unlimited=unlimited,
         sort_by_lecture_count=sort_by_lecture_count,
+        apply_filter=apply_filter,
     )
 
     return response
@@ -67,13 +69,22 @@ def search_lecture(
     input_data: InputModelSearchCourseCode,
 ) -> List[LectureSummaryOutputModel]:
 
+    apply_filters = True
     if input_data.query == '':
-        input_data.query = '*'
+        apply_filters = False
 
     if course_code == 'no_course':
-        response = lecture_index.term_query_no_courses()
+        response = lecture_index.search(
+            input_data.query,
+            no_course=True,
+            apply_filter=False,
+        )
         return response
 
-    response = lecture_index.wildcard_search_course_code(input_data.query, course_code)
+    response = lecture_index.search(
+        input_data.query,
+        course_code,
+        apply_filters,
+    )
 
     return response
