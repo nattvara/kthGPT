@@ -42,7 +42,10 @@ def get_unfinished_lectures():
 
     out = []
     for lecture in lectures:
-        if lecture.get_last_analysis().state != Analysis.State.READY:
+        if lecture.get_last_analysis().state not in [
+            Analysis.State.READY,
+            Analysis.State.DENIED,
+        ]:
             out.append(lecture)
 
     return out
