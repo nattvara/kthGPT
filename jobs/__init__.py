@@ -1,7 +1,7 @@
 from redis import Redis
 from rq import Queue
 
-from db.crud import get_unfinished_analysis, save_message_for_analysis
+from db.crud import get_unfinished_lectures, save_message_for_analysis
 from config.settings import settings
 from db.models.analysis import Analysis
 from db.models.lecture import Lecture
@@ -168,19 +168,12 @@ def analysis_queues_restart(
     queue_transcribe: Queue = get_transcribe_queue,
     queue_summarise: Queue = get_summarise_queue,
 ):
-    analysis = get_unfinished_analysis()
-
     next(queue_download()).empty()
     next(queue_extract()).empty()
     next(queue_transcribe()).empty()
     next(queue_summarise()).empty()
 
-    lectures = []
-
-    for a in analysis:
-        if a.lecture_id not in lectures:
-            lectures.append(a.lecture_id)
-
-    for lecture_id in lectures:
-        lecture = Lecture.get_by_id(lecture_id)
+    lectures = get_unfinished_lectures()
+    for lecture in lectures:
+        print(f'scheduling re-analysis of lecture {lecture.id}')
         schedule_analysis_of_lecture(lecture)
