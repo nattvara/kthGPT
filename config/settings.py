@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     NAME: str
     STORAGE_DIRECTORY: str
     OPENAI_API_KEY: str
+    WHISPER_TRANSCRIPTION_DEVICE: str
 
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
 

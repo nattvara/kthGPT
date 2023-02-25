@@ -8,6 +8,8 @@ import ffmpeg
 import re
 import os
 
+from config.settings import settings
+
 
 def save_text(
     mp3_file: str,
@@ -45,6 +47,7 @@ def save_text(
         f'--model={model}',
         f'--language={lang}',
         f'--output_dir={output_dir}',
+        f'--device={settings.WHISPER_TRANSCRIPTION_DEVICE}',
         '--verbose=True',
     ]
 
