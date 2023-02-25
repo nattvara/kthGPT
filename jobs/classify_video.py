@@ -39,6 +39,7 @@ def job(lecture_id: str, language: str):
     analysis = lecture.get_last_analysis()
     analysis.state = Analysis.State.CLASSIFYING
     analysis.save()
+    save_message_for_analysis(analysis, 'Classifying video', 'Trying to classify if the video is relevant for kthGPT')
 
     temp_path = tempfile.NamedTemporaryFile(mode='w+', delete=False)
     temp_path_mp3 = download_mp3(lecture.content_link(), temp_path.name)
