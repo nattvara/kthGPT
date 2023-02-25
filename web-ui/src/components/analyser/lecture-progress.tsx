@@ -62,7 +62,7 @@ export default function LectureProgress(props: LectureProgressProps) {
       <Collapse
         className={styles.collapsible}
         collapsible='header'
-        defaultActiveKey={['0']}
+        defaultActiveKey={[]}
         expandIcon={() => <></>}
       >
         <Panel
@@ -76,6 +76,7 @@ export default function LectureProgress(props: LectureProgressProps) {
               <Row>
                 <Progress
                   className={styles.overall}
+                  showInfo={true}
                   percent={lecture.analysis?.overall_progress} />
               </Row>
               <Row gutter={[20, 10]}>
