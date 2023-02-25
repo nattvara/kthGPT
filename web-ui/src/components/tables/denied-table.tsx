@@ -1,23 +1,23 @@
 import {
-  Typography,
   Table,
   Image,
+  Typography,
 } from 'antd';
 import { notification } from 'antd';
 import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import apiClient from '@/http';
 import { Lecture } from '@/components/lecture';
-import styles from './queue-table.less';
+import styles from './denied-table.less';
 import { ColumnsType } from 'antd/es/table';
 import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';
 import kthLogo from '@/assets/kth.svg';
 import youtubeLogo from '@/assets/youtube.svg';
 
-const UPDATE_INTERVAL = 1000;
-
 const { Link } = Typography;
+
+const UPDATE_INTERVAL = 5000;
 
 const columns: ColumnsType<Lecture> = [
   {
@@ -46,10 +46,10 @@ const columns: ColumnsType<Lecture> = [
     dataIndex: 'title',
   },
   {
-    title: 'Analysis',
-    dataIndex: 'combined_public_id_and_lang',
-    render: (combined_public_id_and_lang: string) => <>
-      <Link href={`/analyse/lectures/${combined_public_id_and_lang}`} type='dashed'>View Progress</Link>
+    title: 'Content Link',
+    dataIndex: 'content_link',
+    render: (content_link: string) => <>
+      <Link href={content_link} target='_blank'>{content_link}</Link>
     </>,
   },
   {
@@ -93,30 +93,15 @@ const columns: ColumnsType<Lecture> = [
       return <>{titleCase}</>;
     }
   },
-  {
-    title: 'Frozen',
-    dataIndex: 'frozen',
-    render: (isFrozen: boolean) => {
-      if (isFrozen) {
-        return <>Yes</>;
-      }
-      return <>No</>;
-    }
-  },
-  {
-    title: 'Progress',
-    dataIndex: 'overall_progress',
-    render: (val: string) => <>{val}%</>
-  },
 ];
 
-export default function QueueTable() {
+export default function DeniedTable() {
   const [ lectures, setLectures ] = useState<Lecture[]>([]);
   const [ notificationApi, contextHolder ] = notification.useNotification();
 
   const { mutate: fetchLectures } = useMutation(
     async () => {
-      return await apiClient.get(`/lectures?summary=true&only_unfinished=true`);
+      return await apiClient.get(`/lectures?summary=true&only_denied=true`);
     },
     {
       onSuccess: (res: any) => {

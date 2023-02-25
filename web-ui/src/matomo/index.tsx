@@ -10,7 +10,7 @@ export const EVENT_SUBMIT_URL = 'submit url';
 export const EVENT_GOTO_LECTURE = 'goto lecture';
 
 
-export const registerPageLoad = () => {
+export const registerPageLoad = async () => {
   if (!window._paq) return;
 
   const _paq = window._paq || [];
@@ -19,7 +19,7 @@ export const registerPageLoad = () => {
   _paq.push(['trackPageView']);
 };
 
-export const emitEvent = (event: string) => {
+export const emitEvent = async (event: string) => {
   if (!window._paq) return;
 
   var _paq = window._paq || [];

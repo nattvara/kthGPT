@@ -9,7 +9,6 @@ import {
   Typography,
 } from 'antd';
 import {
-  BulbOutlined,
   LeftOutlined,
   RightOutlined,
   VideoCameraOutlined

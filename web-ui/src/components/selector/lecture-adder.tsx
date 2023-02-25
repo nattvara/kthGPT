@@ -13,13 +13,11 @@ import {
   InputRef,
   Form,
   Alert,
+  Grid,
 } from 'antd';
 import {
   BulbOutlined,
-  LeftOutlined,
   PlayCircleOutlined,
-  RightOutlined,
-  VideoCameraOutlined
 } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
@@ -38,6 +36,7 @@ import {
 
 const { Title, Link, Paragraph } = Typography;
 const { Meta } = Card;
+const { useBreakpoint } = Grid;
 
 const SOURCE_KTH = 'kth';
 const SOURCE_YOUTUBE = 'youtube';
@@ -113,6 +112,7 @@ function LanguagePopover(props: LanguagePopoverProps) {
           <Image
               src={enFlag}
               height={50}
+              width={100}
               className={styles.flag}
               preview={false}
               onClick={() => {
@@ -125,6 +125,7 @@ function LanguagePopover(props: LanguagePopoverProps) {
             <Image
               src={svFlag}
               height={50}
+              width={80}
               className={styles.flag}
               preview={false}
               onClick={() => {
@@ -150,6 +151,7 @@ interface UrlPopoverProps {
   setUrl: Function
   url: string
   source: string
+  isOpen: boolean
 }
 
 function UrlPopover(props: UrlPopoverProps) {
@@ -157,13 +159,15 @@ function UrlPopover(props: UrlPopoverProps) {
     dismiss,
     setUrl,
     url,
-    source
+    source,
+    isOpen,
   } = props;
 
   const [ localUrl, setLocalUrl ] = useState<string>('');
-
   const ref = useRef<InputRef>(null);
   const [ form ] = Form.useForm();
+
+  const screens = useBreakpoint();
 
   let placeholder = '';
   if (source === SOURCE_YOUTUBE) {
@@ -180,9 +184,17 @@ function UrlPopover(props: UrlPopoverProps) {
   };
 
   useEffect(() => {
+    if (!isOpen) return;
+
     ref.current?.input?.focus();
+
+    if (screens.lg !== undefined && screens.lg !== true) {
+      setTimeout(() => {
+        ref.current?.input?.scrollIntoView();
+      }, 200);
+    }
     setLocalUrl(url);
-  }, [url]);
+  }, [url, screens, isOpen]);
 
   return (
     <>
@@ -329,9 +341,10 @@ export default function LectureAdder(props: LectureAdderProps) {
                 setUrl={(s: any) => setUrl(s)}
                 url={url}
                 source={source}
+                isOpen={urlOpen}
               />
             }
-            title='Select the spoken language of the lecture'
+            title='Enter the URL to the lecture'
             trigger='hover'
             open={urlOpen}
           >

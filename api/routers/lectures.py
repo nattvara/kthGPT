@@ -13,6 +13,7 @@ from db.crud import (
     find_relation_between_lecture_and_course,
     get_lecture_by_public_id_and_language,
     delete_lecture_course_relation,
+    get_all_denied_lectures,
     get_unfinished_lectures,
     find_course_code,
     get_all_lectures,
@@ -83,12 +84,16 @@ class LectureSummaryOutputModel(BaseModel):
 def get_all(
     summary: Union[bool, None] = None,
     only_unfinished: Union[bool, None] = None,
+    only_denied: Union[bool, None] = None,
     include_denied: Union[bool, None] = False,
     include_failed: Union[bool, None] = False,
     random: Union[bool, None] = None,
 ) -> List[Union[LectureOutputModel, LectureSummaryOutputModel]]:
     if only_unfinished:
         lectures = get_unfinished_lectures()
+    elif only_denied:
+        include_denied = True
+        lectures = get_all_denied_lectures()
     else:
         lectures = get_all_lectures()
 

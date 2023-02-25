@@ -1,16 +1,14 @@
 import Frame from '@/components/main/frame';
-import QueueTable from '@/components/tables/queue-table';
+import DeniedTable from '@/components/tables/denied-table';
 import { registerPageLoad } from '@/matomo';
 import { useEffect } from 'react';
 import {
   Typography,
 } from 'antd';
 
-
 const { Title } = Typography;
 
-
-export default function QueuePage() {
+export default function DeniedPage() {
   useEffect(() => {
     registerPageLoad();
   }, []);
@@ -19,8 +17,8 @@ export default function QueuePage() {
     <>
       <Frame>
         <>
-          <Title level={3}>Current queue of videos for kthGPT to watch</Title>
-          <QueueTable />
+          <Title level={3}>Lectures that where denied by kthGPT</Title>
+          <DeniedTable />
         </>
       </Frame>
     </>

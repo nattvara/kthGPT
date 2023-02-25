@@ -14,6 +14,57 @@ def clean():
     )
 
 
+def create():
+    index_body = {
+        'settings': {
+            'analysis': {
+                'analyzer': {
+                    'course_code_analyzer': {
+                        'tokenizer': 'course_code_tokenizer',
+                        'filter': [
+                            'word_delimiter_graph'
+                        ],
+                    },
+                    'title_analyzer': {
+                        'tokenizer': 'keyword',
+                        'filter': [
+                            'word_delimiter_graph'
+                        ],
+                    },
+                },
+                'tokenizer': {
+                    'course_code_tokenizer': {
+                        'type': 'ngram',
+                        'min_gram': 1,
+                        'max_gram': 2,
+                        'token_chars': [
+                            'letter',
+                            'digit',
+                        ]
+                    }
+                },
+            },
+        },
+        'mappings': {
+            'properties': {
+                'title': {
+                    'type': 'search_as_you_type',
+                    'analyzer': 'title_analyzer',
+                },
+                'courses': {
+                    'type': 'search_as_you_type',
+                    'analyzer': 'course_code_analyzer',
+                },
+            }
+        }
+    }
+    client.indices.create(
+        index=INDEX_NAME,
+        body=index_body,
+        ignore=[400, 404],
+    )
+
+
 def index(lecture: Lecture):
     client.index(
         index=INDEX_NAME,
@@ -23,7 +74,12 @@ def index(lecture: Lecture):
     )
 
 
-def wildcard_search_course_code(search_string: str, course_code: str):
+def search(
+    search_string: str,
+    course_code: Optional[str] = None,
+    apply_filter: Optional[bool] = True,
+    no_course: Optional[bool] = False,
+):
     output_fields = [
         'public_id',
         'language',
@@ -38,73 +94,54 @@ def wildcard_search_course_code(search_string: str, course_code: str):
         'courses',
     ]
 
-    query_string = f"*{'*'.join(search_string.split(' '))}*"
-
     query = {
         'query': {
             'bool': {
-                'must': [
+                'must': [],
+                'should': [
                     {
-                        'match': {
-                            'courses': course_code,
-                        }
-                    }
+                        'multi_match': {
+                            'query': search_string,
+                            'type': 'bool_prefix',
+                        },
+                    },
                 ],
-                'filter': {
-                    'query_string': {
-                        'query': query_string,
-                        'fields': [
-                            'source',
-                            'title',
-                        ]
-                    }
-                }
             }
         },
-        'fields': output_fields,
         'sort': {
             'date': {
                 'order': 'desc',
             },
         },
+        'size': 5000,
+        'fields': output_fields,
+        '_source': False,
     }
 
-    response = client.search(
-        index=INDEX_NAME,
-        body=query,
-    )
+    if course_code is not None:
+        query['query']['bool']['must'].append({
+            'match_phrase': {
+                'courses': course_code,
+            }
+        })
 
-    return clean_response(response, output_fields)
-
-
-def term_query_no_courses():
-    output_fields = [
-        'public_id',
-        'language',
-        'approved',
-        'source',
-        'date',
-        'words',
-        'length',
-        'title',
-        'preview_uri',
-        'content_link',
-    ]
-
-    query = {
-        'query': {
+    if no_course is True:
+        query['query']['bool']['must'].append({
             'term': {
                 'no_course': True,
             }
-        },
-        'fields': output_fields,
-        'size': 5000,
-        'sort': {
-            'date': {
-                'order': 'desc',
+        })
+
+    if apply_filter:
+        query['query']['bool']['filter'] = {
+            'multi_match': {
+                'query': search_string,
+                'type': 'bool_prefix',
+                'fields': [
+                    'title',
+                ]
             },
-        },
-    }
+        }
 
     response = client.search(
         index=INDEX_NAME,
