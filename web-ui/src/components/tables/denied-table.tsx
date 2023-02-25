@@ -1,6 +1,7 @@
 import {
   Table,
   Image,
+  Typography,
 } from 'antd';
 import { notification } from 'antd';
 import { useEffect, useState } from 'react';
@@ -13,6 +14,8 @@ import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';
 import kthLogo from '@/assets/kth.svg';
 import youtubeLogo from '@/assets/youtube.svg';
+
+const { Link } = Typography;
 
 const UPDATE_INTERVAL = 5000;
 
@@ -41,6 +44,13 @@ const columns: ColumnsType<Lecture> = [
   {
     title: 'Title',
     dataIndex: 'title',
+  },
+  {
+    title: 'Content Link',
+    dataIndex: 'content_link',
+    render: (content_link: string) => <>
+      <Link href={content_link} target='_blank'>{content_link}</Link>
+    </>,
   },
   {
     title: 'Language',
