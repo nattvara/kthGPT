@@ -77,6 +77,9 @@ def new_query(input_data: InputModel) -> OutputModel:
         query.response = response
         query.save()
 
+    query.count += 1
+    query.save()
+
     return {
         'response': query.response,
         'cached': cached,
