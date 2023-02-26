@@ -52,10 +52,18 @@ class Lecture(Base):
         if self.id is not None:
             a = self.get_last_analysis()
             if a is not None:
-                if a.state == Analysis.State.READY:
-                    from jobs import get_metadata_queue, index_lecture
-                    q = next(get_metadata_queue())
-                    q.enqueue(index_lecture.job, self.public_id, self.language)
+                if a.state == Analysis.State.DENIED:
+                    return
+                if a.state == Analysis.State.WAITING:
+                    return
+                if a.state == Analysis.State.CLASSIFYING:
+                    return
+                if a.state == Analysis.State.FAILURE:
+                    return
+
+                from jobs import get_metadata_queue, index_lecture
+                q = next(get_metadata_queue())
+                q.enqueue(index_lecture.job, self.public_id, self.language)
 
     def content_link(self):
         if self.source == self.Source.KTH:
