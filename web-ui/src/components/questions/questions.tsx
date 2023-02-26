@@ -52,6 +52,12 @@ const examples = [
     queryStringSv: 'När i föreläsningen berättar föreläsaren om X?',
   },
   {
+    titleEn: 'Where in the course literature can I read more about this?',
+    titleSv: 'Var i kursboken kan jag läsa mer om detta?',
+    queryStringEn: 'Where in the course book "X" can i read more about the topics from this lecture?',
+    queryStringSv: 'Var i kursboken "X" kan jag läsa mer om innehållet från denna föreläsning?',
+  },
+  {
     titleEn: 'Tell me a joke about this lecture',
     titleSv: 'Berätta ett skämt om den här föreläsningen',
     queryStringEn: 'Tell me a joke about the contents covered in this lecture',
