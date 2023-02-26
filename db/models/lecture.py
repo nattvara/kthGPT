@@ -28,6 +28,7 @@ class Lecture(Base):
     title = peewee.CharField(null=True)
     date = peewee.TimestampField(null=True)
     img_preview = peewee.CharField(null=True)
+    img_preview_small = peewee.CharField(null=True)
     mp4_filepath = peewee.CharField(null=True)
     mp3_filepath = peewee.CharField(null=True)
     transcript_filepath = peewee.CharField(null=True)
@@ -64,11 +65,20 @@ class Lecture(Base):
     def preview_filename(self):
         return writable_image_filepath(self.public_id, 'png')
 
+    def preview_small_filename(self):
+        return writable_image_filepath(self.public_id + '-small', 'png')
+
     def preview_uri(self):
         if self.img_preview is None:
             return None
 
         return f'/lectures/{self.public_id}/{self.language}/preview'
+
+    def preview_small_uri(self):
+        if self.img_preview_small is None:
+            return None
+
+        return f'/lectures/{self.public_id}/{self.language}/preview-small'
 
     def transcript_uri(self):
         if self.transcript_filepath is None:
@@ -193,6 +203,7 @@ class Lecture(Base):
             'length': self.length,
             'title': self.title,
             'preview_uri': self.preview_uri(),
+            'preview_small_uri': self.preview_small_uri(),
             'content_link': self.content_link(),
             'courses': course_codes,
             'no_course': len(course_codes) == 0
@@ -258,6 +269,7 @@ class Lecture(Base):
             'title': self.title,
             'date': date,
             'preview_uri': self.preview_uri(),
+            'preview_small_uri': self.preview_small_uri(),
             'transcript_uri': self.transcript_uri(),
             'summary_uri': self.summary_uri(),
             'content_link': self.content_link(),

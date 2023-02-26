@@ -20,11 +20,16 @@ def job(lecture_id: str, language: str):
     logger.info(f'taking photo of {url}')
 
     save_photo(url, lecture)
+    logger.info(f'photo saved at {lecture.preview_filename()}')
+
+    save_photo(url, lecture, small=True)
+    logger.info(f'photo saved at {lecture.preview_small_filename()}')
+
     lecture.refresh()
     lecture.img_preview = lecture.preview_filename()
+    lecture.img_preview_small = lecture.preview_small_filename()
     lecture.save()
 
-    logger.info(f'photo saved at {lecture.preview_filename()}')
 
 
 # Test run the job
@@ -36,6 +41,6 @@ if __name__ == '__main__':
     ))
     queue.enqueue(
         jobs.capture_preview.job,
-        'vJtpKwOKpOM',
-        Lecture.Language.SWEDISH
+        '0_pkrd51s7',
+        Lecture.Language.ENGLISH
     )
