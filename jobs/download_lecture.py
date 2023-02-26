@@ -71,6 +71,8 @@ def job(lecture_id: str, language: str):
             download_mp4_from_kthplay(lecture)
         elif lecture.source == Lecture.Source.YOUTUBE:
             download_mp4_from_youtube(lecture)
+        elif lecture.source == Lecture.Source.KTH_RAW:
+            download_mp4_from_m3u8(lecture.raw_content_link, lecture)
         else:
             raise ValueError(f'unsupported lecture source {lecture.source}')
 
