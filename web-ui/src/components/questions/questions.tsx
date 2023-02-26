@@ -256,7 +256,7 @@ export default function Questions(props: QuestionsProps) {
               </Col>
               <Col>
                 <Button type='default' size='large' onClick={() => history.push('/')}>
-                  <CloseOutlined /> Watch a new lecture
+                  <CloseOutlined /> Another lecture
                 </Button>
               </Col>
 
