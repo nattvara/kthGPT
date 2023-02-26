@@ -4,6 +4,7 @@ from rq import Queue
 import logging
 
 from db.crud import get_lecture_by_public_id_and_language
+from tools.video.img import save_photo_from_video
 from tools.web.camera import save_photo
 from db.models import Lecture
 import jobs.capture_preview
@@ -16,6 +17,16 @@ def job(lecture_id: str, language: str):
     logger = logging.getLogger('rq.worker')
 
     lecture = get_lecture_by_public_id_and_language(lecture_id, language)
+    if lecture.raw_content_link is not None:
+        logger.info(f'content has raw link, using mp4 file')
+        if lecture.mp4_filepath is None:
+            raise ValueError('mp4_filepath was not specified')
+
+        mp4 = lecture.mp4_filepath
+        save_photo_from_video(mp4, lecture.preview_filename())
+        save_photo_from_video(mp4, lecture.preview_small_filename(), True)
+        return
+
     url = lecture.content_link()
     logger.info(f'taking photo of {url}')
 
@@ -41,6 +52,6 @@ if __name__ == '__main__':
     ))
     queue.enqueue(
         jobs.capture_preview.job,
-        '0_pkrd51s7',
-        Lecture.Language.ENGLISH
+        '0_hdz62g82',
+        Lecture.Language.SWEDISH
     )
