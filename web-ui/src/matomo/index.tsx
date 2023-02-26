@@ -7,7 +7,9 @@ export const CATEGORY_QUESTIONS = 'questions';
 
 export const CATEGORY_PREVIEW = 'preview';
 
-export const CATEGORY_ADDER = 'preview';
+export const CATEGORY_ADDER = 'adder';
+
+export const CATEGORY_COURSE_BROWSER = 'course_browser';
 
 export const EVENT_ASKED_QUESTION = 'asked_question';
 

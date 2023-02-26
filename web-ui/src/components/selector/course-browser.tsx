@@ -18,6 +18,11 @@ import { useEffect, useState } from 'react';
 import apiClient from '@/http';
 import { history } from 'umi';
 import { PreviewCompact } from '../preview';
+import {
+  CATEGORY_COURSE_BROWSER,
+  EVENT_GOTO_COURSE,
+  emitEvent,
+} from '@/matomo';
 
 const { Search } = Input;
 const { Link } = Typography;
@@ -96,6 +101,7 @@ export default function CourseBrowser(props: CourseBrowserProps) {
     await setStep(1);
     await setSelectedCourse(courseCode);
     searchLectures('');
+    emitEvent(CATEGORY_COURSE_BROWSER, EVENT_GOTO_COURSE, courseCode);
   };
 
   useEffect(() => {
