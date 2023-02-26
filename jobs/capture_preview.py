@@ -25,6 +25,11 @@ def job(lecture_id: str, language: str):
         mp4 = lecture.mp4_filepath
         save_photo_from_video(mp4, lecture.preview_filename())
         save_photo_from_video(mp4, lecture.preview_small_filename(), True)
+
+        lecture.refresh()
+        lecture.img_preview = lecture.preview_filename()
+        lecture.img_preview_small = lecture.preview_small_filename()
+        lecture.save()
         return
 
     url = lecture.content_link()
