@@ -147,6 +147,7 @@ def schedule_analysis_of_lecture(
     job_2 = next(queue_extract()).enqueue(extract_audio.job, lecture.public_id, lecture.language, job_timeout=extract_audio.TIMEOUT, depends_on=job_1)
     job_3 = next(queue_transcribe()).enqueue(transcribe_audio.job, lecture.public_id, lecture.language, job_timeout=transcribe_audio.TIMEOUT, depends_on=job_2)
     job_4 = next(queue_summarise()).enqueue(summarise_transcript.job, lecture.public_id, lecture.language, job_timeout=summarise_transcript.TIMEOUT, depends_on=job_3)
+    job_5 = next(queue_metadata()).enqueue(clean_lecture.job, lecture.public_id, lecture.language, depends_on=job_4)
 
     return analysis
 
