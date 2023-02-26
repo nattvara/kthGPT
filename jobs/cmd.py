@@ -1,7 +1,11 @@
 from rq import Queue
 
-from db.crud import get_all_lectures
+from db.crud import (
+    get_all_ready_lectures,
+    get_all_lectures,
+)
 from jobs import (
+    schedule_cleanup_of_lecture,
     get_metadata_queue,
     capture_preview,
     fetch_metadata,
@@ -42,3 +46,12 @@ def capture_preview_for_all_lectures(
             lecture.language,
             job_timeout=capture_preview.TIMEOUT,
         )
+
+
+def cleanup_for_all_lectures():
+    print('dispatching jobs to do cleanup on all lectures')
+
+    lectures = get_all_ready_lectures()
+    for lecture in lectures:
+        print(f'scheduling clean of {lecture.id}')
+        schedule_cleanup_of_lecture(lecture)
