@@ -23,6 +23,11 @@ import { history } from 'umi';
 import Preview from '../preview';
 import LectureProgress from './lecture-progress';
 import CourseSelector from './course-selector';
+import {
+  CATEGORY_QUESTIONS,
+  EVENT_GOTO_LECTURE,
+  emitEvent,
+} from '@/matomo';
 
 const { Paragraph, Link } = Typography;
 
@@ -118,8 +123,9 @@ export default function Analyser(props: AnalyserProps) {
     }
   );
 
-  const goToQuestions = () => {
-    history.push(`/questions/lectures/${id}/${language}`);
+  const goToQuestions = async () => {
+    await history.push(`/questions/lectures/${id}/${language}`);
+    emitEvent(CATEGORY_QUESTIONS, EVENT_GOTO_LECTURE, `${id}/${language}`);
   };
 
   const restart = () => {
