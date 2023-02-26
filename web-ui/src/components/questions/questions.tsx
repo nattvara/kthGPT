@@ -24,6 +24,7 @@ import {
   EVENT_ASKED_QUESTION,
   EVENT_ASKED_QUESTION_NO_CACHE,
   emitEvent,
+  ACTION_NONE,
 } from '@/matomo';
 import CourseSelector from '../analyser/course-selector';
 
@@ -157,7 +158,7 @@ export default function Questions(props: QuestionsProps) {
 
     makeQuery();
 
-    emitEvent(EVENT_ASKED_QUESTION);
+    emitEvent(EVENT_ASKED_QUESTION, ACTION_NONE);
   };
 
   const askQuestionWithoutCache = async () => {
@@ -166,7 +167,7 @@ export default function Questions(props: QuestionsProps) {
     await setOverrideCache(true);
     askQuestion();
 
-    emitEvent(EVENT_ASKED_QUESTION_NO_CACHE);
+    emitEvent(EVENT_ASKED_QUESTION_NO_CACHE, ACTION_NONE);
   };
 
   if (notFound === true) {

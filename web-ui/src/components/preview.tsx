@@ -119,7 +119,7 @@ export default function Preview(props: PreviewProps) {
 
   const openKthPlay = (url: string) => {
     window.open(url, '_blank');
-    emitEvent(EVENT_GOTO_LECTURE);
+    emitEvent(EVENT_GOTO_LECTURE, url);
   }
 
   let flagIcon = '';

@@ -23,7 +23,6 @@ import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import apiClient from '@/http';
 import { history } from 'umi';
-import { PreviewCompact } from '../preview';
 import kthLogo from '@/assets/kth.svg';
 import youtubeLogo from '@/assets/youtube.svg';
 import svFlag from '@/assets/flag-sv.svg';
@@ -276,7 +275,7 @@ export default function LectureAdder(props: LectureAdderProps) {
 
   const submit = async () => {
     await postUrl();
-    emitEvent(EVENT_SUBMIT_URL);
+    emitEvent(EVENT_SUBMIT_URL, source);
   };
 
   return (
