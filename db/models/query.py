@@ -9,6 +9,7 @@ class Query(Base):
     lecture_id = peewee.ForeignKeyField(Lecture, backref='lecture')
     query_hash = peewee.CharField(index=True, null=False)
     query_string = peewee.TextField(null=False)
+    count = peewee.IntegerField(null=False, default=0)
     response = peewee.TextField(null=True)
 
     @staticmethod

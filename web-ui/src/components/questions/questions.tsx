@@ -24,6 +24,8 @@ import {
   EVENT_ASKED_QUESTION,
   EVENT_ASKED_QUESTION_NO_CACHE,
   emitEvent,
+  ACTION_NONE,
+  CATEGORY_QUESTIONS,
 } from '@/matomo';
 import CourseSelector from '../analyser/course-selector';
 
@@ -50,6 +52,12 @@ const examples = [
     titleSv: 'När i föreläsningen berättar föreläsaren om X?',
     queryStringEn: 'At which point in the lecture is X covered?',
     queryStringSv: 'När i föreläsningen berättar föreläsaren om X?',
+  },
+  {
+    titleEn: 'Where in the course literature can I read more about this?',
+    titleSv: 'Var i kursboken kan jag läsa mer om detta?',
+    queryStringEn: 'Where in the course book "X" can i read more about the topics from this lecture?',
+    queryStringSv: 'Var i kursboken "X" kan jag läsa mer om innehållet från denna föreläsning?',
   },
   {
     titleEn: 'Tell me a joke about this lecture',
@@ -151,7 +159,7 @@ export default function Questions(props: QuestionsProps) {
 
     makeQuery();
 
-    emitEvent(EVENT_ASKED_QUESTION);
+    emitEvent(CATEGORY_QUESTIONS, EVENT_ASKED_QUESTION, ACTION_NONE);
   };
 
   const askQuestionWithoutCache = async () => {
@@ -160,7 +168,7 @@ export default function Questions(props: QuestionsProps) {
     await setOverrideCache(true);
     askQuestion();
 
-    emitEvent(EVENT_ASKED_QUESTION_NO_CACHE);
+    emitEvent(CATEGORY_QUESTIONS, EVENT_ASKED_QUESTION_NO_CACHE, ACTION_NONE);
   };
 
   if (notFound === true) {
@@ -250,7 +258,7 @@ export default function Questions(props: QuestionsProps) {
               </Col>
               <Col>
                 <Button type='default' size='large' onClick={() => history.push('/')}>
-                  <CloseOutlined /> Watch a new lecture
+                  <CloseOutlined /> Another lecture
                 </Button>
               </Col>
 

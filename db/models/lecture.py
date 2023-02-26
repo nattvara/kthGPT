@@ -187,10 +187,12 @@ class Lecture(Base):
         self.title = update.title
         self.date = update.date
         self.img_preview = update.img_preview
+        self.img_preview_small = update.img_preview_small
         self.mp4_filepath = update.mp4_filepath
         self.mp3_filepath = update.mp3_filepath
         self.transcript_filepath = update.transcript_filepath
         self.summary_filepath = update.summary_filepath
+        self.raw_content_link = update.raw_content_link
 
     def to_doc(self):
         course_codes = []

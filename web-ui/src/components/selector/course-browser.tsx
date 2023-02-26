@@ -18,6 +18,12 @@ import { useEffect, useState } from 'react';
 import apiClient from '@/http';
 import { history } from 'umi';
 import { PreviewCompact } from '../preview';
+import {
+  CATEGORY_COURSE_BROWSER,
+  EVENT_GOTO_COURSE,
+  emitEvent,
+  EVENT_GOTO_LECTURE,
+} from '@/matomo';
 
 const { Search } = Input;
 const { Link } = Typography;
@@ -96,6 +102,12 @@ export default function CourseBrowser(props: CourseBrowserProps) {
     await setStep(1);
     await setSelectedCourse(courseCode);
     searchLectures('');
+    emitEvent(CATEGORY_COURSE_BROWSER, EVENT_GOTO_COURSE, courseCode);
+  };
+
+  const goToLecture = async (lecture: Lecture) => {
+    await history.push(`/questions/lectures/${lecture.public_id}/${lecture.language}`);
+    emitEvent(CATEGORY_COURSE_BROWSER, EVENT_GOTO_LECTURE, `${lecture.public_id}/${lecture.language}`);
   };
 
   useEffect(() => {
@@ -212,9 +224,7 @@ export default function CourseBrowser(props: CourseBrowserProps) {
                     <Col span={22}>
                       <PreviewCompact
                         lecture={lecture}
-                        onClick={() => {
-                          history.push(`/questions/lectures/${lecture.public_id}/${lecture.language}`)
-                        }}
+                        onClick={() => goToLecture(lecture)}
                       />
                     </Col>
                   </Row>
