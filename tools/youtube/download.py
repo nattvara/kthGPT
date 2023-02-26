@@ -1,3 +1,4 @@
+from yt_dlp.utils import download_range_func
 import ffmpeg
 import yt_dlp
 import os
@@ -6,11 +7,12 @@ from config.logger import log
 from db.models import Lecture
 
 
-def download_mp3(url: str, output_file: str) -> str:
+def download_mp3(url: str, output_file: str, seconds_to_download: int) -> str:
     log('rq.worker').info(f'downloading {url} to {output_file}')
 
     ydl_opts = {
         'format': 'bestaudio/best',
+        'download_ranges': download_range_func(None, [(0, seconds_to_download)]),
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
