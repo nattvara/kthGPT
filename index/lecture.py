@@ -90,6 +90,7 @@ def search(
         'length',
         'title',
         'preview_uri',
+        'preview_small_uri',
         'content_link',
         'courses',
     ]
