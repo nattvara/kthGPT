@@ -21,6 +21,8 @@ export const EVENT_SUBMIT_URL = 'submit_url';
 
 export const EVENT_GOTO_LECTURE = 'goto_lecture';
 
+export const EVENT_GOTO_CONTENT = 'goto_content';
+
 export const EVENT_GOTO_COURSE = 'goto_course';
 
 export const ACTION_NONE = '_';
