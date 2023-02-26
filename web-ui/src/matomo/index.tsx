@@ -1,4 +1,14 @@
 
+export const CATEGORY_SELECTOR = 'selector';
+
+export const CATEGORY_ANALYSE = 'analyse';
+
+export const CATEGORY_QUESTIONS = 'questions';
+
+export const CATEGORY_PREVIEW = 'preview';
+
+export const CATEGORY_ADDER = 'preview';
+
 export const EVENT_ASKED_QUESTION = 'asked_question';
 
 export const EVENT_ASKED_QUESTION_NO_CACHE = 'asked_question_with_cache_override';
@@ -23,10 +33,10 @@ export const registerPageLoad = async () => {
   _paq.push(['trackPageView']);
 };
 
-export const emitEvent = async (event: string, action: string) => {
+export const emitEvent = async (category: string, event: string, action: string) => {
   if (!window._paq) return;
 
   var _paq = window._paq || [];
 
-  _paq.push(['trackEvent', 'kthgpt', event, action]);
+  _paq.push(['trackEvent', category, event, action]);
 };

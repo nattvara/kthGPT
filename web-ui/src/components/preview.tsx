@@ -9,7 +9,7 @@ import {
 } from 'antd';
 import { Lecture } from '@/components/lecture';
 import { makeUrl } from '@/http';
-import { EVENT_GOTO_LECTURE, emitEvent } from '@/matomo';
+import { EVENT_GOTO_LECTURE, emitEvent, CATEGORY_PREVIEW } from '@/matomo';
 import {
   AudioOutlined,
   BookOutlined,
@@ -119,7 +119,7 @@ export default function Preview(props: PreviewProps) {
 
   const openKthPlay = (url: string) => {
     window.open(url, '_blank');
-    emitEvent(EVENT_GOTO_LECTURE, url);
+    emitEvent(CATEGORY_PREVIEW, EVENT_GOTO_LECTURE, url);
   }
 
   let flagIcon = '';

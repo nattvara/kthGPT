@@ -28,6 +28,7 @@ import youtubeLogo from '@/assets/youtube.svg';
 import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';
 import {
+  CATEGORY_ADDER,
   emitEvent,
   EVENT_SUBMIT_URL,
 } from '@/matomo';
@@ -275,7 +276,7 @@ export default function LectureAdder(props: LectureAdderProps) {
 
   const submit = async () => {
     await postUrl();
-    emitEvent(EVENT_SUBMIT_URL, source);
+    emitEvent(CATEGORY_ADDER, EVENT_SUBMIT_URL, source);
   };
 
   return (

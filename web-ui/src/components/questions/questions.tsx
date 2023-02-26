@@ -25,6 +25,7 @@ import {
   EVENT_ASKED_QUESTION_NO_CACHE,
   emitEvent,
   ACTION_NONE,
+  CATEGORY_QUESTIONS,
 } from '@/matomo';
 import CourseSelector from '../analyser/course-selector';
 
@@ -158,7 +159,7 @@ export default function Questions(props: QuestionsProps) {
 
     makeQuery();
 
-    emitEvent(EVENT_ASKED_QUESTION, ACTION_NONE);
+    emitEvent(CATEGORY_QUESTIONS, EVENT_ASKED_QUESTION, ACTION_NONE);
   };
 
   const askQuestionWithoutCache = async () => {
@@ -167,7 +168,7 @@ export default function Questions(props: QuestionsProps) {
     await setOverrideCache(true);
     askQuestion();
 
-    emitEvent(EVENT_ASKED_QUESTION_NO_CACHE, ACTION_NONE);
+    emitEvent(CATEGORY_QUESTIONS, EVENT_ASKED_QUESTION_NO_CACHE, ACTION_NONE);
   };
 
   if (notFound === true) {
