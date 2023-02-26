@@ -40,6 +40,8 @@ def save_text(
     elif lecture.language == Lecture.Language.SWEDISH:
         lang = 'sv'
         model = 'small'
+    if lecture.source == Lecture.Source.KTH_RAW:
+        model = 'medium'
 
     cmd = [
         'whisper',
