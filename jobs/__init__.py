@@ -17,6 +17,7 @@ from jobs import (
     classify_video,
     clean_lecture,
     fetch_metadata,
+    index_lecture,
 )
 
 
@@ -148,6 +149,8 @@ def schedule_analysis_of_lecture(
     job_3 = next(queue_transcribe()).enqueue(transcribe_audio.job, lecture.public_id, lecture.language, job_timeout=transcribe_audio.TIMEOUT, depends_on=job_2)
     job_4 = next(queue_summarise()).enqueue(summarise_transcript.job, lecture.public_id, lecture.language, job_timeout=summarise_transcript.TIMEOUT, depends_on=job_3)
     job_5 = next(queue_metadata()).enqueue(clean_lecture.job, lecture.public_id, lecture.language, depends_on=job_4)
+    job_6 = next(queue_metadata()).enqueue(capture_preview.job, lecture.public_id, lecture.language, job_timeout=capture_preview.TIMEOUT, depends_on=job_4)
+    job_7 = next(queue_metadata()).enqueue(index_lecture.job, lecture.public_id, lecture.language, depends_on=job_6)
 
     return analysis
 
