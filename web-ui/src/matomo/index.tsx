@@ -29,8 +29,6 @@ export const ACTION_NONE = '_';
 
 
 export const registerPageLoad = async () => {
-  if (!window._paq) return;
-
   const _paq = window._paq || [];
 
   _paq.push(['setCustomUrl', window.location.pathname]);
@@ -38,9 +36,7 @@ export const registerPageLoad = async () => {
 };
 
 export const emitEvent = async (category: string, event: string, action: string) => {
-  if (!window._paq) return;
-
-  var _paq = window._paq || [];
+  const _paq = window._paq || [];
 
   _paq.push(['trackEvent', category, event, action]);
 };
