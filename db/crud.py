@@ -63,6 +63,30 @@ def get_unfinished_lectures():
     return out
 
 
+# Analysis
+def get_all_analysis_for_lecture(lecture_id: int):
+    from db.models import Analysis
+    query = Analysis.filter(Analysis.lecture_id == lecture_id)
+
+    out = []
+    for a in query:
+        out.append(a)
+
+    return out
+
+
+def delete_all_except_last_message_in_analysis(analysis_id: int):
+    from db.models import Analysis, Message
+    a = Analysis.get(analysis_id)
+    last_message = a.get_last_message()
+
+    Message.delete().where(
+        Message.id != last_message
+    ).where(
+        Message.analysis_id == analysis_id
+    ).execute()
+
+
 # Query
 def get_most_recent_query_by_sha(lecture, sha: str) :
     from db.models.query import Query

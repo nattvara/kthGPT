@@ -250,7 +250,7 @@ export default function Questions(props: QuestionsProps) {
               </Col>
               <Col>
                 <Button type='default' size='large' onClick={() => history.push('/')}>
-                  <CloseOutlined /> Analyse a new lecture
+                  <CloseOutlined /> Watch a new lecture
                 </Button>
               </Col>
 

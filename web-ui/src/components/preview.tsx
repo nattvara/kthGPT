@@ -70,10 +70,10 @@ export function PreviewCompact(props: PreviewCompactProps) {
       <Row>
         <Col span={8}>
           <div className={styles.image}>
-            <Spin tip="Loading..." spinning={lecture.preview_uri === null}>
+            <Spin tip="Loading..." spinning={lecture.preview_small_uri === null}>
               <Image
                 preview={false}
-                src={lecture.preview_uri === null ? '' : makeUrl(lecture.preview_uri!)} />
+                src={lecture.preview_small_uri === null ? '' : makeUrl(lecture.preview_small_uri!)} />
             </Spin>
           </div>
         </Col>

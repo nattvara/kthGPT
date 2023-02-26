@@ -40,11 +40,9 @@ def new_query(input_data: InputModel) -> OutputModel:
         raise HTTPException(status_code=404)
 
     query = get_most_recent_query_by_sha(lecture, Query.make_sha(input_data.query_string))
-    if query is None:
-        query = create_query(lecture, input_data.query_string)
 
     cached = True
-    if query.response is None or input_data.override_cache is True:
+    if query is None or query.response is None or input_data.override_cache is True:
         cached = False
         query = create_query(lecture, input_data.query_string)
 

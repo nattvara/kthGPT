@@ -1,10 +1,12 @@
 from redis import Redis
 from rq import Queue
 
-from db.crud import get_unfinished_lectures, save_message_for_analysis
+from db.crud import (
+    get_unfinished_lectures,
+    save_message_for_analysis,
+)
 from config.settings import settings
 from db.models.analysis import Analysis
-from db.models.lecture import Lecture
 from config.logger import log
 from jobs import (
     capture_preview,
@@ -13,6 +15,7 @@ from jobs import (
     transcribe_audio,
     summarise_transcript,
     classify_video,
+    clean_lecture,
     fetch_metadata,
 )
 
@@ -144,6 +147,7 @@ def schedule_analysis_of_lecture(
     job_2 = next(queue_extract()).enqueue(extract_audio.job, lecture.public_id, lecture.language, job_timeout=extract_audio.TIMEOUT, depends_on=job_1)
     job_3 = next(queue_transcribe()).enqueue(transcribe_audio.job, lecture.public_id, lecture.language, job_timeout=transcribe_audio.TIMEOUT, depends_on=job_2)
     job_4 = next(queue_summarise()).enqueue(summarise_transcript.job, lecture.public_id, lecture.language, job_timeout=summarise_transcript.TIMEOUT, depends_on=job_3)
+    job_5 = next(queue_metadata()).enqueue(clean_lecture.job, lecture.public_id, lecture.language, depends_on=job_4)
 
     return analysis
 
@@ -159,6 +163,19 @@ def schedule_approval_of_lecture(
         lecture.public_id,
         lecture.language,
         job_timeout=classify_video.TIMEOUT,
+    )
+
+
+def schedule_cleanup_of_lecture(
+    lecture,
+    queue_metadata: Queue = get_metadata_queue,
+):
+    log().info(f'Scheduling cleanup of {lecture.public_id}')
+
+    next(queue_metadata()).enqueue(
+        clean_lecture.job,
+        lecture.public_id,
+        lecture.language,
     )
 
 

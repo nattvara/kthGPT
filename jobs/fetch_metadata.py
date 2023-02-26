@@ -34,6 +34,7 @@ def job(lecture_id: str, language: str):
 
     lecture.title = title
     lecture.date = date
+    lecture.reindex()
     lecture.save()
 
     logger.info('done.')
@@ -42,4 +43,3 @@ def job(lecture_id: str, language: str):
 # Test run the job
 if __name__ == '__main__':
     job('0_bcl3micy', 'en')
-    job('vJtpKwOKpOM', 'sv')

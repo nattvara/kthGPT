@@ -58,6 +58,7 @@ class LectureOutputModel(BaseModel):
     words: int
     length: int
     preview_uri: Union[str, None] = None
+    preview_small_uri: Union[str, None] = None
     transcript_uri: Union[str, None] = None
     summary_uri: Union[str, None] = None
     content_link: Union[str, None] = None
@@ -77,6 +78,7 @@ class LectureSummaryOutputModel(BaseModel):
     frozen: Union[bool, None] = None
     content_link: Union[str, None] = None
     preview_uri: Union[str, None] = None
+    preview_small_uri: Union[str, None] = None
     overall_progress: Union[int, None] = None
 
 
@@ -147,6 +149,20 @@ def get_preview(public_id: str, language: str):
         raise HTTPException(status_code=404)
 
     with open(lecture.img_preview, 'rb') as file:
+        image_bytes: bytes = file.read()
+        return Response(content=image_bytes, media_type='image/png')
+
+
+@router.get('/lectures/{public_id}/{language}/preview-small', dependencies=[Depends(get_db)])
+def get_small_preview(public_id: str, language: str):
+    lecture = get_lecture_by_public_id_and_language(public_id, language)
+    if lecture is None:
+        raise HTTPException(status_code=404)
+
+    if lecture.img_preview_small is None:
+        raise HTTPException(status_code=404)
+
+    with open(lecture.img_preview_small, 'rb') as file:
         image_bytes: bytes = file.read()
         return Response(content=image_bytes, media_type='image/png')
 

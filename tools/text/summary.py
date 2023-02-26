@@ -8,6 +8,8 @@ from . import prompts, ai
 
 MIN_WORD_LIMIT = 500
 
+SUMMARY_CACHE_HIT_LIMIT = 4
+
 
 def minutes_to_time(minutes):
     hours = math.floor(minutes // 60)
@@ -72,6 +74,8 @@ class Summary:
         self.summary_size = summary_size
         self.lecture = lecture
         self.summaries = {}
+        self.cached_summary = ''
+        self.cached_summary_hits = 0
 
     def update_with_chunk(self, lecture: Lecture, chunk: Chunk, include_summary: bool):
         if lecture.language == Lecture.Language.ENGLISH:
@@ -113,6 +117,10 @@ class Summary:
         return string
 
     def summarise(self):
+        if self.cached_summary != '' and self.cached_summary_hits < SUMMARY_CACHE_HIT_LIMIT:
+            self.cached_summary_hits += 1
+            return self.cached_summary
+
         if self.lecture.language == Lecture.Language.ENGLISH:
             prompt = prompts.create_text_to_summarise_summary_english(self)
         elif self.lecture.language == Lecture.Language.SWEDISH:
@@ -142,6 +150,9 @@ class Summary:
             analysis_id=analysis.id,
         )
 
+        self.cached_summary = response
+        self.cached_summary_hits = 0
+
         return response
 
     @staticmethod
@@ -168,7 +179,8 @@ class Summary:
                 save_message_for_analysis(analysis, 'Creating summary...', f'This step is using AI to summarize the lecture. This can take a while. Currently on part {inc}/{len(chunks)}.')
 
                 summary.update_with_chunk(lecture, chunk, include_summary)
-                include_summary = True
+                if inc > 6:
+                    include_summary = True
 
                 progress = int((inc / len(chunks)) * 100)
                 logger.info(f'current progress {progress}%')

@@ -39,9 +39,10 @@ def job(lecture_id: str, language: str):
     analysis = lecture.get_last_analysis()
     analysis.state = Analysis.State.CLASSIFYING
     analysis.save()
+    save_message_for_analysis(analysis, 'Classifying video', 'Trying to classify if the video is relevant for kthGPT')
 
     temp_path = tempfile.NamedTemporaryFile(mode='w+', delete=False)
-    temp_path_mp3 = download_mp3(lecture.content_link(), temp_path.name)
+    temp_path_mp3 = download_mp3(lecture.content_link(), temp_path.name, SAMPLE_SIZE_SECONDS)
 
     length = extract_mp3_len(temp_path_mp3)
     if length > MAX_ALLOWED_VIDEO_LENGTH:
@@ -116,4 +117,4 @@ def job(lecture_id: str, language: str):
 
 # Test run the job
 if __name__ == '__main__':
-    job('nnkCEN4suxs', Lecture.Language.SWEDISH)
+    job('L3pk_TBkihU', Lecture.Language.ENGLISH)
