@@ -6,7 +6,6 @@ import os
 
 from db.crud import get_lecture_by_public_id_and_language, save_message_for_analysis
 from db.models import Lecture, Analysis
-from tools.text.summary import Summary
 import jobs.summarise_transcript
 
 
@@ -15,6 +14,7 @@ TIMEOUT = 90 * 60
 
 
 def job(lecture_id: str, language: str):
+    from tools.text.summary import Summary
     logger = logging.getLogger('rq.worker')
 
     lecture = get_lecture_by_public_id_and_language(lecture_id, language)
@@ -34,7 +34,7 @@ def job(lecture_id: str, language: str):
 
         save_message_for_analysis(analysis, 'Creating summary...', 'Summarizing the lecture into something you can query.')
 
-        min_size = round((lecture.length / 60) / 25)
+        min_size = round((lecture.length / 60) / 20)
         if min_size == 0:
             min_size = 1
 
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     ))
     queue.enqueue(
         jobs.summarise_transcript.job,
-        'ev_wkULk2sk',
-        Lecture.Language.SWEDISH,
+        'rVzDRfO2sgs',
+        Lecture.Language.ENGLISH,
         job_timeout=TIMEOUT
     )
