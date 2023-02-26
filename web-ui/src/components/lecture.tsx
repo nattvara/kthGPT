@@ -40,6 +40,7 @@ export interface Lecture {
   courses: Course[]
   courses_can_change: boolean
   preview_uri: string | null
+  preview_small_uri: string | null
   transcript_uri: string | null
   summary_uri: string | null
   content_link: string
