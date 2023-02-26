@@ -179,7 +179,8 @@ class Summary:
                 save_message_for_analysis(analysis, 'Creating summary...', f'This step is using AI to summarize the lecture. This can take a while. Currently on part {inc}/{len(chunks)}.')
 
                 summary.update_with_chunk(lecture, chunk, include_summary)
-                include_summary = True
+                if inc > 6:
+                    include_summary = True
 
                 progress = int((inc / len(chunks)) * 100)
                 logger.info(f'current progress {progress}%')
