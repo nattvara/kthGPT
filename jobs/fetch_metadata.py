@@ -29,6 +29,9 @@ def job(lecture_id: str, language: str):
         title = scrape_title_from_page(lecture.content_link())
         logger.info(f'fetching title from {lecture.content_link()}')
         date = get_upload_date(lecture.content_link())
+    elif lecture.source == lecture.Source.KTH_RAW:
+        logger.warning('kth_raw does not support metadata')
+        return
     else:
         raise ValueError(f'unknown source {lecture.source}')
 

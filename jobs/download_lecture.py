@@ -8,6 +8,7 @@ from tools.youtube.download import download_mp4
 from tools.web.crawler import get_m3u8
 from db.models import Lecture, Analysis
 import jobs.download_lecture
+import jobs.capture_preview
 from db.crud import (
     get_lecture_by_public_id_and_language,
     save_message_for_analysis
@@ -71,6 +72,18 @@ def job(lecture_id: str, language: str):
             download_mp4_from_kthplay(lecture)
         elif lecture.source == Lecture.Source.YOUTUBE:
             download_mp4_from_youtube(lecture)
+        elif lecture.source == Lecture.Source.KTH_RAW:
+            download_mp4_from_m3u8(lecture.raw_content_link, lecture)
+
+            logger.info('rq-queueing preview capture job')
+            from jobs import get_metadata_queue
+            q = next(get_metadata_queue())
+            q.enqueue(
+                jobs.capture_preview.job,
+                lecture.public_id,
+                lecture.language,
+                job_timeout=jobs.capture_preview.TIMEOUT
+            )
         else:
             raise ValueError(f'unsupported lecture source {lecture.source}')
 

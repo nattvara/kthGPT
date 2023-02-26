@@ -27,6 +27,7 @@ class Lecture(Base):
     words = peewee.IntegerField(null=False, default=0)
     title = peewee.CharField(null=True)
     date = peewee.TimestampField(null=True)
+    raw_content_link = peewee.CharField(null=True)
     img_preview = peewee.CharField(null=True)
     img_preview_small = peewee.CharField(null=True)
     mp4_filepath = peewee.CharField(null=True)
@@ -36,6 +37,7 @@ class Lecture(Base):
 
     class Source:
         KTH = 'kth'
+        KTH_RAW = 'kth_raw'
         YOUTUBE = 'youtube'
 
     class Language:
@@ -60,6 +62,8 @@ class Lecture(Base):
             return f'https://play.kth.se/media/{self.public_id}'
         elif self.source == self.Source.YOUTUBE:
             return f'https://www.youtube.com/watch?v={self.public_id}'
+        elif self.source == self.Source.KTH_RAW:
+            return f'https://play.kth.se/media/{self.public_id}'
         raise ValueError(f'unknown source {self.source}')
 
     def preview_filename(self):
