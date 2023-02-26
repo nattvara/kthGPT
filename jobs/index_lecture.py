@@ -1,7 +1,11 @@
 import logging
 
-from db.crud import get_lecture_by_public_id_and_language
+from db.crud import (
+    get_lecture_by_public_id_and_language,
+    find_course_code,
+)
 import index.lecture as lecture_index
+
 
 def job(lecture_id: str, language: str):
     logger = logging.getLogger('rq.worker')
@@ -11,6 +15,11 @@ def job(lecture_id: str, language: str):
         raise ValueError(f'lecture {lecture_id} not found')
 
     lecture_index.index(lecture)
+
+    for course in lecture.courses():
+        course_code = course['course_code']
+        c = find_course_code(course_code)
+        c.reindex()
 
     logger.info('done.')
 
