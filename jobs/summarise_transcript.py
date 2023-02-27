@@ -34,7 +34,7 @@ def job(lecture_id: str, language: str):
 
         save_message_for_analysis(analysis, 'Creating summary...', 'Summarizing the lecture into something you can query.')
 
-        min_size = round((lecture.length / 60) / 20)
+        min_size = round((lecture.length / 60) / 22)
         if min_size < 2:
             min_size = 2
 
