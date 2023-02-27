@@ -69,22 +69,22 @@ def search_lecture(
     input_data: InputModelSearchCourseCode,
 ) -> List[LectureSummaryOutputModel]:
 
-    apply_filters = True
+    apply_filter = True
     if input_data.query == '':
-        apply_filters = False
+        apply_filter = False
 
     if course_code == 'no_course':
         response = lecture_index.search(
             input_data.query,
             no_course=True,
-            apply_filter=False,
+            apply_filter=apply_filter,
         )
         return response
 
     response = lecture_index.search(
         input_data.query,
         course_code,
-        apply_filters,
+        apply_filter,
     )
 
     return response

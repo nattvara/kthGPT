@@ -18,52 +18,52 @@ def create():
     index_body = {
         'settings': {
             'analysis': {
+                'filter': {
+                    'word_delimiter_graph_course': {
+                        'type': 'word_delimiter_graph',
+                        'preserve_original': True,
+                    },
+                    'edge_ngram_course': {
+                        'type': 'edge_ngram',
+                        'min_gram': 1,
+                        'max_gram': 6,
+                    },
+                },
                 'analyzer': {
                     'course_analyzer': {
-                        'tokenizer': 'course_tokenizer',
+                        'tokenizer': 'keyword',
                         'filter': [
+                            'lowercase',
+                            'word_delimiter_graph_course',
+                            'edge_ngram_course',
                         ],
                     },
                 },
-                'tokenizer': {
-                    'course_tokenizer': {
-                        'type': 'ngram',
-                        'min_gram': 1,
-                        'max_gram': 4,
-                        'token_chars': [
-                            'letter',
-                            'digit',
-                        ]
-                    }
-                },
             },
-            'max_ngram_diff': 10,
         },
         'mappings': {
             'properties': {
                 'course_code': {
-                    'type': 'search_as_you_type',
+                    'type': 'text',
                     'analyzer': 'course_analyzer',
+                    'search_analyzer': 'standard',
                 },
                 'swedish_name': {
                     'type': 'search_as_you_type',
-                    'analyzer': 'course_analyzer',
                 },
                 'english_name': {
                     'type': 'search_as_you_type',
-                    'analyzer': 'course_analyzer',
                 },
                 'alternate_course_codes': {
-                    'type': 'search_as_you_type',
+                    'type': 'text',
                     'analyzer': 'course_analyzer',
+                    'search_analyzer': 'standard',
                 },
                 'alternate_english_names': {
                     'type': 'search_as_you_type',
-                    'analyzer': 'course_analyzer',
                 },
                 'alternate_swedish_names': {
                     'type': 'search_as_you_type',
-                    'analyzer': 'course_analyzer',
                 },
             }
         }

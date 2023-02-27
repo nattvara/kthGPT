@@ -18,42 +18,62 @@ def create():
     index_body = {
         'settings': {
             'analysis': {
-                'analyzer': {
-                    'course_code_analyzer': {
-                        'tokenizer': 'course_code_tokenizer',
-                        'filter': [
-                            'word_delimiter_graph'
-                        ],
+                'filter': {
+                    'word_delimiter_graph_course': {
+                        'type': 'word_delimiter_graph',
+                        'preserve_original': True,
                     },
-                    'title_analyzer': {
-                        'tokenizer': 'keyword',
-                        'filter': [
-                            'word_delimiter_graph'
+                    'edge_ngram_course': {
+                        'type': 'edge_ngram',
+                        'min_gram': 1,
+                        'max_gram': 6,
+                    },
+                },
+                'char_filter': {
+                    'underscore_replacement': {
+                        'type': 'mapping',
+                        'mappings': [
+                            '_ => ',
                         ],
                     },
                 },
-                'tokenizer': {
-                    'course_code_tokenizer': {
-                        'type': 'ngram',
-                        'min_gram': 1,
-                        'max_gram': 2,
-                        'token_chars': [
-                            'letter',
-                            'digit',
-                        ]
-                    }
+                'analyzer': {
+                    'course_code_analyzer': {
+                        'tokenizer': 'keyword',
+                        'filter': [
+                            'lowercase',
+                            'word_delimiter_graph_course',
+                            'edge_ngram_course',
+                        ],
+                    },
+                    'title_analyzer': {
+                        'tokenizer': 'standard',
+                        'char_filter': [
+                            'underscore_replacement',
+                        ],
+                        'filter': [
+                            'word_delimiter_graph',
+                            'lowercase',
+                        ],
+                    },
                 },
             },
         },
         'mappings': {
             'properties': {
                 'title': {
-                    'type': 'search_as_you_type',
+                    'type': 'text',
                     'analyzer': 'title_analyzer',
+                    'fields': {
+                        'standard': {
+                            'type': 'search_as_you_type',
+                        }
+                    },
                 },
                 'courses': {
-                    'type': 'search_as_you_type',
+                    'type': 'text',
                     'analyzer': 'course_code_analyzer',
+                    'search_analyzer': 'standard',
                 },
             }
         }
@@ -89,6 +109,7 @@ def search(
         'words',
         'length',
         'title',
+        'title.standard',
         'preview_uri',
         'preview_small_uri',
         'content_link',
@@ -103,7 +124,6 @@ def search(
                     {
                         'multi_match': {
                             'query': search_string,
-                            'type': 'bool_prefix',
                         },
                     },
                 ],
@@ -134,15 +154,17 @@ def search(
         })
 
     if apply_filter:
-        query['query']['bool']['filter'] = {
+        query['query']['bool']['must'].append({
             'multi_match': {
                 'query': search_string,
-                'type': 'bool_prefix',
                 'fields': [
                     'title',
-                ]
+                    'title.standard',
+                ],
+                'type': 'bool_prefix',
+                'operator': 'and',
             },
-        }
+        })
 
     response = client.search(
         index=INDEX_NAME,
