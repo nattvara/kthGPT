@@ -15,7 +15,7 @@ import enFlag from '@/assets/flag-en.svg';
 import kthLogo from '@/assets/kth.svg';
 import youtubeLogo from '@/assets/youtube.svg';
 
-const UPDATE_INTERVAL = 1000;
+const UPDATE_INTERVAL = 10000;
 
 const { Link } = Typography;
 
