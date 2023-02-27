@@ -37,6 +37,8 @@ def save_text(
     if lecture.language == Lecture.Language.ENGLISH:
         lang = 'en'
         model = 'tiny'
+        if settings.WHISPER_TRANSCRIPTION_DEVICE == 'cuda':
+            model = 'small'
     elif lecture.language == Lecture.Language.SWEDISH:
         lang = 'sv'
         model = 'small'
