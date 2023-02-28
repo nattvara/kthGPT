@@ -166,15 +166,15 @@ npm run dev
 
 ## Screenshots
 
-> Select a KTH Play lecture
+> ### Select a KTH Play lecture
 
 ![Select](docs/img/select.png)
 
-> The lecture is analysed
+> ### The lecture is analysed
 
 ![Analyse](docs/img/analyse.png)
 
-> Ask questions about the lecture
+> ### Ask questions about the lecture
 
 ![Questions](docs/img/question.png)
 
