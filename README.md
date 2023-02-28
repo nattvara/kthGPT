@@ -1,7 +1,5 @@
 # kthGPT
 
-A POC tool to download and summarise a lecture stored on [KTH Play](https://play.kth.se).
-
 ![Hero image](docs/img/hero.png)
 
 - [kthGPT](#kthgpt)
