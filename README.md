@@ -1,18 +1,70 @@
-# kthGPT
+# kthGPT <!-- omit in toc -->
 
-A POC tool to download and summarise a lecture stored on [KTH Play](https://play.kth.se).
+kthGPT is a free and open source tool that can watch a lecture for you. It allows students to ask questions about any lecture using the GPT-3 model.
+
+> This project **is not** affiliated with KTH. It's just a tool that's meant to be useful for KTH students.
 
 ![Hero image](docs/img/hero.png)
 
-- [kthGPT](#kthgpt)
-  - [Usage](#usage)
-    - [Docker](#docker)
-    - [Development](#development)
-  - [Screenshots](#screenshots)
-  - [License](#license)
+# Table of Contents <!-- omit in toc -->
 
+- [Usage](#usage)
+  - [1. Select lecture](#1-select-lecture)
+  - [2. Wait for kthGPT to "watch" the lecture](#2-wait-for-kthgpt-to-watch-the-lecture)
+  - [3. Ask questions about the lecture](#3-ask-questions-about-the-lecture)
+- [Run the tool locally](#run-the-tool-locally)
+  - [Docker](#docker)
+  - [Development](#development)
+- [Screenshots](#screenshots)
+- [License](#license)
 
 ## Usage
+
+kthGPT is available at [https://kthgpt.com](https://kthgpt.com) - it's free to use!
+
+### 1. Select lecture
+
+Select a lecture that's already been watched or add a new one! kthGPT can watch lectures hosted on [KTH Play](https://play.kth.se/) or [YouTube](https://youtube.com).
+
+It can't watch any video on YouTube. Due to limited capacity kthGPT will only watch "relevant videos". Relevant videos are such that it thinks are `Recorded Lectures`. kthGPT uses a sample of the video to do this assessment.
+
+### 2. Wait for kthGPT to "watch" the lecture
+
+If the video has not been watched by kthGPT before, it will start watching the video and try to produce a summary. It will only listen to the audio, so nothing been shown or written in the lecture will be included in the summary.
+
+This process is very resource intensive and usually takes between 20-60 minutes. This will be slower if many videos have been queued.
+
+If the audio quality in the video is bad, the quality of the summary will be worse. kthGPT is generally best at understanding English. However, if the audio quality is good, Swedish should be just fine as well.
+
+### 3. Ask questions about the lecture
+
+The lecture is ready. kthGPT can now use GPT-3 to answer questions about the lecture. Some useful queries:
+
+**- Summarize the lecture for me into 10 bullets**
+>
+> This query obviously useful to get a brief overview about what's covered in the lecture
+
+**- Tell me the core concepts covered in the lecture and give some explanations for each**
+>
+> This usually produce very good results. Answers seem to be less inclined to summarise the audio transcript and focus more on the topics. Which seem to produce more accurate results.
+
+**- At which point in the lecture is X covered?**
+>
+> Pretty self explanatory, useful to quickly now where to look in a lecture.
+
+**- Where in the course book "X" can i read more about the topics from this lecture?**
+>
+> Very useful to find more reading instructions.
+>
+> In [this lecture](https://kthgpt.com/questions/lectures/0_xkulq3st/en) the following question:
+>
+> - _Where in the course book "Hans Peters, Game Theory: A Multi-Leveled Approach, Springer 2008" can i read more about the topics from this lecture?_
+>
+> Produce the following results
+> - Hans Peters, Game Theory: A Multi-Leveled Approach, Springer 2008 (Chapter 6) provides a deep exploration of the topics discussed in this lecture. It includes discussion on transferable utility and the core, super-aditivity, and finding efficient outcomes in non-zero sum games, as well as balancing games and linear programming.
+>
+
+## Run the tool locally
 
 ### Docker
 
@@ -114,15 +166,15 @@ npm run dev
 
 ## Screenshots
 
-> Select a KTH Play lecture
+> ### Select a KTH Play or YouTube lecture
 
 ![Select](docs/img/select.png)
 
-> The lecture is analysed
+> ### Wait for kthGPT to watch the lecture
 
 ![Analyse](docs/img/analyse.png)
 
-> Ask questions about the lecture
+> ### Ask questions about the lecture
 
 ![Questions](docs/img/question.png)
 

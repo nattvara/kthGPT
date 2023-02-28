@@ -12,7 +12,7 @@ services:
       - db
     volumes:
       - shared:/shared
-    command: create_db_schema && migrate_up
+    command: create_db_schema
 
   api:
     image: kthgpt_main
