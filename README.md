@@ -40,19 +40,19 @@ If the audio quality in the video is bad, the quality of the summary will be wor
 
 The lecture is ready. kthGPT can now use GPT-3 to answer questions about the lecture. Some useful queries:
 
-> **- Summarize the lecture for me into 10 bullets**
+**- Summarize the lecture for me into 10 bullets**
 >
 > This query obviously useful to get a brief overview about what's covered in the lecture
 
-> **- Tell me the core concepts covered in the lecture and give some explanations for each**
+**- Tell me the core concepts covered in the lecture and give some explanations for each**
 >
 > This usually produce very good results. Answers seem to be less inclined to summarise the audio transcript and focus more on the topics. Which seem to produce more accurate results.
 
-> **- At which point in the lecture is X covered?**
+**- At which point in the lecture is X covered?**
 >
 > Pretty self explanatory, useful to quickly now where to look in a lecture.
 
-> **- Where in the course book "X" can i read more about the topics from this lecture?**
+**- Where in the course book "X" can i read more about the topics from this lecture?**
 >
 > Very useful to find more reading instructions.
 >
