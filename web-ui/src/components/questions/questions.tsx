@@ -154,6 +154,14 @@ export default function Questions(props: QuestionsProps) {
     fetchLecture();
   }, [id, language]);
 
+  useEffect(() => {
+    if (lecture === null) return;
+
+    if (lecture.title) {
+      document.title = `kthGPT - ${lecture.title}`;
+    }
+  }, [lecture]);
+
   const askQuestion = () => {
     if (isMakingQuery) return;
 

@@ -37,6 +37,7 @@ def job(lecture_id: str, language: str):
         analysis = lecture.get_last_analysis()
         analysis.state = Analysis.State.IDLE
         analysis.save()
+        save_message_for_analysis(analysis, 'Extracted', 'The audio has been extracted, waiting for transcription to start.')
 
         logger.info('done')
 

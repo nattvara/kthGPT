@@ -38,11 +38,18 @@ const prettyLengthString = (seconds: number) => {
 interface PreviewCompactProps {
   lecture: Lecture
   onClick: Function
+  onMetaClick: Function
+  onCtrlClick: Function
 }
 
 
 export function PreviewCompact(props: PreviewCompactProps) {
-  const { lecture, onClick } = props;
+  const {
+    lecture,
+    onClick,
+    onCtrlClick,
+    onMetaClick,
+  } = props;
 
   let flagIcon = '';
   if (lecture.language == 'sv') {
@@ -69,7 +76,11 @@ export function PreviewCompact(props: PreviewCompactProps) {
     <Card
       className={styles.compact}
       hoverable
-      onClick={() => onClick()}
+      onClick={e => {
+        if (e.metaKey) return onMetaClick();
+        if (e.ctrlKey) return onCtrlClick();
+        onClick();
+      }}
     >
       <Row>
         <Col span={8}>

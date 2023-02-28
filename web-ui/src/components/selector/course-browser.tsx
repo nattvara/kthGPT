@@ -105,8 +105,15 @@ export default function CourseBrowser(props: CourseBrowserProps) {
     emitEvent(CATEGORY_COURSE_BROWSER, EVENT_GOTO_COURSE, courseCode);
   };
 
-  const goToLecture = async (lecture: Lecture) => {
-    await history.push(`/questions/lectures/${lecture.public_id}/${lecture.language}`);
+  const goToLecture = async (lecture: Lecture, newTab: boolean = false) => {
+    const url = `/questions/lectures/${lecture.public_id}/${lecture.language}`;
+
+    if (newTab) {
+      window.open(url, '_blank');
+    } else {
+      await history.push(url);
+    }
+
     emitEvent(CATEGORY_COURSE_BROWSER, EVENT_GOTO_LECTURE, `${lecture.public_id}/${lecture.language}`);
   };
 
@@ -225,6 +232,8 @@ export default function CourseBrowser(props: CourseBrowserProps) {
                       <PreviewCompact
                         lecture={lecture}
                         onClick={() => goToLecture(lecture)}
+                        onMetaClick={() => goToLecture(lecture, true)}
+                        onCtrlClick={() => goToLecture(lecture, true)}
                       />
                     </Col>
                   </Row>

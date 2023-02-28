@@ -42,6 +42,8 @@ export default function Selector() {
 
   useEffect(() => {
     fetchStats();
+
+    document.title = `kthGPT`;
   }, []);
 
   return (

@@ -157,6 +157,14 @@ export default function Analyser(props: AnalyserProps) {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (lecture === null) return;
+
+    if (lecture.title) {
+      document.title = `kthGPT - ${lecture.title}`;
+    }
+  }, [lecture]);
+
   if (notFound === true) {
     return (
       <>

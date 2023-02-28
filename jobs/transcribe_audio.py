@@ -42,6 +42,8 @@ def job(lecture_id: str, language: str):
         analysis.transcript_progress = 100
         analysis.state = Analysis.State.IDLE
         analysis.save()
+        save_message_for_analysis(analysis, 'Transcribed', 'The lecture has been transcribed, waiting for summary to start.')
+
         logger.info('done')
 
     except Exception as e:
