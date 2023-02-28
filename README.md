@@ -166,11 +166,11 @@ npm run dev
 
 ## Screenshots
 
-> ### Select a KTH Play lecture
+> ### Select a KTH Play or YouTube lecture
 
 ![Select](docs/img/select.png)
 
-> ### The lecture is analysed
+> ### Wait for kthGPT to watch the lecture
 
 ![Analyse](docs/img/analyse.png)
 
