@@ -1,13 +1,16 @@
-# kthGPT
+# kthGPT <!-- omit in toc -->
+
+kthGPT is a free and open source tool that can watch a lecture for you. It allows students to ask questions about any lecture using the GPT-3 model.
 
 ![Hero image](docs/img/hero.png)
 
-- [kthGPT](#kthgpt)
-  - [Usage](#usage)
-    - [Docker](#docker)
-    - [Development](#development)
-  - [Screenshots](#screenshots)
-  - [License](#license)
+# Table of Contents <!-- omit in toc -->
+
+- [Usage](#usage)
+  - [Docker](#docker)
+  - [Development](#development)
+- [Screenshots](#screenshots)
+- [License](#license)
 
 
 ## Usage
