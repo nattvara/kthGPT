@@ -304,7 +304,7 @@ export default function LectureAdder(props: LectureAdderProps) {
           }}>
             {source === '' && <> select source</>}
             {source === SOURCE_KTH && <> KTH Play</>}
-            {source === SOURCE_YOUTUBE && <> Youtube</>}
+            {source === SOURCE_YOUTUBE && <> YouTube</>}
           </Link>
           </Popover>
 
