@@ -34,7 +34,11 @@ function Frame(props: FrameProps) {
         <Col span={24}>
           <div className={styles.hero}>
             <Row justify={'center'}>
-              <Space className={styles.logo_container} direction='horizontal' size='small' onClick={() => history.push('/')}>
+              <Space className={styles.logo_container} direction='horizontal' size='small' onClick={e => {
+                if (e.metaKey) return window.open('/', '_blank');
+                if (e.ctrlKey) return window.open('/', '_blank');
+                history.push('/');
+              }}>
                 <Image
                   height={100}
                   width={100}
