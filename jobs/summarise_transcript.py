@@ -58,7 +58,7 @@ def job(lecture_id: str, language: str):
         analysis.state = Analysis.State.READY
         analysis.save()
 
-        save_message_for_analysis(analysis, 'Done!', 'Lecture has been analyzed.')
+        save_message_for_analysis(analysis, 'Done!', 'kthGPT has finished watching the lecture.')
 
         logger.info('done')
 
