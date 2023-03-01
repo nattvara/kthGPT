@@ -14,7 +14,7 @@ import {
   VideoCameraOutlined
 } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import apiClient from '@/http';
 import { history } from 'umi';
 import { PreviewCompact } from '../preview';
@@ -45,6 +45,8 @@ export default function CourseBrowser(props: CourseBrowserProps) {
   const [ courses, setCourses ] = useState<Course[]>([]);
   const [ lectures, setLectures ] = useState<Lecture[]>([]);
   const [ selectedCourse, setSelectedCourse ] = useState<string>('');
+
+  const scrollRef = useRef<any>(null);
 
   const { isLoading: isSearchingCourses, mutate: doCourseSearch } = useMutation(
     async () => {
@@ -101,8 +103,19 @@ export default function CourseBrowser(props: CourseBrowserProps) {
   const goToCourse = async (courseCode: string) => {
     await setStep(1);
     await setSelectedCourse(courseCode);
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo(0, 0);
+    }
     searchLectures('');
     emitEvent(CATEGORY_COURSE_BROWSER, EVENT_GOTO_COURSE, courseCode);
+  };
+
+  const goBack = async () => {
+    setStep(0);
+    setSelectedCourse('');
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo(0, 0);
+    }
   };
 
   const goToLecture = async (lecture: Lecture, newTab: boolean = false) => {
@@ -153,10 +166,7 @@ export default function CourseBrowser(props: CourseBrowserProps) {
                 <Button
                   size='large'
                   type='primary'
-                  onClick={() => {
-                    setStep(0);
-                    setSelectedCourse('');
-                  }}><LeftOutlined /> Back</Button>
+                  onClick={() => goBack()}><LeftOutlined /> Back</Button>
               </Col>
               <Col offset={1} xs={13} sm={14} md={13} lg={16} xl={18}>
                 <Search
@@ -176,7 +186,7 @@ export default function CourseBrowser(props: CourseBrowserProps) {
         </Row>
       </div>
 
-      <div className={styles.result_container}>
+      <div className={styles.result_container} ref={scrollRef}>
         <Row className={`${styles.result_inner_container} ${step === 1 ? styles.left : ''}`}>
           <Col span={12} className={`${styles.content} ${styles.animate_height} ${step === 1 ? styles.collapsed : ''}`}>
             <Space direction='vertical' size='large'>
