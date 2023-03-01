@@ -90,6 +90,15 @@ def job():
         if 'monitoring' in line:
             info.queue_monitoring = int(split[len(split) - 1].strip())
 
+        if 'approval' in line:
+            info.queue_approval = int(split[len(split) - 1].strip())
+
+        if 'metadata' in line:
+            info.queue_metadata = int(split[len(split) - 1].strip())
+
+        if 'gpt' in line:
+            info.queue_gpt = int(split[len(split) - 1].strip())
+
     process = get_workers()
     for line in iter(process.stdout.readline, b''):
         line = line.decode()
