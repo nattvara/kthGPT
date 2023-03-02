@@ -11,7 +11,7 @@ def download_mp3(url: str, output_file: str, seconds_to_download: int) -> str:
     log('rq.worker').info(f'downloading {url} to {output_file}')
 
     ydl_opts = {
-        'format': 'bestaudio/best',
+        'format': 'best',
         'download_ranges': download_range_func(None, [(0, seconds_to_download)]),
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
@@ -35,7 +35,7 @@ def download_mp4(url: str, lecture: Lecture) -> str:
         os.unlink(output_filename)
 
     ydl_opts = {
-        'format': 'bestaudio/best',
+        'format': 'best',
         'postprocessors': [{
             'key': 'FFmpegVideoConvertor',
             'preferedformat': 'mp4',
