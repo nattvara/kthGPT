@@ -7,7 +7,8 @@
     "postinstall": "umi setup",
     "setup": "umi setup",
     "start": "ENVIRONMENT=development npm run dev",
-    "lint": "eslint --ext .js,.ts,.jsx,.tsx src"
+    "lint": "eslint --ext .js,.ts,.jsx,.tsx src",
+    "format": "lint --fix & prettier --write 'src/**/*.{js,jsx,ts,tsx}'"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
