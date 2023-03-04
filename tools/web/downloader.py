@@ -31,11 +31,7 @@ def download_mp4_from_m3u8(download_url: str, lecture: Lecture) -> str:
 
     with ProgressFFmpeg(total_duration, on_update) as progress:
         try:
-            (ffmpeg
-                .input(download_url)
-                .output(output_filename, vcodec='copy', acodec='copy')
-                .global_args('-progress', progress.output_file.name)
-                .run(quiet=True))
+            run_ffmpeg_cmd(download_url, output_filename, progress)
         except ffmpeg.Error as e:
             logger.error(e.stderr)
             lecture.refresh()
@@ -52,3 +48,17 @@ def download_mp4_from_m3u8(download_url: str, lecture: Lecture) -> str:
     analysis = lecture.get_last_analysis()
     analysis.mp4_progress = 100
     analysis.save()
+
+
+def run_ffmpeg_cmd(
+    download_url: str,
+    output_filename: str,
+    progress: ProgressFFmpeg
+):
+    (
+        ffmpeg
+        .input(download_url)
+        .output(output_filename, vcodec='copy', acodec='copy')
+        .global_args('-progress', progress.output_file.name)
+        .run(quiet=True)
+    )

@@ -5,10 +5,10 @@ import logging
 
 from tools.web.downloader import download_mp4_from_m3u8
 from tools.youtube.download import download_mp4
-from tools.web.crawler import get_m3u8
 from db.models import Lecture, Analysis
 import jobs.download_lecture
 import jobs.capture_preview
+import tools.web.crawler as crawler
 from db.crud import (
     get_lecture_by_public_id_and_language,
     save_message_for_analysis
@@ -23,7 +23,6 @@ def download_mp4_from_kthplay(lecture: Lecture):
     logger = logging.getLogger('rq.worker')
 
     url = lecture.content_link()
-
     lecture.refresh()
     analysis = lecture.get_last_analysis()
     analysis.mp4_progress = 2
@@ -31,7 +30,7 @@ def download_mp4_from_kthplay(lecture: Lecture):
 
     logger.info(f'fetching content link at {url}')
     save_message_for_analysis(analysis, 'Downloading...', 'Looking for link to content.')
-    m3u8_url = get_m3u8(url)
+    m3u8_url = crawler.get_m3u8(url)
     logger.info(f'found {m3u8_url}')
 
     lecture.refresh()

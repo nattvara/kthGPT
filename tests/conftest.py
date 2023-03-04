@@ -3,16 +3,22 @@ import subprocess
 import tempfile
 import peewee
 import pytest
+import shutil
 import os
 
+from config.settings import settings
 from db.schema import all_models
 import api
 
 
 TEST_DB_FILEPATH = '/tmp/kthgpt.test.db'
+TEST_STORAGE_DIRECTORY = '/tmp/kthgpt-test-filesystem'
 
 
 def pytest_configure(config):
+    settings.STORAGE_DIRECTORY = TEST_STORAGE_DIRECTORY
+    settings.OPENAI_API_KEY = 'sk-xxx...'
+
     if os.path.exists(TEST_DB_FILEPATH):
         os.unlink(TEST_DB_FILEPATH)
 
@@ -23,6 +29,25 @@ def pytest_configure(config):
 def pytest_unconfigure(config):
     if os.path.exists(TEST_DB_FILEPATH):
         os.unlink(TEST_DB_FILEPATH)
+
+    if os.path.exists(TEST_STORAGE_DIRECTORY):
+        shutil.rmtree(TEST_STORAGE_DIRECTORY)
+
+
+@pytest.fixture(autouse=True)
+def run_around_tests():
+    db = peewee.SqliteDatabase(TEST_DB_FILEPATH)
+    setup(db)
+    yield
+    teardown(db)
+
+
+def setup(db):
+    db.create_tables(all_models)
+
+
+def teardown(db):
+    db.drop_tables(all_models)
 
 
 @pytest.fixture
