@@ -24,6 +24,11 @@ jobs:
       run: |
         cp .env.example .env
 
-    - name: Test with pytest
+    - name: Test with PyTest
       run: |
         python -m pytest
+
+    - name: Lint Source
+      run: |
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=15 --max-line-length=127 --statistics --exclude venv
