@@ -1,7 +1,7 @@
 name: Test
 on: push
 jobs:
-  Run Testsuite:
+  'Run Testsuite':
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
