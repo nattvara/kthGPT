@@ -15,6 +15,7 @@ kthGPT is a free and open source tool that can watch a lecture for you. It allow
 - [Run the tool locally](#run-the-tool-locally)
   - [Docker](#docker)
   - [Development](#development)
+- [Testsuite](#testsuite)
 - [Screenshots](#screenshots)
 - [License](#license)
 
@@ -162,6 +163,23 @@ cd web-ui
 pnpm install
 
 npm run dev
+```
+
+## Testsuite
+
+To run the testsuite execute the following command in the repository root.
+
+```bash
+$ pytest
+===================== test session starts ======================
+collected 5 items
+
+tests/feature/api/test_index.py .                        [ 20%]
+tests/feature/api/test_lectures.py .                     [ 40%]
+tests/feature/jobs/test_download_lecture.py .            [ 60%]
+tests/unit/tools/video/test_img.py ..                    [100%]
+
+====================== 5 passed in 0.78s =======================
 ```
 
 ## Screenshots
