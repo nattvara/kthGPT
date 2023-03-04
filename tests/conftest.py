@@ -1,10 +1,28 @@
 from fastapi.testclient import TestClient
 import subprocess
 import tempfile
+import peewee
 import pytest
 import os
 
+from db.schema import all_models
 import api
+
+
+TEST_DB_FILEPATH = '/tmp/kthgpt.test.db'
+
+
+def pytest_configure(config):
+    if os.path.exists(TEST_DB_FILEPATH):
+        os.unlink(TEST_DB_FILEPATH)
+
+    db = peewee.SqliteDatabase(TEST_DB_FILEPATH)
+    db.create_tables(all_models)
+
+
+def pytest_unconfigure(config):
+    if os.path.exists(TEST_DB_FILEPATH):
+        os.unlink(TEST_DB_FILEPATH)
 
 
 @pytest.fixture
