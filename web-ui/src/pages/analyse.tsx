@@ -4,7 +4,6 @@ import { registerPageLoad } from '@/matomo';
 import { useEffect } from 'react';
 import { useParams } from 'umi';
 
-
 export default function AnalysePage() {
   const { id, language } = useParams();
 

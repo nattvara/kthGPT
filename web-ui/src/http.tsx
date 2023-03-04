@@ -8,12 +8,11 @@ if (process.env.NODE_ENV === 'production') {
   baseURL = 'http://localhost:8000';
 }
 
-
 export const makeUrl = (uri: string) => `${baseURL}${uri}`;
 
 export default axios.create({
   baseURL,
   headers: {
-    'Content-type': 'application/json'
-  }
+    'Content-type': 'application/json',
+  },
 });

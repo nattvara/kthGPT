@@ -4,7 +4,6 @@ import { useParams } from 'umi';
 import { useEffect } from 'react';
 import { registerPageLoad } from '@/matomo';
 
-
 export default function QuestionsPage() {
   useEffect(() => {
     registerPageLoad();

@@ -1,17 +1,6 @@
-import {
-  SendOutlined,
-  CloseOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
+import { SendOutlined, CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 import styles from './questions.less';
-import {
-  Row,
-  Col,
-  Space,
-  Button,
-  Skeleton,
-  Result,
-} from 'antd';
+import { Row, Col, Space, Button, Skeleton, Result } from 'antd';
 import { notification } from 'antd';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
@@ -30,8 +19,8 @@ import {
 import CourseSelector from '../analyser/course-selector';
 
 interface QuestionsProps {
-  id: string
-  language: string
+  id: string;
+  language: string;
 }
 
 const examples = [
@@ -44,8 +33,10 @@ const examples = [
   {
     titleEn: 'Tell me the core concepts covered in the lecture',
     titleSv: 'Berätta om kärnbegreppen i föreläsningen',
-    queryStringEn: 'Tell me the core concepts covered in the lecture and give some explanations for each',
-    queryStringSv: 'Förklara kärnbegreppen i denna föreläsning, med några användbara exempel',
+    queryStringEn:
+      'Tell me the core concepts covered in the lecture and give some explanations for each',
+    queryStringSv:
+      'Förklara kärnbegreppen i denna föreläsning, med några användbara exempel',
   },
   {
     titleEn: 'At which point in the lecture is X covered?',
@@ -56,8 +47,10 @@ const examples = [
   {
     titleEn: 'Where in the course literature can I read more about this?',
     titleSv: 'Var i kursboken kan jag läsa mer om detta?',
-    queryStringEn: 'Where in the course book "X" can i read more about the topics from this lecture?',
-    queryStringSv: 'Var i kursboken "X" kan jag läsa mer om innehållet från denna föreläsning?',
+    queryStringEn:
+      'Where in the course book "X" can i read more about the topics from this lecture?',
+    queryStringSv:
+      'Var i kursboken "X" kan jag läsa mer om innehållet från denna föreläsning?',
   },
   {
     titleEn: 'Tell me a joke about this lecture',
@@ -69,7 +62,7 @@ const examples = [
 
 const randomInt = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+};
 
 export default function Questions(props: QuestionsProps) {
   const { id, language } = props;
@@ -112,14 +105,18 @@ export default function Questions(props: QuestionsProps) {
   const { isLoading: isMakingQuery, mutate: makeQuery } = useMutation(
     async () => {
       setResponse('');
-      return await apiClient.post('/query', {
-        lecture_id: id,
-        language: language,
-        query_string: queryString,
-        override_cache: overrideCache,
-      }, {
-        timeout: 1000 * 40,  // 40s timeout
-      });
+      return await apiClient.post(
+        '/query',
+        {
+          lecture_id: id,
+          language: language,
+          query_string: queryString,
+          override_cache: overrideCache,
+        },
+        {
+          timeout: 1000 * 40, // 40s timeout
+        }
+      );
     },
     {
       onSuccess: (res: any) => {
@@ -144,7 +141,7 @@ export default function Questions(props: QuestionsProps) {
         if (data.detail) {
           setError(data.detail);
         } else {
-          setError('Something went wrong when communicating with OpenAI.')
+          setError('Something went wrong when communicating with OpenAI.');
         }
       },
     }
@@ -183,20 +180,21 @@ export default function Questions(props: QuestionsProps) {
     return (
       <>
         <Result
-          status='404'
-          title='Could not find lecture'
+          status="404"
+          title="Could not find lecture"
           extra={[
             <Button
               onClick={() => history.push('/')}
-              type='primary'
-              key='btn'
-              size='large'>
+              type="primary"
+              key="btn"
+              size="large"
+            >
               Add a lecture here
             </Button>,
           ]}
         />
       </>
-    )
+    );
   }
 
   if (lecture == null) {
@@ -237,20 +235,21 @@ export default function Questions(props: QuestionsProps) {
       {contextHolder}
       <Row>
         <Col sm={smLeft} md={mdLeft} lg={lgLeft}>
-          <Space direction='vertical' size='large' style={{width: '100%'}}>
+          <Space direction="vertical" size="large" style={{ width: '100%' }}>
             <Row>
               <Col span={24}>
                 <TextArea
                   className={styles.hugeInput}
                   value={queryString}
-                  onChange={e => {
+                  onChange={(e) => {
                     let val = e.target.value;
                     val = val.replaceAll('\n', '');
                     setQueryString(val);
                   }}
                   onPressEnter={() => askQuestion()}
                   placeholder={placeholder}
-                  autoSize={true} />
+                  autoSize={true}
+                />
               </Col>
             </Row>
             <Row gutter={[10, 10]}>
@@ -258,28 +257,36 @@ export default function Questions(props: QuestionsProps) {
                 <Button
                   onClick={() => askQuestion()}
                   loading={isMakingQuery}
-                  type='primary'
-                  size='large'
+                  type="primary"
+                  size="large"
                 >
                   <SendOutlined /> Ask
                 </Button>
               </Col>
               <Col>
-                <Button type='default' size='large' onClick={() => history.push('/')}>
+                <Button
+                  type="default"
+                  size="large"
+                  onClick={() => history.push('/')}
+                >
                   <CloseOutlined /> Another lecture
                 </Button>
               </Col>
 
               <Col>
-                <Button type='text' size='small' style={{pointerEvents: 'none'}}>
+                <Button
+                  type="text"
+                  size="small"
+                  style={{ pointerEvents: 'none' }}
+                >
                   Some examples
                 </Button>
               </Col>
-              {examples.map(example =>
+              {examples.map((example) => (
                 <Col key={example.titleEn}>
                   <Button
-                    type='dashed'
-                    size='small'
+                    type="dashed"
+                    size="small"
                     onClick={() => {
                       if (language === 'en') {
                         setQueryString(example.queryStringEn);
@@ -292,68 +299,71 @@ export default function Questions(props: QuestionsProps) {
                     {lecture.language === 'sv' && example.titleSv}
                   </Button>
                 </Col>
-              )}
+              ))}
             </Row>
           </Space>
           <Row>
             <Col span={24}>
-              {error !== '' &&
+              {error !== '' && (
                 <>
                   <Result
-                    status='500'
-                    title='Sorry, something went wrong.'
+                    status="500"
+                    title="Sorry, something went wrong."
                     subTitle={error}
                     extra={
                       <Button
                         onClick={() => askQuestion()}
                         loading={isMakingQuery}
-                        type='primary'
-                        size='large'
+                        type="primary"
+                        size="large"
                       >
                         <ReloadOutlined /> Try Again
                       </Button>
                     }
                   />
                 </>
-              }
-              {isMakingQuery &&
+              )}
+              {isMakingQuery && (
                 <>
                   <Skeleton active paragraph={{ rows: randomInt(1, 8) }} />
                   <Skeleton active paragraph={{ rows: randomInt(6, 10) }} />
                   <Skeleton active paragraph={{ rows: randomInt(1, 4) }} />
                   <Skeleton active paragraph={{ rows: randomInt(2, 8) }} />
                 </>
-              }
-              {!isMakingQuery && response !== '' &&
+              )}
+              {!isMakingQuery && response !== '' && (
                 <>
                   <Row gutter={[20, 20]}>
                     <Col span={24}>
-                      <pre className={styles.response}>
-                        {response}
-                      </pre>
+                      <pre className={styles.response}>{response}</pre>
                     </Col>
                   </Row>
 
                   <div className={styles.divider}></div>
 
-                  {wasCached &&
-                    <Row justify='end' align='middle' gutter={[10, 10]}>
-                      <Button type='text' size='small' style={{pointerEvents: 'none'}}>
-                        This response was cached. Click here to override the cache
+                  {wasCached && (
+                    <Row justify="end" align="middle" gutter={[10, 10]}>
+                      <Button
+                        type="text"
+                        size="small"
+                        style={{ pointerEvents: 'none' }}
+                      >
+                        This response was cached. Click here to override the
+                        cache
                       </Button>
                       <Button
                         onClick={() => askQuestionWithoutCache()}
                         loading={isMakingQuery}
-                        type='dashed'
-                        size='small'
+                        type="dashed"
+                        size="small"
                         icon={<ReloadOutlined />}
                       >
                         New Response
                       </Button>
                     </Row>
-                  }
+                  )}
                 </>
-              }
+              )}
             </Col>
           </Row>
           <Row>
@@ -364,13 +374,16 @@ export default function Questions(props: QuestionsProps) {
         </Col>
         <Col sm={smRight} md={mdRight} lg={lgRight}>
           <div className={styles.preview_container}>
-            {lecture.courses_can_change &&
+            {lecture.courses_can_change && (
               <Row>
-                <CourseSelector lecture={lecture} onLectureUpdated={lecture => setLecture(lecture)} />
+                <CourseSelector
+                  lecture={lecture}
+                  onLectureUpdated={(lecture) => setLecture(lecture)}
+                />
               </Row>
-            }
+            )}
             <Row>
-                <Preview lecture={lecture}></Preview>
+              <Preview lecture={lecture}></Preview>
             </Row>
           </div>
         </Col>

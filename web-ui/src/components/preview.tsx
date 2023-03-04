@@ -1,19 +1,8 @@
 import styles from './preview.less';
-import {
-  Image,
-  Card,
-  Spin,
-  Row,
-  Col,
-  Space,
-} from 'antd';
+import { Image, Card, Spin, Row, Col, Space } from 'antd';
 import { Lecture } from '@/components/lecture';
 import { makeUrl } from '@/http';
-import {
-  EVENT_GOTO_CONTENT,
-  CATEGORY_PREVIEW,
-  emitEvent,
-} from '@/matomo';
+import { EVENT_GOTO_CONTENT, CATEGORY_PREVIEW, emitEvent } from '@/matomo';
 import {
   AudioOutlined,
   BookOutlined,
@@ -32,30 +21,22 @@ const prettyLengthString = (seconds: number) => {
   const minutes = Math.floor((seconds % 3600) / 60);
 
   return `${hours}h ${minutes}min`;
-}
-
+};
 
 interface PreviewCompactProps {
-  lecture: Lecture
-  onClick: Function
-  onMetaClick: Function
-  onCtrlClick: Function
+  lecture: Lecture;
+  onClick: Function;
+  onMetaClick: Function;
+  onCtrlClick: Function;
 }
 
-
 export function PreviewCompact(props: PreviewCompactProps) {
-  const {
-    lecture,
-    onClick,
-    onCtrlClick,
-    onMetaClick,
-  } = props;
+  const { lecture, onClick, onCtrlClick, onMetaClick } = props;
 
   let flagIcon = '';
   if (lecture.language == 'sv') {
     flagIcon = svFlag;
-  }
-  else if (lecture.language == 'en') {
+  } else if (lecture.language == 'en') {
     flagIcon = enFlag;
   }
 
@@ -67,8 +48,7 @@ export function PreviewCompact(props: PreviewCompactProps) {
   let icon = '';
   if (lecture.source === 'youtube') {
     icon = youtubeLogo;
-  }
-  else if (lecture.source === 'kth') {
+  } else if (lecture.source === 'kth') {
     icon = kthLogo;
   }
 
@@ -76,7 +56,7 @@ export function PreviewCompact(props: PreviewCompactProps) {
     <Card
       className={styles.compact}
       hoverable
-      onClick={e => {
+      onClick={(e) => {
         if (e.metaKey) return onMetaClick();
         if (e.ctrlKey) return onCtrlClick();
         onClick();
@@ -85,17 +65,27 @@ export function PreviewCompact(props: PreviewCompactProps) {
       <Row>
         <Col span={8}>
           <div className={styles.image}>
-            <Spin tip="Loading..." spinning={lecture.preview_small_uri === null}>
+            <Spin
+              tip="Loading..."
+              spinning={lecture.preview_small_uri === null}
+            >
               <Image
                 preview={false}
-                src={lecture.preview_small_uri === null ? '' : makeUrl(lecture.preview_small_uri!)} />
+                src={
+                  lecture.preview_small_uri === null
+                    ? ''
+                    : makeUrl(lecture.preview_small_uri!)
+                }
+              />
             </Spin>
           </div>
         </Col>
         <Col span={16} className={styles.body}>
-          <Row className={styles.title}><strong>{lecture.title}</strong></Row>
-          <Row align='middle' justify='start'>
-            <Space direction='horizontal'>
+          <Row className={styles.title}>
+            <strong>{lecture.title}</strong>
+          </Row>
+          <Row align="middle" justify="start">
+            <Space direction="horizontal">
               <Col>
                 <strong>{dateString}</strong>
               </Col>
@@ -105,7 +95,7 @@ export function PreviewCompact(props: PreviewCompactProps) {
                   height={18}
                   className={styles.flag}
                   preview={false}
-                  />
+                />
               </Col>
               <Col>
                 <Image
@@ -123,11 +113,9 @@ export function PreviewCompact(props: PreviewCompactProps) {
   );
 }
 
-
 interface PreviewProps {
-  lecture: Lecture
+  lecture: Lecture;
 }
-
 
 export default function Preview(props: PreviewProps) {
   const { lecture } = props;
@@ -135,13 +123,12 @@ export default function Preview(props: PreviewProps) {
   const openKthPlay = (url: string) => {
     window.open(url, '_blank');
     emitEvent(CATEGORY_PREVIEW, EVENT_GOTO_CONTENT, url);
-  }
+  };
 
   let flagIcon = '';
   if (lecture.language == 'sv') {
     flagIcon = svFlag;
-  }
-  else if (lecture.language == 'en') {
+  } else if (lecture.language == 'en') {
     flagIcon = enFlag;
   }
 
@@ -156,87 +143,106 @@ export default function Preview(props: PreviewProps) {
       className={styles.preview}
       onClick={() => openKthPlay(lecture.content_link)}
       cover={
-          <>
-            <Spin tip="Loading..." spinning={lecture.preview_uri === null}>
-              <Image
-                preview={false}
-                style={{minHeight: '100px'}}
-                src={lecture.preview_uri === null ? '' : makeUrl(lecture.preview_uri!)} />
-            </Spin>
-          </>
-        }>
+        <>
+          <Spin tip="Loading..." spinning={lecture.preview_uri === null}>
+            <Image
+              preview={false}
+              style={{ minHeight: '100px' }}
+              src={
+                lecture.preview_uri === null
+                  ? ''
+                  : makeUrl(lecture.preview_uri!)
+              }
+            />
+          </Spin>
+        </>
+      }
+    >
       <>
-        <Meta title={
-          lecture.title === null ? '' : lecture.title
-        } description={<>
-          {lecture.date !== null &&
-            <Row>
-              <strong>{dateString}</strong>
-            </Row>
+        <Meta
+          title={lecture.title === null ? '' : lecture.title}
+          description={
+            <>
+              {lecture.date !== null && (
+                <Row>
+                  <strong>{dateString}</strong>
+                </Row>
+              )}
+              <Row>{lecture.content_link}</Row>
+              <div className={styles.meta_container}>
+                <div className={styles.meta}>
+                  <Row justify="start" align="middle">
+                    <Space direction="horizontal">
+                      <Col>
+                        <h3 className={styles.language}>
+                          <AudioOutlined /> Language
+                        </h3>
+                      </Col>
+                      <Col>
+                        <Image
+                          src={flagIcon}
+                          height={20}
+                          className={styles.flag}
+                          preview={false}
+                        />
+                      </Col>
+                    </Space>
+                  </Row>
+                </div>
+                {lecture.length !== null && lecture.length !== 0 && (
+                  <div className={styles.meta}>
+                    <Row justify="start" align="middle">
+                      <Space direction="horizontal">
+                        <Col>
+                          <h3 className={styles.length}>
+                            <ClockCircleOutlined /> Length
+                          </h3>
+                        </Col>
+                        <Col>{prettyLengthString(lecture.length!)}</Col>
+                      </Space>
+                    </Row>
+                  </div>
+                )}
+                {lecture.words !== null && lecture.words !== 0 && (
+                  <div className={styles.meta}>
+                    <Row justify="start" align="middle" className={styles.stat}>
+                      <Space direction="horizontal">
+                        <Col>
+                          <h3 className={styles.words}>
+                            <NumberOutlined /> Words
+                          </h3>
+                        </Col>
+                        <Col>{lecture.words!.toLocaleString('sv')}</Col>
+                      </Space>
+                    </Row>
+                  </div>
+                )}
+                {lecture.courses &&
+                  lecture.courses.map((course) => (
+                    <div
+                      key={course.course_code}
+                      className={`${styles.meta} ${styles.course}`}
+                    >
+                      <Row
+                        justify="start"
+                        align="middle"
+                        className={styles.stat}
+                      >
+                        <Space direction="horizontal">
+                          <Col>
+                            <h3 className={styles.course}>
+                              <BookOutlined /> {course.course_code}
+                            </h3>
+                          </Col>
+                        </Space>
+                      </Row>
+                    </div>
+                  ))}
+              </div>
+            </>
           }
-          <Row>
-            {lecture.content_link}
-          </Row>
-          <div className={styles.meta_container}>
-            <div className={styles.meta}>
-              <Row justify='start' align='middle'>
-                <Space direction='horizontal'>
-                  <Col>
-                    <h3 className={styles.language}><AudioOutlined /> Language</h3>
-                  </Col>
-                  <Col>
-                    <Image
-                      src={flagIcon}
-                      height={20}
-                      className={styles.flag}
-                      preview={false}
-                      />
-                  </Col>
-                </Space>
-              </Row>
-            </div>
-            {lecture.length !== null && lecture.length !== 0 &&
-              <div className={styles.meta}>
-                <Row justify='start' align='middle'>
-                  <Space direction='horizontal'>
-                    <Col>
-                      <h3 className={styles.length}><ClockCircleOutlined /> Length</h3>
-                    </Col>
-                    <Col>
-                      {prettyLengthString(lecture.length!)}
-                    </Col>
-                  </Space>
-                </Row>
-              </div>
-            }
-            {lecture.words !== null && lecture.words !== 0 &&
-              <div className={styles.meta}>
-                <Row justify='start' align='middle' className={styles.stat}>
-                  <Space direction='horizontal'>
-                    <Col>
-                      <h3 className={styles.words}><NumberOutlined /> Words</h3>
-                    </Col>
-                    <Col>
-                      {lecture.words!.toLocaleString('sv')}
-                    </Col>
-                  </Space>
-                </Row>
-              </div>
-            }
-            {lecture.courses && lecture.courses.map(course =>
-              <div key={course.course_code} className={`${styles.meta} ${styles.course}`}>
-                <Row justify='start' align='middle' className={styles.stat}>
-                  <Space direction='horizontal'>
-                    <Col>
-                      <h3 className={styles.course}><BookOutlined /> {course.course_code}</h3>
-                    </Col>
-                  </Space>
-                </Row>
-              </div>
-            )}
-        </div>
-        </>} />
+        />
       </>
     </Card>
-  )
+  );
 }

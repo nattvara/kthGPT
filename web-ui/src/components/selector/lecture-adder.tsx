@@ -15,10 +15,7 @@ import {
   Alert,
   Grid,
 } from 'antd';
-import {
-  BulbOutlined,
-  PlayCircleOutlined,
-} from '@ant-design/icons';
+import { BulbOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import apiClient from '@/http';
@@ -27,12 +24,7 @@ import kthLogo from '@/assets/kth.svg';
 import youtubeLogo from '@/assets/youtube.svg';
 import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';
-import {
-  CATEGORY_ADDER,
-  emitEvent,
-  EVENT_SUBMIT_URL,
-} from '@/matomo';
-
+import { CATEGORY_ADDER, emitEvent, EVENT_SUBMIT_URL } from '@/matomo';
 
 const { Title, Link, Paragraph } = Typography;
 const { Meta } = Card;
@@ -45,8 +37,8 @@ const LANGUAGE_ENGLISH = 'en';
 const LANGUAGE_SWEDISH = 'sv';
 
 interface SourcePopoverProps {
-  dismiss: Function
-  setSource: Function
+  dismiss: Function;
+  setSource: Function;
 }
 
 function SourcePopover(props: SourcePopoverProps) {
@@ -54,7 +46,7 @@ function SourcePopover(props: SourcePopoverProps) {
 
   return (
     <>
-      <Row justify='center'>
+      <Row justify="center">
         <Space>
           <Col>
             <Card
@@ -64,9 +56,10 @@ function SourcePopover(props: SourcePopoverProps) {
                 setSource(SOURCE_KTH);
                 dismiss();
               }}
-              cover={<Image preview={false} src={kthLogo} />}>
+              cover={<Image preview={false} src={kthLogo} />}
+            >
               <>
-                <Meta title={<div style={{padding: '10px'}}>KTH Play</div>} />
+                <Meta title={<div style={{ padding: '10px' }}>KTH Play</div>} />
               </>
             </Card>
           </Col>
@@ -78,27 +71,29 @@ function SourcePopover(props: SourcePopoverProps) {
                 setSource(SOURCE_YOUTUBE);
                 dismiss();
               }}
-              cover={<Image preview={false} src={youtubeLogo} />}>
+              cover={<Image preview={false} src={youtubeLogo} />}
+            >
               <>
-                <Meta title={<div style={{padding: '10px'}}>YouTube</div>} />
+                <Meta title={<div style={{ padding: '10px' }}>YouTube</div>} />
               </>
             </Card>
           </Col>
         </Space>
       </Row>
-      <Row justify='center'>
+      <Row justify="center">
         <Col>
-          <Button type='link' onClick={() => dismiss()}>Close</Button>
+          <Button type="link" onClick={() => dismiss()}>
+            Close
+          </Button>
         </Col>
       </Row>
     </>
   );
 }
 
-
 interface LanguagePopoverProps {
-  dismiss: Function
-  setLanguage: Function
+  dismiss: Function;
+  setLanguage: Function;
 }
 
 function LanguagePopover(props: LanguagePopoverProps) {
@@ -106,10 +101,10 @@ function LanguagePopover(props: LanguagePopoverProps) {
 
   return (
     <>
-      <Row justify='center'>
+      <Row justify="center">
         <Space>
           <Col>
-          <Image
+            <Image
               src={enFlag}
               height={50}
               width={100}
@@ -136,36 +131,31 @@ function LanguagePopover(props: LanguagePopoverProps) {
           </Col>
         </Space>
       </Row>
-      <Row justify='center'>
+      <Row justify="center">
         <Col>
-          <Button type='link' onClick={() => dismiss()}>Close</Button>
+          <Button type="link" onClick={() => dismiss()}>
+            Close
+          </Button>
         </Col>
       </Row>
     </>
   );
 }
 
-
 interface UrlPopoverProps {
-  dismiss: Function
-  setUrl: Function
-  url: string
-  source: string
-  isOpen: boolean
+  dismiss: Function;
+  setUrl: Function;
+  url: string;
+  source: string;
+  isOpen: boolean;
 }
 
 function UrlPopover(props: UrlPopoverProps) {
-  const {
-    dismiss,
-    setUrl,
-    url,
-    source,
-    isOpen,
-  } = props;
+  const { dismiss, setUrl, url, source, isOpen } = props;
 
-  const [ localUrl, setLocalUrl ] = useState<string>('');
+  const [localUrl, setLocalUrl] = useState<string>('');
   const ref = useRef<InputRef>(null);
-  const [ form ] = Form.useForm();
+  const [form] = Form.useForm();
 
   const screens = useBreakpoint();
 
@@ -175,7 +165,7 @@ function UrlPopover(props: UrlPopoverProps) {
   } else if (source === SOURCE_KTH) {
     placeholder = 'Enter video.. eg. https://play.kth.se/media/...';
   } else {
-    placeholder = 'Enter video.. eg. https://play.kth.se/media/...'
+    placeholder = 'Enter video.. eg. https://play.kth.se/media/...';
   }
 
   const save = async () => {
@@ -198,37 +188,38 @@ function UrlPopover(props: UrlPopoverProps) {
 
   return (
     <>
-      <Space direction='vertical'>
-        <Row justify='center'>
+      <Space direction="vertical">
+        <Row justify="center">
           <Col>
-            <Form
-              form={form}
-              layout='vertical'
-              autoComplete='off'
-            >
+            <Form form={form} layout="vertical" autoComplete="off">
               <Form.Item
-                name='Lecture URL'
-                label='Lecture URL'
+                name="Lecture URL"
+                label="Lecture URL"
                 rules={[{ required: true }, { type: 'url', warningOnly: true }]}
               >
                 <Input
                   ref={ref}
                   className={styles.url_input}
                   value={localUrl}
-                  onChange={e => setLocalUrl(e.target.value)}
+                  onChange={(e) => setLocalUrl(e.target.value)}
                   onPressEnter={() => save()}
                   placeholder={placeholder}
-                  prefix={<PlayCircleOutlined />} />
+                  prefix={<PlayCircleOutlined />}
+                />
               </Form.Item>
             </Form>
           </Col>
         </Row>
-        <Row justify='center'>
+        <Row justify="center">
           <Col>
-            <Button type='link' onClick={() => dismiss()}>Close</Button>
+            <Button type="link" onClick={() => dismiss()}>
+              Close
+            </Button>
           </Col>
           <Col>
-            <Button type='primary' onClick={() => save()}>Save</Button>
+            <Button type="primary" onClick={() => save()}>
+              Save
+            </Button>
           </Col>
         </Row>
       </Space>
@@ -236,19 +227,17 @@ function UrlPopover(props: UrlPopoverProps) {
   );
 }
 
-
 interface LectureAdderProps {}
 
-
 export default function LectureAdder(props: LectureAdderProps) {
-  const [ sourceOpen, setSourceOpen ] = useState(false);
-  const [ languageOpen, setLanguageOpen ] = useState(false);
-  const [ urlOpen, setUrlOpen ] = useState(false);
+  const [sourceOpen, setSourceOpen] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const [urlOpen, setUrlOpen] = useState(false);
 
-  const [ source, setSource ] = useState<string>('');
-  const [ language, setLanguage ] = useState<string>('');
-  const [ url, setUrl ] = useState<string>('');
-  const [ error, setError ] = useState<string>('');
+  const [source, setSource] = useState<string>('');
+  const [language, setLanguage] = useState<string>('');
+  const [url, setUrl] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
   const canSubmit = source !== '' && language !== '' && url !== '';
 
@@ -284,7 +273,6 @@ export default function LectureAdder(props: LectureAdderProps) {
       <Paragraph className={styles.paragraph}>
         <Title level={2} className={styles.link}>
           Please watch a lecture on
-
           <Popover
             style={{ width: 500 }}
             content={
@@ -293,21 +281,23 @@ export default function LectureAdder(props: LectureAdderProps) {
                 setSource={(s: any) => setSource(s)}
               />
             }
-            title='Select where the lecture is hosted'
-            trigger='hover'
+            title="Select where the lecture is hosted"
+            trigger="hover"
             open={sourceOpen}
           >
-          <Link className={styles.link} onClick={() => {
-            setSourceOpen(true);
-            setLanguageOpen(false);
-            setUrlOpen(false);
-          }}>
-            {source === '' && <> select source</>}
-            {source === SOURCE_KTH && <> KTH Play</>}
-            {source === SOURCE_YOUTUBE && <> YouTube</>}
-          </Link>
+            <Link
+              className={styles.link}
+              onClick={() => {
+                setSourceOpen(true);
+                setLanguageOpen(false);
+                setUrlOpen(false);
+              }}
+            >
+              {source === '' && <> select source</>}
+              {source === SOURCE_KTH && <> KTH Play</>}
+              {source === SOURCE_YOUTUBE && <> YouTube</>}
+            </Link>
           </Popover>
-
           <>. The lecture is in </>
           <Popover
             style={{ width: 500 }}
@@ -317,21 +307,23 @@ export default function LectureAdder(props: LectureAdderProps) {
                 setLanguage={(s: any) => setLanguage(s)}
               />
             }
-            title='Select the spoken language of the lecture'
-            trigger='hover'
+            title="Select the spoken language of the lecture"
+            trigger="hover"
             open={languageOpen}
           >
-            <Link className={styles.link} onClick={() => {
-              setLanguageOpen(true);
-              setSourceOpen(false);
-              setUrlOpen(false);
-            }}>
+            <Link
+              className={styles.link}
+              onClick={() => {
+                setLanguageOpen(true);
+                setSourceOpen(false);
+                setUrlOpen(false);
+              }}
+            >
               {language === '' && <> select language</>}
               {language === LANGUAGE_SWEDISH && <> Swedish</>}
               {language === LANGUAGE_ENGLISH && <> English</>}
             </Link>
           </Popover>
-
           <>. The link to the lecture is </>
           <Popover
             style={{ width: 500 }}
@@ -344,43 +336,46 @@ export default function LectureAdder(props: LectureAdderProps) {
                 isOpen={urlOpen}
               />
             }
-            title='Enter the URL to the lecture'
-            trigger='hover'
+            title="Enter the URL to the lecture"
+            trigger="hover"
             open={urlOpen}
           >
-            <Link className={styles.link} onClick={() => {
+            <Link
+              className={styles.link}
+              onClick={() => {
                 setLanguageOpen(false);
                 setSourceOpen(false);
                 setUrlOpen(true);
-              }}>
-                {url === '' && <> enter URL</>}
-                {url !== '' && <> {url}</>}
+              }}
+            >
+              {url === '' && <> enter URL</>}
+              {url !== '' && <> {url}</>}
             </Link>
           </Popover>
         </Title>
       </Paragraph>
 
-      <Space direction='vertical' style={{width: '100%'}} size='large'>
-        {error !== '' &&
-          <Row justify='center'>
+      <Space direction="vertical" style={{ width: '100%' }} size="large">
+        {error !== '' && (
+          <Row justify="center">
             <Col>
               <Alert
-                message='The URL was not accepted'
+                message="The URL was not accepted"
                 description={error}
-                type='error'
+                type="error"
                 showIcon
               />
             </Col>
           </Row>
-        }
+        )}
 
-        <Row justify='center'>
+        <Row justify="center">
           <Col>
             <Button
               onClick={submit}
-              type='primary'
+              type="primary"
               icon={<BulbOutlined />}
-              size='large'
+              size="large"
               loading={isPosting}
               disabled={!canSubmit}
             >

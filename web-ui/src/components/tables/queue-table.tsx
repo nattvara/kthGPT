@@ -1,8 +1,4 @@
-import {
-  Typography,
-  Table,
-  Image,
-} from 'antd';
+import { Typography, Table, Image } from 'antd';
 import { notification } from 'antd';
 import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
@@ -27,17 +23,11 @@ const columns: ColumnsType<Lecture> = [
       let icon = '';
       if (source === 'youtube') {
         icon = youtubeLogo;
-      }
-      else if (source === 'kth') {
+      } else if (source === 'kth') {
         icon = kthLogo;
       }
       return (
-        <Image
-          src={icon}
-          height={30}
-          className={styles.logo}
-          preview={false}
-        />
+        <Image src={icon} height={30} className={styles.logo} preview={false} />
       );
     },
   },
@@ -48,9 +38,16 @@ const columns: ColumnsType<Lecture> = [
   {
     title: 'Analysis',
     dataIndex: 'combined_public_id_and_lang',
-    render: (combined_public_id_and_lang: string) => <>
-      <Link href={`/analyse/lectures/${combined_public_id_and_lang}`} type='dashed'>View Progress</Link>
-    </>,
+    render: (combined_public_id_and_lang: string) => (
+      <>
+        <Link
+          href={`/analyse/lectures/${combined_public_id_and_lang}`}
+          type="dashed"
+        >
+          View Progress
+        </Link>
+      </>
+    ),
   },
   {
     title: 'Language',
@@ -59,8 +56,7 @@ const columns: ColumnsType<Lecture> = [
       let flagIcon = '';
       if (val === 'sv') {
         flagIcon = svFlag;
-      }
-      else if (val === 'en') {
+      } else if (val === 'en') {
         flagIcon = enFlag;
       }
       return (
@@ -71,7 +67,7 @@ const columns: ColumnsType<Lecture> = [
           preview={false}
         />
       );
-    }
+    },
   },
   {
     title: 'Added At',
@@ -80,8 +76,12 @@ const columns: ColumnsType<Lecture> = [
       const d = new Date(val);
       const date = d.toDateString();
       const time = d.toLocaleTimeString('sv');
-      return <>{date}, {time}</>;
-    }
+      return (
+        <>
+          {date}, {time}
+        </>
+      );
+    },
   },
   {
     title: 'State',
@@ -89,9 +89,11 @@ const columns: ColumnsType<Lecture> = [
     render: (val: string) => {
       val = val.replaceAll('_', ' ');
 
-      const titleCase = val.toLowerCase().replace(/(^|\s)\S/g, (match) => match.toUpperCase());
+      const titleCase = val
+        .toLowerCase()
+        .replace(/(^|\s)\S/g, (match) => match.toUpperCase());
       return <>{titleCase}</>;
-    }
+    },
   },
   {
     title: 'Frozen',
@@ -101,18 +103,18 @@ const columns: ColumnsType<Lecture> = [
         return <>Yes</>;
       }
       return <>No</>;
-    }
+    },
   },
   {
     title: 'Progress',
     dataIndex: 'overall_progress',
-    render: (val: string) => <>{val}%</>
+    render: (val: string) => <>{val}%</>,
   },
 ];
 
 export default function QueueTable() {
-  const [ lectures, setLectures ] = useState<Lecture[]>([]);
-  const [ notificationApi, contextHolder ] = notification.useNotification();
+  const [lectures, setLectures] = useState<Lecture[]>([]);
+  const [notificationApi, contextHolder] = notification.useNotification();
 
   const { mutate: fetchLectures } = useMutation(
     async () => {
@@ -156,9 +158,7 @@ export default function QueueTable() {
   return (
     <>
       {contextHolder}
-      <Table
-        columns={columns}
-        dataSource={lectures} />
+      <Table columns={columns} dataSource={lectures} />
     </>
   );
 }

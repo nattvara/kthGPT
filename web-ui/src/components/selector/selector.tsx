@@ -1,16 +1,7 @@
 import styles from './selector.less';
-import {
-  Row,
-  Col,
-  Typography,
-  Divider,
-  Statistic,
-} from 'antd';
+import { Row, Col, Typography, Divider, Statistic } from 'antd';
 import { useEffect, useState } from 'react';
-import {
-  FileSearchOutlined,
-  VideoCameraAddOutlined,
-} from '@ant-design/icons';
+import { FileSearchOutlined, VideoCameraAddOutlined } from '@ant-design/icons';
 import CourseBrowser from './course-browser';
 import apiClient from '@/http';
 import LectureAdder from './lecture-adder';
@@ -18,14 +9,13 @@ import LectureAdder from './lecture-adder';
 const { Title } = Typography;
 
 interface Stats {
-  courses: number
-  lectures: number
-  lectures_without_courses: number
+  courses: number;
+  lectures: number;
+  lectures_without_courses: number;
 }
 
-
 export default function Selector() {
-  const [ stats, setStats ] = useState<Stats>({
+  const [stats, setStats] = useState<Stats>({
     courses: 0,
     lectures: 0,
     lectures_without_courses: 0,
@@ -38,7 +28,7 @@ export default function Selector() {
     } catch (err: any) {
       console.log(err);
     }
-  }
+  };
 
   useEffect(() => {
     fetchStats();
@@ -49,20 +39,33 @@ export default function Selector() {
   return (
     <Row className={styles.selector}>
       <Col xs={24} sm={11}>
-        <Title level={2}>Find a lecture <FileSearchOutlined /></Title>
-        <Title
-          level={5}
-          className={styles.subtitle}
-        >kthGPT has already watched <Statistic value={stats.lectures} /> lectures from <Statistic value={stats.courses} /> courses</Title>
+        <Title level={2}>
+          Find a lecture <FileSearchOutlined />
+        </Title>
+        <Title level={5} className={styles.subtitle}>
+          kthGPT has already watched <Statistic value={stats.lectures} />
+          <span> </span>
+          lectures from
+          <span> </span>
+          <Statistic value={stats.courses} />
+          <span> </span>
+          courses
+        </Title>
 
-        <CourseBrowser lecturesWithoutCourses={stats.lectures_without_courses} />
+        <CourseBrowser
+          lecturesWithoutCourses={stats.lectures_without_courses}
+        />
       </Col>
       <Col xs={0} sm={2} className={styles.divider}>
-        <Divider type='vertical' />
+        <Divider type="vertical" />
       </Col>
       <Col xs={24} sm={11}>
-        <Title level={2}>...or add a new lecture <VideoCameraAddOutlined /></Title>
-        <Title level={5} className={styles.subtitle}>Ask kthGPT to watch a new lecture</Title>
+        <Title level={2}>
+          ...or add a new lecture <VideoCameraAddOutlined />
+        </Title>
+        <Title level={5} className={styles.subtitle}>
+          Ask kthGPT to watch a new lecture
+        </Title>
 
         <LectureAdder />
       </Col>
