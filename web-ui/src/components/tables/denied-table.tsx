@@ -2,7 +2,7 @@ import { Table, Image, Typography } from 'antd';
 import { notification } from 'antd';
 import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import apiClient from '@/http';
+import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { Lecture } from '@/components/lecture';
 import styles from './denied-table.less';
 import { ColumnsType } from 'antd/es/table';
@@ -94,6 +94,10 @@ const columns: ColumnsType<Lecture> = [
   },
 ];
 
+interface LectureResponse extends ServerResponse {
+  data: Lecture[];
+}
+
 export default function DeniedTable() {
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [notificationApi, contextHolder] = notification.useNotification();
@@ -103,7 +107,7 @@ export default function DeniedTable() {
       return await apiClient.get(`/lectures?summary=true&only_denied=true`);
     },
     {
-      onSuccess: (res: any) => {
+      onSuccess: (res: LectureResponse) => {
         const result = {
           status: res.status + '-' + res.statusText,
           headers: res.headers,
@@ -114,9 +118,9 @@ export default function DeniedTable() {
           lecture.combined_public_id_and_lang = `${lecture.public_id}/${lecture.language}`;
           lecture['key'] = lecture.combined_public_id_and_lang;
         }
-        setLectures(result.data);
+        setLectures(result.data as Lecture[]);
       },
-      onError: (err: any) => {
+      onError: (err: ServerErrorResponse) => {
         notificationApi['error']({
           message: 'Failed to get lectures',
           description: err.response.data.detail,
@@ -127,7 +131,7 @@ export default function DeniedTable() {
 
   useEffect(() => {
     fetchLectures();
-  }, []);
+  }, [fetchLectures]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -135,7 +139,7 @@ export default function DeniedTable() {
     }, UPDATE_INTERVAL);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchLectures]);
 
   return (
     <>

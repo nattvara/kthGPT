@@ -1,15 +1,6 @@
 import styles from './course-selector.less';
 import { Lecture, Course } from '@/components/lecture';
-import {
-  Button,
-  Row,
-  Typography,
-  Input,
-  Space,
-  Card,
-  Col,
-  notification,
-} from 'antd';
+import { Button, Row, Typography, Input, Space, Col, notification } from 'antd';
 import {
   DeleteOutlined,
   PlusCircleFilled,
@@ -17,14 +8,18 @@ import {
 } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
-import apiClient from '@/http';
+import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 
 const { Search } = Input;
 const { Title, Paragraph } = Typography;
 
+interface CourseResponse extends ServerResponse {
+  data: Course[];
+}
+
 interface CourseSearchProps {
   lecture: Lecture;
-  onLectureUpdated: (lecture: Lecture) => any;
+  onLectureUpdated: (lecture: Lecture) => void;
 }
 
 function CourseSearch(props: CourseSearchProps) {
@@ -39,13 +34,13 @@ function CourseSearch(props: CourseSearchProps) {
       });
     },
     {
-      onSuccess: (res: any) => {
+      onSuccess: (res: CourseResponse) => {
         const result = {
           data: res.data,
         };
         setCourses(result.data);
       },
-      onError: (err: any) => {
+      onError: (err: ServerErrorResponse) => {
         console.log(err);
       },
     }
@@ -64,8 +59,8 @@ function CourseSearch(props: CourseSearchProps) {
           size="large"
           value={query}
           loading={isSearching}
-          onChange={(e) => {
-            let val = e.target.value;
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            const val = e.target.value;
             search(val);
           }}
         />
@@ -104,7 +99,7 @@ function CourseSearch(props: CourseSearchProps) {
 interface NonAddedCourseProps {
   course: Course;
   lecture: Lecture;
-  onLectureUpdated: (lecture: Lecture) => any;
+  onLectureUpdated: (lecture: Lecture) => void;
 }
 
 function NonAddedCourse(props: NonAddedCourseProps) {
@@ -125,11 +120,11 @@ function NonAddedCourse(props: NonAddedCourseProps) {
       notificationApi['success']({
         message: `Added lecture to ${course_code}`,
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       notificationApi['error']({
         icon: <WarningOutlined />,
         message: 'Course was not added',
-        description: err.response.data.detail,
+        description: (err as ServerErrorResponse).response.data.detail,
       });
     } finally {
       await setLoading(false);
@@ -167,7 +162,7 @@ function NonAddedCourse(props: NonAddedCourseProps) {
 interface AddedCourseProps {
   course: Course;
   lecture: Lecture;
-  onLectureUpdated: (lecture: Lecture) => any;
+  onLectureUpdated: (lecture: Lecture) => void;
 }
 
 function AddedCourse(props: AddedCourseProps) {
@@ -182,11 +177,11 @@ function AddedCourse(props: AddedCourseProps) {
         `/lectures/${lecture.public_id}/${lecture.language}/course/${course_code}`
       );
       onLectureUpdated(response.data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       notificationApi['warning']({
         icon: <WarningOutlined />,
         message: 'Course was not removed',
-        description: err.response.data.detail,
+        description: (err as ServerErrorResponse).response.data.detail,
       });
     } finally {
       await setLoading(false);
@@ -223,7 +218,7 @@ function AddedCourse(props: AddedCourseProps) {
 
 interface CourseSelectorProps {
   lecture: Lecture;
-  onLectureUpdated: (lecture: Lecture) => any;
+  onLectureUpdated: (lecture: Lecture) => void;
 }
 
 export default function CourseSelector(props: CourseSelectorProps) {

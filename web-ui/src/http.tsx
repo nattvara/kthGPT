@@ -1,5 +1,24 @@
 import axios from 'axios';
 
+export interface ServerResponse {
+  data: object | object[];
+  headers: object;
+  status: number;
+  statusText: string;
+}
+
+export interface ServerErrorResponse {
+  response: {
+    data: {
+      detail: string;
+    };
+    headers: object;
+    status: number;
+    statusText: string;
+  };
+  code: string;
+}
+
 let baseURL: string;
 
 if (process.env.NODE_ENV === 'production') {

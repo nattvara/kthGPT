@@ -4,7 +4,7 @@ import { Row, Col, Space, Button, Skeleton, Result } from 'antd';
 import { notification } from 'antd';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import apiClient from '@/http';
+import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { history } from 'umi';
 import TextArea from 'antd/es/input/TextArea';
 import Preview from '../preview';
@@ -17,11 +17,6 @@ import {
   CATEGORY_QUESTIONS,
 } from '@/matomo';
 import CourseSelector from '../analyser/course-selector';
-
-interface QuestionsProps {
-  id: string;
-  language: string;
-}
 
 const examples = [
   {
@@ -64,6 +59,22 @@ const randomInt = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
+interface LectureResponse extends ServerResponse {
+  data: Lecture;
+}
+
+interface QueryResponse extends ServerResponse {
+  data: {
+    response: string;
+    cached: boolean;
+  };
+}
+
+interface QuestionsProps {
+  id: string;
+  language: string;
+}
+
 export default function Questions(props: QuestionsProps) {
   const { id, language } = props;
   const [queryString, setQueryString] = useState('');
@@ -76,12 +87,12 @@ export default function Questions(props: QuestionsProps) {
   const [overrideCache, setOverrideCache] = useState<boolean>(false);
   const [wasCached, setWasCached] = useState<boolean>(false);
 
-  const { isLoading: isLoadingLecture, mutate: fetchLecture } = useMutation(
+  const { mutate: fetchLecture } = useMutation(
     async () => {
       return await apiClient.get(`/lectures/${id}/${language}`);
     },
     {
-      onSuccess: (res: any) => {
+      onSuccess: (res: LectureResponse) => {
         const result = {
           status: res.status + '-' + res.statusText,
           headers: res.headers,
@@ -90,7 +101,7 @@ export default function Questions(props: QuestionsProps) {
         setLecture(result.data);
         setNotFound(false);
       },
-      onError: (err: any) => {
+      onError: (err: ServerErrorResponse) => {
         notificationApi['error']({
           message: 'Failed to get the lecture',
           description: err.response.data.detail,
@@ -119,7 +130,7 @@ export default function Questions(props: QuestionsProps) {
       );
     },
     {
-      onSuccess: (res: any) => {
+      onSuccess: (res: QueryResponse) => {
         const result = {
           status: res.status + '-' + res.statusText,
           headers: res.headers,
@@ -130,7 +141,7 @@ export default function Questions(props: QuestionsProps) {
         setWasCached(result.data.cached);
         setOverrideCache(false);
       },
-      onError: (err: any) => {
+      onError: (err: ServerErrorResponse) => {
         if (err.code === 'ECONNABORTED') {
           setError('OpenAI took to long to response, try asking again!');
         }
@@ -149,7 +160,7 @@ export default function Questions(props: QuestionsProps) {
 
   useEffect(() => {
     fetchLecture();
-  }, [id, language]);
+  }, [id, language, fetchLecture]);
 
   useEffect(() => {
     if (lecture === null) return;
@@ -290,7 +301,7 @@ export default function Questions(props: QuestionsProps) {
                     onClick={() => {
                       if (language === 'en') {
                         setQueryString(example.queryStringEn);
-                      } else if (language == 'sv') {
+                      } else if (language === 'sv') {
                         setQueryString(example.queryStringSv);
                       }
                     }}

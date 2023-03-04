@@ -44,4 +44,6 @@ export interface Lecture {
   content_link: string;
   analysis: Analysis | null;
   overall_progress: number | null; // for the summary response
+  combined_public_id_and_lang: string;
+  key: string;
 }

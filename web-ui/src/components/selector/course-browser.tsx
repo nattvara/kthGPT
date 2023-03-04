@@ -8,7 +8,7 @@ import {
 } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import apiClient from '@/http';
+import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { history } from 'umi';
 import { PreviewCompact } from '../preview';
 import {
@@ -22,6 +22,14 @@ const { Search } = Input;
 const { Link } = Typography;
 
 const AUTO_UPDATE_INTERVAL = 10000;
+
+interface CourseResponse extends ServerResponse {
+  data: Course[];
+}
+
+interface LectureResponse extends ServerResponse {
+  data: Lecture[];
+}
 
 interface CourseBrowserProps {
   lecturesWithoutCourses: number;
@@ -37,7 +45,7 @@ export default function CourseBrowser(props: CourseBrowserProps) {
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<string>('');
 
-  const scrollRef = useRef<any>(null);
+  const scrollRef = useRef<unknown>(null);
 
   const { isLoading: isSearchingCourses, mutate: doCourseSearch } = useMutation(
     async () => {
@@ -49,7 +57,7 @@ export default function CourseBrowser(props: CourseBrowserProps) {
       );
     },
     {
-      onSuccess: (res: any) => {
+      onSuccess: (res: CourseResponse) => {
         const result = {
           data: res.data,
         };
@@ -60,7 +68,7 @@ export default function CourseBrowser(props: CourseBrowserProps) {
         });
         setCourses(result.data);
       },
-      onError: (err: any) => {
+      onError: (err: ServerErrorResponse) => {
         console.log(err);
       },
     }
@@ -73,13 +81,13 @@ export default function CourseBrowser(props: CourseBrowserProps) {
         });
       },
       {
-        onSuccess: (res: any) => {
+        onSuccess: (res: LectureResponse) => {
           const result = {
             data: res.data,
           };
           setLectures(result.data);
         },
-        onError: (err: any) => {
+        onError: (err: ServerErrorResponse) => {
           console.log(err);
         },
       }
@@ -113,7 +121,7 @@ export default function CourseBrowser(props: CourseBrowserProps) {
     }
   };
 
-  const goToLecture = async (lecture: Lecture, newTab: boolean = false) => {
+  const goToLecture = async (lecture: Lecture, newTab = false) => {
     const url = `/questions/lectures/${lecture.public_id}/${lecture.language}`;
 
     if (newTab) {
@@ -131,7 +139,7 @@ export default function CourseBrowser(props: CourseBrowserProps) {
 
   useEffect(() => {
     searchCourses('');
-  }, [lecturesWithoutCourses]);
+  }, [lecturesWithoutCourses]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -139,7 +147,7 @@ export default function CourseBrowser(props: CourseBrowserProps) {
     }, AUTO_UPDATE_INTERVAL);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [doCourseSearch]);
 
   return (
     <>
@@ -156,8 +164,8 @@ export default function CourseBrowser(props: CourseBrowserProps) {
                 size="large"
                 value={courseQuery}
                 loading={isSearchingCourses}
-                onChange={(e) => {
-                  let val = e.target.value;
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const val = e.target.value;
                   searchCourses(val);
                 }}
               />
@@ -177,8 +185,8 @@ export default function CourseBrowser(props: CourseBrowserProps) {
                   size="large"
                   value={lectureQuery}
                   loading={isSearchingLectures}
-                  onChange={(e) => {
-                    let val = e.target.value;
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const val = e.target.value;
                     searchLectures(val);
                   }}
                 />

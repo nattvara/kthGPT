@@ -14,7 +14,7 @@ import { notification } from 'antd';
 import { useMutation } from '@tanstack/react-query';
 import { Lecture } from '@/components/lecture';
 import { useEffect, useState } from 'react';
-import apiClient from '@/http';
+import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { history } from 'umi';
 import Preview from '../preview';
 import LectureProgress from './lecture-progress';
@@ -25,6 +25,21 @@ const { Paragraph, Link } = Typography;
 
 const UPDATE_LECTURE_INTERVAL = 1000;
 const UPDATE_QUEUE_INTERVAL = 5000;
+
+interface LectureResponse extends ServerResponse {
+  data: Lecture;
+}
+
+interface LecturesResponse extends ServerResponse {
+  data: Lecture[];
+}
+
+interface UrlResponse extends ServerResponse {
+  data: {
+    uri: string;
+    language: string;
+  };
+}
 
 interface AnalyserProps {
   id: string;
@@ -44,7 +59,7 @@ export default function Analyser(props: AnalyserProps) {
       return await apiClient.get(`/lectures/${id}/${language}`);
     },
     {
-      onSuccess: (res: any) => {
+      onSuccess: (res: LectureResponse) => {
         const result = {
           status: res.status + '-' + res.statusText,
           headers: res.headers,
@@ -53,7 +68,7 @@ export default function Analyser(props: AnalyserProps) {
         setLecture(result.data);
         setNotFound(false);
       },
-      onError: (err: any) => {
+      onError: (err: ServerErrorResponse) => {
         notificationApi['error']({
           message: 'Failed to get the lecture',
           description: err.response.data.detail,
@@ -70,7 +85,7 @@ export default function Analyser(props: AnalyserProps) {
       return await apiClient.get(`/lectures?summary=true&only_unfinished=true`);
     },
     {
-      onSuccess: (res: any) => {
+      onSuccess: (res: LecturesResponse) => {
         const result = {
           status: res.status + '-' + res.statusText,
           headers: res.headers,
@@ -78,7 +93,7 @@ export default function Analyser(props: AnalyserProps) {
         };
         setUnfinishedLectures(result.data);
       },
-      onError: (err: any) => {
+      onError: (err: ServerErrorResponse) => {
         notificationApi['error']({
           message: 'Failed to get lectures',
           description: err.response.data.detail,
@@ -89,24 +104,35 @@ export default function Analyser(props: AnalyserProps) {
 
   const { isLoading: isPosting, mutate: postUrl } = useMutation(
     async () => {
-      return await apiClient.post(`/url/${lecture!.source}`, {
-        url: lecture!.content_link,
+      if (lecture === null) {
+        throw new Error('lecture was null');
+      }
+
+      let contentLink = '';
+      if (lecture.content_link !== null) {
+        contentLink = lecture.content_link;
+      }
+
+      return await apiClient.post(`/url/${lecture.source}`, {
+        url: contentLink,
         language,
       });
     },
     {
-      onSuccess: (res: any) => {
+      onSuccess: (res: UrlResponse) => {
         const result = {
           status: res.status + '-' + res.statusText,
           headers: res.headers,
           data: res.data,
         };
+        console.log(result.data);
+
         notificationApi['success']({
           message: 'Restarted analysis',
           description: 'Hopefully it works this time!',
         });
       },
-      onError: (err: any) => {
+      onError: (err: ServerErrorResponse) => {
         notificationApi['error']({
           message: 'Failed restart analysis',
           description: err.response.data.detail,
@@ -131,7 +157,7 @@ export default function Analyser(props: AnalyserProps) {
   useEffect(() => {
     fetchLecture();
     fetchUnfinishedLectures();
-  }, [id, language]);
+  }, [id, language, fetchLecture, fetchUnfinishedLectures]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -139,7 +165,7 @@ export default function Analyser(props: AnalyserProps) {
     }, UPDATE_LECTURE_INTERVAL);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchLecture]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -242,9 +268,7 @@ export default function Analyser(props: AnalyserProps) {
                     a course at KTH, which is the purpose of kthGPT.
                   </Paragraph>
                   <Paragraph>
-                    <strong>
-                      If you feel this video should be admitted
-                    </strong>
+                    <strong>If you feel this video should be admitted</strong>
                     <span> </span>
                     please feel free to open an issue on github.
                   </Paragraph>

@@ -25,7 +25,7 @@ export default function Selector() {
     try {
       const response = await apiClient.get('/stats');
       await setStats(response.data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.log(err);
     }
   };

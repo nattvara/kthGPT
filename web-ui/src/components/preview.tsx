@@ -25,18 +25,18 @@ const prettyLengthString = (seconds: number) => {
 
 interface PreviewCompactProps {
   lecture: Lecture;
-  onClick: Function;
-  onMetaClick: Function;
-  onCtrlClick: Function;
+  onClick: () => void;
+  onMetaClick: () => void;
+  onCtrlClick: () => void;
 }
 
 export function PreviewCompact(props: PreviewCompactProps) {
   const { lecture, onClick, onCtrlClick, onMetaClick } = props;
 
   let flagIcon = '';
-  if (lecture.language == 'sv') {
+  if (lecture.language === 'sv') {
     flagIcon = svFlag;
-  } else if (lecture.language == 'en') {
+  } else if (lecture.language === 'en') {
     flagIcon = enFlag;
   }
 
@@ -56,7 +56,7 @@ export function PreviewCompact(props: PreviewCompactProps) {
     <Card
       className={styles.compact}
       hoverable
-      onClick={(e) => {
+      onClick={(e: React.MouseEvent) => {
         if (e.metaKey) return onMetaClick();
         if (e.ctrlKey) return onCtrlClick();
         onClick();
@@ -74,7 +74,7 @@ export function PreviewCompact(props: PreviewCompactProps) {
                 src={
                   lecture.preview_small_uri === null
                     ? ''
-                    : makeUrl(lecture.preview_small_uri!)
+                    : makeUrl(lecture.preview_small_uri)
                 }
               />
             </Spin>
@@ -126,9 +126,9 @@ export default function Preview(props: PreviewProps) {
   };
 
   let flagIcon = '';
-  if (lecture.language == 'sv') {
+  if (lecture.language === 'sv') {
     flagIcon = svFlag;
-  } else if (lecture.language == 'en') {
+  } else if (lecture.language === 'en') {
     flagIcon = enFlag;
   }
 
@@ -149,9 +149,7 @@ export default function Preview(props: PreviewProps) {
               preview={false}
               style={{ minHeight: '100px' }}
               src={
-                lecture.preview_uri === null
-                  ? ''
-                  : makeUrl(lecture.preview_uri!)
+                lecture.preview_uri === null ? '' : makeUrl(lecture.preview_uri)
               }
             />
           </Spin>
@@ -198,7 +196,7 @@ export default function Preview(props: PreviewProps) {
                             <ClockCircleOutlined /> Length
                           </h3>
                         </Col>
-                        <Col>{prettyLengthString(lecture.length!)}</Col>
+                        <Col>{prettyLengthString(lecture.length)}</Col>
                       </Space>
                     </Row>
                   </div>
@@ -212,7 +210,7 @@ export default function Preview(props: PreviewProps) {
                             <NumberOutlined /> Words
                           </h3>
                         </Col>
-                        <Col>{lecture.words!.toLocaleString('sv')}</Col>
+                        <Col>{lecture.words.toLocaleString('sv')}</Col>
                       </Space>
                     </Row>
                   </div>

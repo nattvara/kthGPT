@@ -11,10 +11,18 @@ export default function QuestionsPage() {
 
   const { id, language } = useParams();
 
+  if (id === null) {
+    return <></>;
+  }
+
+  if (language === null) {
+    return <></>;
+  }
+
   return (
     <>
       <Frame step={2}>
-        <Questions id={id!} language={language!}></Questions>
+        <Questions id={id} language={language}></Questions>
       </Frame>
     </>
   );

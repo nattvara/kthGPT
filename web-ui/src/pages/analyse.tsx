@@ -11,10 +11,18 @@ export default function AnalysePage() {
     registerPageLoad();
   }, []);
 
+  if (id === null) {
+    return <></>;
+  }
+
+  if (language === null) {
+    return <></>;
+  }
+
   return (
     <>
       <Frame step={1}>
-        <Analyser id={id!} language={language!}></Analyser>
+        <Analyser id={id} language={language}></Analyser>
       </Frame>
     </>
   );

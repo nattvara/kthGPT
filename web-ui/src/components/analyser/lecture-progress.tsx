@@ -89,7 +89,7 @@ export default function LectureProgress(props: LectureProgressProps) {
                         color="#108ee9"
                       >
                         {prettyTimeElapsedString(
-                          new Date(lecture.analysis?.last_message?.timestamp!)
+                          new Date(lecture.analysis.last_message?.timestamp)
                         )}
                       </Tag>
                       <Alert
@@ -117,7 +117,7 @@ export default function LectureProgress(props: LectureProgressProps) {
                     style={{ height: '100%' }}
                   >
                     <Col>
-                      <Button type="dashed" size="large" onClick={() => {}}>
+                      <Button type="dashed" size="large">
                         Show More Info
                       </Button>
                     </Col>
@@ -133,22 +133,22 @@ export default function LectureProgress(props: LectureProgressProps) {
                 Downloading video
                 <Progress
                   percent={lecture.analysis?.mp4_progress}
-                  showInfo={lecture.analysis?.mp4_progress != 0}
+                  showInfo={lecture.analysis?.mp4_progress !== 0}
                 />
                 Extracting audio
                 <Progress
                   percent={lecture.analysis?.mp3_progress}
-                  showInfo={lecture.analysis?.mp3_progress != 0}
+                  showInfo={lecture.analysis?.mp3_progress !== 0}
                 />
                 Transcribing lecture
                 <Progress
                   percent={lecture.analysis?.transcript_progress}
-                  showInfo={lecture.analysis?.transcript_progress != 0}
+                  showInfo={lecture.analysis?.transcript_progress !== 0}
                 />
                 Generating summary
                 <Progress
                   percent={lecture.analysis?.summary_progress}
-                  showInfo={lecture.analysis?.summary_progress != 0}
+                  showInfo={lecture.analysis?.summary_progress !== 0}
                 />
               </Col>
             </Row>

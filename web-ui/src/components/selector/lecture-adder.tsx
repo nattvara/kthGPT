@@ -1,5 +1,4 @@
 import styles from './lecture-adder.less';
-import { Course, Lecture } from '@/components/lecture';
 import {
   Row,
   Input,
@@ -18,7 +17,7 @@ import {
 import { BulbOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import apiClient from '@/http';
+import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { history } from 'umi';
 import kthLogo from '@/assets/kth.svg';
 import youtubeLogo from '@/assets/youtube.svg';
@@ -37,8 +36,8 @@ const LANGUAGE_ENGLISH = 'en';
 const LANGUAGE_SWEDISH = 'sv';
 
 interface SourcePopoverProps {
-  dismiss: Function;
-  setSource: Function;
+  dismiss: () => void;
+  setSource: (source: string) => void;
 }
 
 function SourcePopover(props: SourcePopoverProps) {
@@ -92,8 +91,8 @@ function SourcePopover(props: SourcePopoverProps) {
 }
 
 interface LanguagePopoverProps {
-  dismiss: Function;
-  setLanguage: Function;
+  dismiss: () => void;
+  setLanguage: (language: string) => void;
 }
 
 function LanguagePopover(props: LanguagePopoverProps) {
@@ -143,8 +142,8 @@ function LanguagePopover(props: LanguagePopoverProps) {
 }
 
 interface UrlPopoverProps {
-  dismiss: Function;
-  setUrl: Function;
+  dismiss: () => void;
+  setUrl: (url: string) => void;
   url: string;
   source: string;
   isOpen: boolean;
@@ -227,9 +226,13 @@ function UrlPopover(props: UrlPopoverProps) {
   );
 }
 
-interface LectureAdderProps {}
+interface UrlResponse extends ServerResponse {
+  data: {
+    uri: string;
+  };
+}
 
-export default function LectureAdder(props: LectureAdderProps) {
+export default function LectureAdder() {
   const [sourceOpen, setSourceOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
   const [urlOpen, setUrlOpen] = useState(false);
@@ -249,7 +252,7 @@ export default function LectureAdder(props: LectureAdderProps) {
       });
     },
     {
-      onSuccess: (res: any) => {
+      onSuccess: (res: UrlResponse) => {
         const result = {
           status: res.status + '-' + res.statusText,
           headers: res.headers,
@@ -257,7 +260,7 @@ export default function LectureAdder(props: LectureAdderProps) {
         };
         history.push('/analyse' + result.data.uri);
       },
-      onError: (err: any) => {
+      onError: (err: ServerErrorResponse) => {
         setError(err.response.data.detail);
       },
     }
@@ -278,7 +281,7 @@ export default function LectureAdder(props: LectureAdderProps) {
             content={
               <SourcePopover
                 dismiss={() => setSourceOpen(false)}
-                setSource={(s: any) => setSource(s)}
+                setSource={(s: string) => setSource(s)}
               />
             }
             title="Select where the lecture is hosted"
@@ -304,7 +307,7 @@ export default function LectureAdder(props: LectureAdderProps) {
             content={
               <LanguagePopover
                 dismiss={() => setLanguageOpen(false)}
-                setLanguage={(s: any) => setLanguage(s)}
+                setLanguage={(s: string) => setLanguage(s)}
               />
             }
             title="Select the spoken language of the lecture"
@@ -330,7 +333,7 @@ export default function LectureAdder(props: LectureAdderProps) {
             content={
               <UrlPopover
                 dismiss={() => setUrlOpen(false)}
-                setUrl={(s: any) => setUrl(s)}
+                setUrl={(s: string) => setUrl(s)}
                 url={url}
                 source={source}
                 isOpen={urlOpen}
