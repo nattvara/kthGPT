@@ -1,7 +1,7 @@
 name: Test
 on: push
 jobs:
-  PyTest:
+  Testsuite:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -20,7 +20,7 @@ jobs:
         sudo apt-get -y update
         sudo apt-get install -y ffmpeg
 
-    - name: Create Env
+    - name: Create Testing Environment
       run: |
         cp .env.example .env
 
@@ -28,7 +28,20 @@ jobs:
       run: |
         python -m pytest
 
-    - name: Lint Source
+  Lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install Dependencies
+      run: |
+        pip install flake8
+
+    - name: Run flake8
       run: |
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=20 --max-line-length=127 --statistics --exclude venv
