@@ -1,7 +1,16 @@
+from fastapi.testclient import TestClient
 import subprocess
 import tempfile
 import pytest
 import os
+
+import api
+
+
+@pytest.fixture
+def api_client():
+    client = TestClient(api.get_app())
+    return client
 
 
 @pytest.fixture
