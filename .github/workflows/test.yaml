@@ -16,6 +16,10 @@ jobs:
         python -m pip install -r requirements.txt
         python setup.py develop
 
+        # Install FFmpeg
+        apt-get -y update
+        apt-get install -y ffmpeg
+
     - name: Create Env
       run: |
         cp .env.example .env
