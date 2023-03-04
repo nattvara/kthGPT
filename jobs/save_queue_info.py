@@ -1,9 +1,5 @@
-from config.settings import settings
 from datetime import timedelta
-from redis import Redis
-from rq import Queue
 import subprocess
-import logging
 import os
 
 from jobs import get_monitoring_queue

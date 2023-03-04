@@ -142,15 +142,15 @@ def schedule_analysis_of_lecture(
 
     save_message_for_analysis(analysis, 'Analysis scheduled', 'Waiting for a worker to pick it up.')
 
-    next(get_metadata_queue()).enqueue(capture_preview.job, lecture.public_id, lecture.language, job_timeout=capture_preview.TIMEOUT)
-    next(get_metadata_queue()).enqueue(fetch_metadata.job, lecture.public_id, lecture.language, job_timeout=fetch_metadata.TIMEOUT)
-    job_1 = next(queue_download()).enqueue(download_lecture.job, lecture.public_id, lecture.language, job_timeout=download_lecture.TIMEOUT)
-    job_2 = next(queue_extract()).enqueue(extract_audio.job, lecture.public_id, lecture.language, job_timeout=extract_audio.TIMEOUT, depends_on=job_1)
-    job_3 = next(queue_transcribe()).enqueue(transcribe_audio.job, lecture.public_id, lecture.language, job_timeout=transcribe_audio.TIMEOUT, depends_on=job_2)
-    job_4 = next(queue_summarise()).enqueue(summarise_transcript.job, lecture.public_id, lecture.language, job_timeout=summarise_transcript.TIMEOUT, depends_on=job_3)
-    job_5 = next(queue_metadata()).enqueue(clean_lecture.job, lecture.public_id, lecture.language, depends_on=job_4)
-    job_6 = next(queue_metadata()).enqueue(capture_preview.job, lecture.public_id, lecture.language, job_timeout=capture_preview.TIMEOUT, depends_on=job_4)
-    job_7 = next(queue_metadata()).enqueue(index_lecture.job, lecture.public_id, lecture.language, depends_on=job_6)
+    next(get_metadata_queue()).enqueue(capture_preview.job, lecture.public_id, lecture.language, job_timeout=capture_preview.TIMEOUT)  # noqa: E501
+    next(get_metadata_queue()).enqueue(fetch_metadata.job, lecture.public_id, lecture.language, job_timeout=fetch_metadata.TIMEOUT)  # noqa: E501
+    job_1 = next(queue_download()).enqueue(download_lecture.job, lecture.public_id, lecture.language, job_timeout=download_lecture.TIMEOUT)  # noqa: E501
+    job_2 = next(queue_extract()).enqueue(extract_audio.job, lecture.public_id, lecture.language, job_timeout=extract_audio.TIMEOUT, depends_on=job_1)  # noqa: E501
+    job_3 = next(queue_transcribe()).enqueue(transcribe_audio.job, lecture.public_id, lecture.language, job_timeout=transcribe_audio.TIMEOUT, depends_on=job_2)  # noqa: E501
+    job_4 = next(queue_summarise()).enqueue(summarise_transcript.job, lecture.public_id, lecture.language, job_timeout=summarise_transcript.TIMEOUT, depends_on=job_3)  # noqa: E501
+    job_5 = next(queue_metadata()).enqueue(clean_lecture.job, lecture.public_id, lecture.language, depends_on=job_4)  # noqa: F841, E501
+    job_6 = next(queue_metadata()).enqueue(capture_preview.job, lecture.public_id, lecture.language, job_timeout=capture_preview.TIMEOUT, depends_on=job_4)  # noqa: E501
+    job_7 = next(queue_metadata()).enqueue(index_lecture.job, lecture.public_id, lecture.language, depends_on=job_6)  # noqa: F841, E501
 
     return analysis
 

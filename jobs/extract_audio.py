@@ -29,7 +29,7 @@ def job(lecture_id: str, language: str):
         if lecture.mp4_filepath is None:
             raise ValueError(f'lecture {lecture_id} has no mp4_filepath')
 
-        save_message_for_analysis(analysis, 'Extracting audio...', 'The analyzer only looks at what is being said in the lecture.')
+        save_message_for_analysis(analysis, 'Extracting audio...', 'The analyzer only looks at what is being said in the lecture.')  # noqa: E501
         logger.info(f'extracting audio from {lecture.mp4_filepath}')
         extract_mp3_from_mp4(lecture.mp4_filepath, lecture)
 

@@ -1,4 +1,4 @@
-
+# flake8: noqa
 from .url import URL
 from .lecture import Lecture
 from .query import Query

@@ -17,12 +17,8 @@ from api.routers import (
 )
 
 
-def main():
+def get_app():
     app = FastAPI(title=settings.NAME, openapi_url=None)
-
-    dictConfig(LogConfig().dict())
-    log().info('starting api')
-
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
@@ -36,6 +32,15 @@ def main():
     app.include_router(query.router)
     app.include_router(search.router)
     app.include_router(stats.router)
+
+    return app
+
+
+def main():
+    dictConfig(LogConfig().dict())
+    log().info('starting api')
+
+    app = get_app()
 
     # Reset the monitoring queue and restart the workers
     queue = next(get_monitoring_queue())

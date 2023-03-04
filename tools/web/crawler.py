@@ -62,7 +62,7 @@ def scrape_posted_date_from_kthplay(url: str) -> Optional[datetime]:
     html = request.urlopen(url).read().decode('utf8')
     soup = BeautifulSoup(html, 'html.parser')
 
-    regex = re.compile('date:((\s|\d)*),')
+    regex = re.compile(r'date:((\s|\d)*),')
 
     # Looking for a <script> tag containing a date on the form:
     #   date: 1613124505,

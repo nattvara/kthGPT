@@ -1,4 +1,5 @@
 """Peewee migrations -- 009_add_count_to_query_table.py."""
+# flake8: noqa
 
 import peewee as pw
 from peewee_migrate import Migrator

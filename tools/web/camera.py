@@ -1,5 +1,4 @@
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
-from playwright.async_api import async_playwright
 from PIL import Image
 import asyncio
 

@@ -18,7 +18,7 @@ def job(lecture_id: str, language: str):
 
     lecture = get_lecture_by_public_id_and_language(lecture_id, language)
     if lecture.raw_content_link is not None:
-        logger.info(f'content has raw link, using mp4 file')
+        logger.info('content has raw link, using mp4 file')
         if lecture.mp4_filepath is None:
             raise ValueError('mp4_filepath was not specified')
 
@@ -45,7 +45,6 @@ def job(lecture_id: str, language: str):
     lecture.img_preview = lecture.preview_filename()
     lecture.img_preview_small = lecture.preview_small_filename()
     lecture.save()
-
 
 
 # Test run the job

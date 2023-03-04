@@ -176,7 +176,7 @@ class Summary:
                 inc += 1
                 lecture.refresh()
                 analysis = lecture.get_last_analysis()
-                save_message_for_analysis(analysis, 'Creating summary...', f'This step is using AI to summarize the lecture. This can take a while. Currently on part {inc}/{len(chunks)}.')
+                save_message_for_analysis(analysis, 'Creating summary...', f'This step is using AI to summarize the lecture. This can take a while. Currently on part {inc}/{len(chunks)}.')  # noqa: E501
 
                 summary.update_with_chunk(lecture, chunk, include_summary)
                 if inc > 6:

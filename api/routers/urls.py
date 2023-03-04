@@ -32,14 +32,14 @@ def parse_kth_url(
     input_data: InputModel,
 ) -> OutputModel:
     if input_data.url.strip() == '':
-        raise HTTPException(status_code=400, detail='No URL provided, please enter a url such as: https://play.kth.se/media/0_4zo9e4nh')
+        raise HTTPException(status_code=400, detail='No URL provided, please enter a url such as: https://play.kth.se/media/0_4zo9e4nh')  # noqa: E501
 
     if not validators.url(input_data.url):
-        raise HTTPException(status_code=400, detail='The URL you entered was not valid, please enter a url such as: https://play.kth.se/media/0_4zo9e4nh')
+        raise HTTPException(status_code=400, detail='The URL you entered was not valid, please enter a url such as: https://play.kth.se/media/0_4zo9e4nh')  # noqa: E501
 
     domain = urlparse(input_data.url).netloc
     if not domain.endswith('play.kth.se'):
-        raise HTTPException(status_code=400, detail='The URL was not valid, it must be kth.play.se video, such as https://play.kth.se/media/0_4zo9e4nh')
+        raise HTTPException(status_code=400, detail='The URL was not valid, it must be kth.play.se video, such as https://play.kth.se/media/0_4zo9e4nh')  # noqa: E501
 
     if input_data.language == str(Lecture.Language.ENGLISH):
         lang = Lecture.Language.ENGLISH
@@ -59,8 +59,8 @@ def parse_kth_url(
 
         try:
             content_url = urlparse(get_m3u8(input_data.url)).path
-        except:
-            raise HTTPException(status_code=400, detail='Something went wrong while trying to get the lecture video, make sure its on the form https://play.kth.se/media/0_4zo9e4nh')
+        except Exception:
+            raise HTTPException(status_code=400, detail='Something went wrong while trying to get the lecture video, make sure its on the form https://play.kth.se/media/0_4zo9e4nh')  # noqa: E501
 
         regex = r'^.*entryId\/(\w*)\/.*$'
         matches = re.finditer(regex, content_url, re.MULTILINE)
@@ -103,18 +103,18 @@ def parse_kth_url(
 
 
 @router.post('/url/kth_raw', dependencies=[Depends(get_db)])
-def parse_kth_url(
+def parse_kth_raw_url(
     input_data: InputModel,
 ) -> OutputModel:
     if input_data.url.strip() == '':
-        raise HTTPException(status_code=400, detail='No URL provided, please enter a url such as: https://vod-cache.kaltura.nordu.net/...')
+        raise HTTPException(status_code=400, detail='No URL provided, please enter a url such as: https://vod-cache.kaltura.nordu.net/...')  # noqa: E501
 
     if not validators.url(input_data.url):
-        raise HTTPException(status_code=400, detail='The URL you entered was not valid, please enter a url such as: https://vod-cache.kaltura.nordu.net/...')
+        raise HTTPException(status_code=400, detail='The URL you entered was not valid, please enter a url such as: https://vod-cache.kaltura.nordu.net/...')  # noqa: E501
 
     domain = urlparse(input_data.url).netloc
     if not domain.endswith('vod-cache.kaltura.nordu.net'):
-        raise HTTPException(status_code=400, detail='The URL was not valid, it must be kaltura.nordu.net video, such as https://vod-cache.kaltura.nordu.net/...')
+        raise HTTPException(status_code=400, detail='The URL was not valid, it must be kaltura.nordu.net video, such as https://vod-cache.kaltura.nordu.net/...')  # noqa: E501
 
     if input_data.language == str(Lecture.Language.ENGLISH):
         lang = Lecture.Language.ENGLISH
@@ -178,18 +178,18 @@ def parse_youtube_url(
     input_data: InputModel,
 ) -> OutputModel:
     if input_data.url.strip() == '':
-        raise HTTPException(status_code=400, detail='No URL provided, please enter a url such as: https://www.youtube.com/watch?v=nnkCEN4suxs')
+        raise HTTPException(status_code=400, detail='No URL provided, please enter a url such as: https://www.youtube.com/watch?v=nnkCEN4suxs')  # noqa: E501
 
     if not validators.url(input_data.url):
-        raise HTTPException(status_code=400, detail='The URL you entered was not valid, please enter a url such as: https://www.youtube.com/watch?v=nnkCEN4suxs')
+        raise HTTPException(status_code=400, detail='The URL you entered was not valid, please enter a url such as: https://www.youtube.com/watch?v=nnkCEN4suxs')  # noqa: E501
 
     domain = urlparse(input_data.url).netloc
     if not domain.endswith('youtube.com'):
-        raise HTTPException(status_code=400, detail='The URL was not valid, it must be a youtube video, such as https://www.youtube.com/watch?v=nnkCEN4suxs')
+        raise HTTPException(status_code=400, detail='The URL was not valid, it must be a youtube video, such as https://www.youtube.com/watch?v=nnkCEN4suxs')  # noqa: E501
 
     query_params = parse_qs(urlparse(input_data.url).query)
     if 'v' not in query_params:
-        raise HTTPException(status_code=400, detail='The URL you entered was not valid, its missing a video id, please enter a url such as: https://www.youtube.com/watch?v=nnkCEN4suxs')
+        raise HTTPException(status_code=400, detail='The URL you entered was not valid, its missing a video id, please enter a url such as: https://www.youtube.com/watch?v=nnkCEN4suxs')  # noqa: E501
 
     if input_data.language == str(Lecture.Language.ENGLISH):
         lang = Lecture.Language.ENGLISH

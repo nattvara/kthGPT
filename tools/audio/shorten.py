@@ -6,7 +6,7 @@ import os
 
 def shorten_mp3(src_file: str, seconds: int) -> str:
     logger = logging.getLogger('rq.worker')
-    logger.info(f'shortening mp3 file')
+    logger.info('shortening mp3 file')
 
     total_duration = int(float(ffmpeg.probe(src_file)['format']['duration']))
 

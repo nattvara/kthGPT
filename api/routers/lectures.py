@@ -1,10 +1,9 @@
 from fastapi import Depends, APIRouter, HTTPException, Response
 from typing import Union, List
 from pydantic import BaseModel
-from datetime import datetime
 import random as rand
 
-from db.models import Lecture, Analysis
+from db.models import Analysis
 from db import get_db
 from db.crud import (
     create_relation_between_lecture_and_course_group,
@@ -101,15 +100,23 @@ def get_all(
 
     out = []
     for lecture in lectures:
-        if random and lecture.get_last_analysis().state != Analysis.State.READY:
-            continue
-
-        if lecture.get_last_analysis().state == Analysis.State.DENIED:
-            if not include_denied:
+        has_analysis = lecture.get_last_analysis() is not None
+        if random:
+            if not has_analysis:
+                continue
+            if lecture.get_last_analysis().state != Analysis.State.READY:
                 continue
 
-        if lecture.get_last_analysis().state == Analysis.State.FAILURE:
-            if not include_failed:
+        if not include_denied:
+            if not has_analysis:
+                continue
+            if lecture.get_last_analysis().state == Analysis.State.DENIED:
+                continue
+
+        if not include_failed:
+            if not has_analysis:
+                continue
+            if lecture.get_last_analysis().state == Analysis.State.FAILURE:
                 continue
 
         if summary:
@@ -183,7 +190,7 @@ def get_transcript(public_id: str, language: str):
 
 
 @router.get('/lectures/{public_id}/{language}/summary', dependencies=[Depends(get_db)])
-def get_transcript(public_id: str, language: str):
+def get_summary(public_id: str, language: str):
     lecture = get_lecture_by_public_id_and_language(public_id, language)
     if lecture is None:
         raise HTTPException(status_code=404)
@@ -208,7 +215,7 @@ def add_course_to_lecture(public_id: str, language: str, input_data: PostCourseI
         raise HTTPException(status_code=404)
 
     if not lecture.courses_can_be_changed():
-        raise HTTPException(status_code=400, detail='A lectures courses can only be changed within the first day of being added')
+        raise HTTPException(status_code=400, detail='A lectures courses can only be changed within the first day of being added')  # noqa: E501
 
     code = input_data.course_code
 
@@ -235,13 +242,13 @@ def add_course_to_lecture(public_id: str, language: str, input_data: PostCourseI
 
 
 @router.delete('/lectures/{public_id}/{language}/course/{course_code}', dependencies=[Depends(get_db)])
-def add_course_to_lecture(public_id: str, language: str, course_code: str) -> LectureOutputModel:
+def remove_course_to_lecture(public_id: str, language: str, course_code: str) -> LectureOutputModel:
     lecture = get_lecture_by_public_id_and_language(public_id, language)
     if lecture is None:
         raise HTTPException(status_code=404)
 
     if not lecture.courses_can_be_changed():
-        raise HTTPException(status_code=400, detail='A lectures courses can only be changed within the first day of being added')
+        raise HTTPException(status_code=400, detail='A lectures courses can only be changed within the first day of being added')  # noqa: E501
 
     course = find_course_code(course_code)
     if course is None:

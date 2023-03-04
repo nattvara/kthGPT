@@ -1,5 +1,6 @@
 from contextvars import ContextVar
 import peewee
+import sys
 
 from config.settings import settings
 
@@ -20,12 +21,25 @@ class PeeweeConnectionState(peewee._ConnectionState):
         return self._state.get()[name]
 
 
-db = peewee.PostgresqlDatabase(
-    settings.POSTGRES_DB,
-    user=settings.POSTGRES_USER,
-    password=settings.POSTGRES_PASSWORD,
-    host=settings.POSTGRES_SERVER,
-    port=settings.POSTGRES_PORT,
-)
+def create_postgres_database_connection():
+    return peewee.PostgresqlDatabase(
+        settings.POSTGRES_DB,
+        user=settings.POSTGRES_USER,
+        password=settings.POSTGRES_PASSWORD,
+        host=settings.POSTGRES_SERVER,
+        port=settings.POSTGRES_PORT,
+    )
+
+
+def create_test_database_connection():
+    TEST_DB_FILEPATH = '/tmp/kthgpt.test.db'
+    return peewee.SqliteDatabase(TEST_DB_FILEPATH)
+
+
+if 'pytest' in sys.modules:
+    db = create_test_database_connection()
+else:
+    db = create_postgres_database_connection()
+
 
 db._state = PeeweeConnectionState()

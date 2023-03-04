@@ -1,4 +1,5 @@
 """Peewee migrations -- 004_add_title_and_date_columns_to_lecture.py."""
+# flake8: noqa
 
 import peewee as pw
 from peewee_migrate import Migrator

@@ -1,4 +1,5 @@
 """Peewee migrations -- 010_add_more_queue_info_columns.py."""
+# flake8: noqa
 
 import peewee as pw
 from peewee_migrate import Migrator

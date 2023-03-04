@@ -1,4 +1,5 @@
 """Peewee migrations -- 001_add_queue_info_table.py."""
+# flake8: noqa
 
 import peewee as pw
 from peewee_migrate import Migrator

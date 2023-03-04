@@ -10,7 +10,7 @@ FROZEN_LIMIT = 20 * 60
 
 
 class Analysis(Base):
-    lecture_id = peewee.IntegerField(null=False, index=True)  # not sure how to make this a foreign key field, due to circular imports
+    lecture_id = peewee.IntegerField(null=False, index=True)  # not sure how to make this a foreign key field, due to circular imports  # noqa: E501
     state = peewee.CharField(null=False, default='waiting')
     mp4_progress = peewee.IntegerField(null=False, default=0)
     mp3_progress = peewee.IntegerField(null=False, default=0)

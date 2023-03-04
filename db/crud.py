@@ -49,7 +49,7 @@ def get_all_denied_lectures():
 
 
 def get_unfinished_lectures():
-    from db.models.lecture import Lecture, Analysis
+    from db.models.lecture import Analysis
     lectures = get_all_lectures()
 
     out = []
@@ -88,9 +88,9 @@ def delete_all_except_last_message_in_analysis(analysis_id: int):
 
 
 # Query
-def get_most_recent_query_by_sha(lecture, sha: str) :
+def get_most_recent_query_by_sha(lecture, sha: str):
     from db.models.query import Query
-    return Query.filter(Query.lecture_id == lecture.id).filter(Query.query_hash == sha).order_by(Query.modified_at.desc()).first()
+    return Query.filter(Query.lecture_id == lecture.id).filter(Query.query_hash == sha).order_by(Query.modified_at.desc()).first()  # noqa: E501
 
 
 def create_query(lecture, query_string: str):
@@ -117,7 +117,7 @@ def get_all_courses():
     from db.models.course import Course, CourseGroup, CourseWrapper
     out = []
 
-    courses = Course.filter(Course.group_id == None)
+    courses = Course.filter(Course.group_id is None)
     for course in courses:
         out.append(CourseWrapper.from_course(course))
 
@@ -130,7 +130,6 @@ def get_all_courses():
 
 def find_course_code(course_code: str):
     from db.models.course import Course, CourseGroup, CourseWrapper
-    out = []
 
     course = CourseGroup.filter(CourseGroup.course_code == course_code).first()
     if course is not None:
@@ -198,12 +197,12 @@ def create_relation_between_lecture_and_course_group(lecture_id: int, group_id: 
 
 def find_relation_between_lecture_and_course(lecture_id: int, course_id: int):
     from db.models.course import CourseLectureRelation
-    return CourseLectureRelation.filter(CourseLectureRelation.lecture_id == lecture_id).filter(CourseLectureRelation.course_id == course_id).first()
+    return CourseLectureRelation.filter(CourseLectureRelation.lecture_id == lecture_id).filter(CourseLectureRelation.course_id == course_id).first()  # noqa: E501
 
 
 def find_relation_between_lecture_and_course_group(lecture_id: int, group_id: int):
     from db.models.course import CourseLectureRelation
-    return CourseLectureRelation.filter(CourseLectureRelation.lecture_id == lecture_id).filter(CourseLectureRelation.group_id == group_id).first()
+    return CourseLectureRelation.filter(CourseLectureRelation.lecture_id == lecture_id).filter(CourseLectureRelation.group_id == group_id).first()  # noqa: E501
 
 
 def delete_lecture_course_relation(id: int):

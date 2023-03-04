@@ -1,5 +1,5 @@
 from fastapi import Depends, APIRouter, HTTPException
-from typing import List, Optional, Union
+from typing import List, Optional
 from pydantic import BaseModel
 
 from api.routers.lectures import LectureSummaryOutputModel
