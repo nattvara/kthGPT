@@ -101,15 +101,23 @@ def get_all(
 
     out = []
     for lecture in lectures:
-        if random and lecture.get_last_analysis().state != Analysis.State.READY:
-            continue
-
-        if lecture.get_last_analysis().state == Analysis.State.DENIED:
-            if not include_denied:
+        has_analysis = lecture.get_last_analysis() is not None
+        if random:
+            if not has_analysis:
+                continue
+            if lecture.get_last_analysis().state != Analysis.State.READY:
                 continue
 
-        if lecture.get_last_analysis().state == Analysis.State.FAILURE:
-            if not include_failed:
+        if not include_denied:
+            if not has_analysis:
+                continue
+            if lecture.get_last_analysis().state == Analysis.State.DENIED:
+                continue
+
+        if not include_failed:
+            if not has_analysis:
+                continue
+            if lecture.get_last_analysis().state == Analysis.State.FAILURE:
                 continue
 
         if summary:
