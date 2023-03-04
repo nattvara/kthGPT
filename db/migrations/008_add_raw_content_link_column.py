@@ -1,4 +1,5 @@
 """Peewee migrations -- 008_add_raw_content_link_column.py."""
+# flake8: noqa
 
 import peewee as pw
 from peewee_migrate import Migrator

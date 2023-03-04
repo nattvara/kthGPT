@@ -1,4 +1,5 @@
 """Peewee migrations -- 003_add_token_usage_table.py."""
+# flake8: noqa
 
 import peewee as pw
 from peewee_migrate import Migrator

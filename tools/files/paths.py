@@ -47,6 +47,7 @@ def writable_transcript_filepath(name: str, language: str) -> str:
 
     return os.path.join(directory, f'{name}-{language}')
 
+
 def writable_summary_filepath(name: str, language: str) -> str:
     create_root_if_not_exists()
 

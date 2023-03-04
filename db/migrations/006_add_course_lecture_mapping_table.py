@@ -1,4 +1,5 @@
 """Peewee migrations -- 006_add_course_lecture_mapping_table.py."""
+# flake8: noqa
 
 import peewee as pw
 from peewee_migrate import Migrator

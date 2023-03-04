@@ -1,4 +1,5 @@
 """Peewee migrations -- 007_add_small_preview_to_lectures_table.py."""
+# flake8: noqa
 
 import peewee as pw
 from peewee_migrate import Migrator

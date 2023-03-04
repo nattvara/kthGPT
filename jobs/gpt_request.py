@@ -30,7 +30,7 @@ def job(prompt: str, analysis_id: Optional[int] = None, query_id: Optional[int] 
         logger.error(e)
         if analysis_id is not None:
             analysis = Analysis.get(analysis_id)
-            save_message_for_analysis(analysis, 'OpenAI Error', 'GPT-3 Error from OpenAI, it is likely overloaded. Retrying in a little while...')
+            save_message_for_analysis(analysis, 'OpenAI Error', 'GPT-3 Error from OpenAI, it is likely overloaded. Retrying in a little while...')  # noqa: E501
         raise e
     return response
 

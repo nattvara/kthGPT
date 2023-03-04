@@ -1,5 +1,4 @@
 import logging
-import os
 
 from db.crud import get_lecture_by_public_id_and_language
 from tools.youtube.metadata import get_upload_date

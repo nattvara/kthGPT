@@ -1,4 +1,5 @@
 """Peewee migrations -- 005_add_course_and_course_group_tables.py."""
+# flake8: noqa
 
 import peewee as pw
 from peewee_migrate import Migrator

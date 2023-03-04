@@ -9,7 +9,6 @@ import asyncio
 
 from config.settings import settings
 from config.logger import log
-from db.models import Lecture
 import jobs.gpt_request
 
 

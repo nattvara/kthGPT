@@ -1,4 +1,5 @@
 """Peewee migrations -- 002_add_approved_and_source_columns_to_lecture.py."""
+# flake8: noqa
 
 import peewee as pw
 from peewee_migrate import Migrator

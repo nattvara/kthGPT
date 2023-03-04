@@ -16,7 +16,7 @@ def job(lecture_id: str, language: str):
         raise ValueError(f'lecture {lecture_id} not found')
 
     if lecture.get_last_analysis().state != Analysis.State.READY:
-        logger.error(f'can only clean lectures with ready state, lecture had state {lecture.lecture.get_last_analysis().state}')
+        logger.error(f'can only clean lectures with ready state, lecture had state {lecture.lecture.get_last_analysis().state}')  # noqa: E501
         return
 
     for analysis in get_all_analysis_for_lecture(lecture.id):

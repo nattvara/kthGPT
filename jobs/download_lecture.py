@@ -91,7 +91,7 @@ def job(lecture_id: str, language: str):
         analysis.state = Analysis.State.IDLE
         analysis.mp4_progress = 100
         analysis.save()
-        save_message_for_analysis(analysis, 'Downloaded', 'The video has been downloaded, waiting for audio extraction to start.')
+        save_message_for_analysis(analysis, 'Downloaded', 'The video has been downloaded, waiting for audio extraction to start.')  # noqa: E501
 
         logger.info('queueing extraction job')
         logger.info('done')

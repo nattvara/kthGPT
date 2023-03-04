@@ -93,7 +93,7 @@ def save_text(
                 current = int(minutes) * 60 + int(seconds)
                 timestamp = f'{minutes}:{seconds}'
 
-            save_message_for_analysis(analysis, 'Creating transcript...', f'This is usually what takes the longest time. Currently at {timestamp} in the lecture.')
+            save_message_for_analysis(analysis, 'Creating transcript...', f'This is usually what takes the longest time. Currently at {timestamp} in the lecture.')  # noqa: E501
 
             progress = int((current / total_duration) * 100)
 
