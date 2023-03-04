@@ -5,7 +5,7 @@ import os
 from tools.video.img import save_photo_from_video
 
 
-def test_save_photo_is_extracted_from_video(mp4_file):
+def test_photo_can_be_extracted_from_video(mp4_file):
     img_filename = tempfile.mkdtemp() + '.png'
 
     save_photo_from_video(mp4_file, img_filename)
