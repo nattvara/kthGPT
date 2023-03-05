@@ -67,7 +67,7 @@ The lecture is ready. kthGPT can now use GPT-3 to answer questions about the lec
 
 **- If i didn't attend this lecture what would I have to read-up on?**
 >
-> Tends to produce quite brief answers, with very "google:able" keywords
+> Tends to produce quite brief answers, with very "google:able" keywords.
 
 ## Run the tool locally
 
