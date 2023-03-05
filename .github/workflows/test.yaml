@@ -1,7 +1,8 @@
 name: Test
 on: push
 jobs:
-  Testsuite:
+  test_python:
+    name: Python Tests
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -28,7 +29,8 @@ jobs:
       run: |
         python -m pytest
 
-  Lint:
+  lint_python:
+    name: Lint Pyton files
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -45,3 +47,16 @@ jobs:
       run: |
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=20 --max-line-length=127 --statistics --exclude venv
+
+  lint_ts:
+    name: Lint Typescript files
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Modules
+      run: |
+        cd web-ui && pnpm install
+
+    - name: Run eslint
+      run: npm run lint
