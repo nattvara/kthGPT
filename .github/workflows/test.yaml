@@ -60,6 +60,7 @@ jobs:
 
     - name: Install Modules
       run: |
+        source /home/runner/.bashrc
         cd web-ui && pnpm install
 
     - name: Run eslint
