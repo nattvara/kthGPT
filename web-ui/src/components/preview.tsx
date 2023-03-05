@@ -12,7 +12,7 @@ import {
 import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';
 import kthLogo from '@/assets/kth.svg';
-import youtubeLogo from '@/assets/youtube.svg';
+import youtubeLogoSmall from '@/assets/youtube-small.svg';
 
 const { Meta } = Card;
 
@@ -47,7 +47,7 @@ export function PreviewCompact(props: PreviewCompactProps) {
 
   let icon = '';
   if (lecture.source === 'youtube') {
-    icon = youtubeLogo;
+    icon = youtubeLogoSmall;
   } else if (lecture.source === 'kth') {
     icon = kthLogo;
   }
@@ -93,6 +93,7 @@ export function PreviewCompact(props: PreviewCompactProps) {
                 <Image
                   src={flagIcon}
                   height={18}
+                  width={lecture.language === 'en' ? 36 : 29}
                   className={styles.flag}
                   preview={false}
                 />
@@ -100,7 +101,8 @@ export function PreviewCompact(props: PreviewCompactProps) {
               <Col>
                 <Image
                   src={icon}
-                  height={18}
+                  height={20}
+                  width={20}
                   className={styles.logo}
                   preview={false}
                 />
