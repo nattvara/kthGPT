@@ -2,10 +2,7 @@ version: "3.8"
 
 services:
   init_db:
-    image: kthgpt_main
-    build:
-      context: .
-      dockerfile: api/Dockerfile
+    image: ghcr.io/nattvara/kthgpt/api:latest
     env_file:
       - .env
     depends_on:
@@ -15,10 +12,7 @@ services:
     command: create_db_schema
 
   api:
-    image: kthgpt_main
-    build:
-      context: .
-      dockerfile: api/Dockerfile
+    image: ghcr.io/nattvara/kthgpt/api:latest
     restart: always
     env_file:
       - .env
@@ -59,10 +53,7 @@ services:
       - discovery.type=single-node
 
   queue_worker_gpt:
-    image: kthgpt_main
-    build:
-      context: .
-      dockerfile: api/Dockerfile
+    image: ghcr.io/nattvara/kthgpt/worker:latest
     restart: always
     env_file:
       - .env
@@ -77,10 +68,7 @@ services:
       - shared:/shared
 
   queue_worker:
-    image: kthgpt_main
-    build:
-      context: .
-      dockerfile: api/Dockerfile
+    image: ghcr.io/nattvara/kthgpt/worker:latest
     restart: always
     env_file:
       - .env
@@ -95,10 +83,7 @@ services:
       - shared:/shared
 
   frontend:
-    image: kthgpt_frontend
-    build:
-      context: web-ui
-      dockerfile: ./Dockerfile
+    image: ghcr.io/nattvara/kthgpt/web-ui:latest
     restart: always
     env_file:
       - .env
