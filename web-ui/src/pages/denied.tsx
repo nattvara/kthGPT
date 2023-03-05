@@ -2,9 +2,7 @@ import Frame from '@/components/main/frame';
 import DeniedTable from '@/components/tables/denied-table';
 import { registerPageLoad } from '@/matomo';
 import { useEffect } from 'react';
-import {
-  Typography,
-} from 'antd';
+import { Typography } from 'antd';
 
 const { Title } = Typography;
 

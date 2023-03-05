@@ -1,12 +1,8 @@
-import {
-  Table,
-  Image,
-  Typography,
-} from 'antd';
+import { Table, Image, Typography } from 'antd';
 import { notification } from 'antd';
 import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import apiClient from '@/http';
+import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { Lecture } from '@/components/lecture';
 import styles from './denied-table.less';
 import { ColumnsType } from 'antd/es/table';
@@ -27,17 +23,11 @@ const columns: ColumnsType<Lecture> = [
       let icon = '';
       if (source === 'youtube') {
         icon = youtubeLogo;
-      }
-      else if (source === 'kth') {
+      } else if (source === 'kth') {
         icon = kthLogo;
       }
       return (
-        <Image
-          src={icon}
-          height={30}
-          className={styles.logo}
-          preview={false}
-        />
+        <Image src={icon} height={30} className={styles.logo} preview={false} />
       );
     },
   },
@@ -48,9 +38,13 @@ const columns: ColumnsType<Lecture> = [
   {
     title: 'Content Link',
     dataIndex: 'content_link',
-    render: (content_link: string) => <>
-      <Link href={content_link} target='_blank'>{content_link}</Link>
-    </>,
+    render: (content_link: string) => (
+      <>
+        <Link href={content_link} target="_blank">
+          {content_link}
+        </Link>
+      </>
+    ),
   },
   {
     title: 'Language',
@@ -59,8 +53,7 @@ const columns: ColumnsType<Lecture> = [
       let flagIcon = '';
       if (val === 'sv') {
         flagIcon = svFlag;
-      }
-      else if (val === 'en') {
+      } else if (val === 'en') {
         flagIcon = enFlag;
       }
       return (
@@ -71,7 +64,7 @@ const columns: ColumnsType<Lecture> = [
           preview={false}
         />
       );
-    }
+    },
   },
   {
     title: 'Added At',
@@ -80,8 +73,12 @@ const columns: ColumnsType<Lecture> = [
       const d = new Date(val);
       const date = d.toDateString();
       const time = d.toLocaleTimeString('sv');
-      return <>{date}, {time}</>;
-    }
+      return (
+        <>
+          {date}, {time}
+        </>
+      );
+    },
   },
   {
     title: 'State',
@@ -89,22 +86,28 @@ const columns: ColumnsType<Lecture> = [
     render: (val: string) => {
       val = val.replaceAll('_', ' ');
 
-      const titleCase = val.toLowerCase().replace(/(^|\s)\S/g, (match) => match.toUpperCase());
+      const titleCase = val
+        .toLowerCase()
+        .replace(/(^|\s)\S/g, (match) => match.toUpperCase());
       return <>{titleCase}</>;
-    }
+    },
   },
 ];
 
+interface LectureResponse extends ServerResponse {
+  data: Lecture[];
+}
+
 export default function DeniedTable() {
-  const [ lectures, setLectures ] = useState<Lecture[]>([]);
-  const [ notificationApi, contextHolder ] = notification.useNotification();
+  const [lectures, setLectures] = useState<Lecture[]>([]);
+  const [notificationApi, contextHolder] = notification.useNotification();
 
   const { mutate: fetchLectures } = useMutation(
     async () => {
       return await apiClient.get(`/lectures?summary=true&only_denied=true`);
     },
     {
-      onSuccess: (res: any) => {
+      onSuccess: (res: LectureResponse) => {
         const result = {
           status: res.status + '-' + res.statusText,
           headers: res.headers,
@@ -115,9 +118,9 @@ export default function DeniedTable() {
           lecture.combined_public_id_and_lang = `${lecture.public_id}/${lecture.language}`;
           lecture['key'] = lecture.combined_public_id_and_lang;
         }
-        setLectures(result.data);
+        setLectures(result.data as Lecture[]);
       },
-      onError: (err: any) => {
+      onError: (err: ServerErrorResponse) => {
         notificationApi['error']({
           message: 'Failed to get lectures',
           description: err.response.data.detail,
@@ -128,7 +131,7 @@ export default function DeniedTable() {
 
   useEffect(() => {
     fetchLectures();
-  }, []);
+  }, [fetchLectures]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -136,14 +139,12 @@ export default function DeniedTable() {
     }, UPDATE_INTERVAL);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchLectures]);
 
   return (
     <>
       {contextHolder}
-      <Table
-        columns={columns}
-        dataSource={lectures} />
+      <Table columns={columns} dataSource={lectures} />
     </>
   );
 }

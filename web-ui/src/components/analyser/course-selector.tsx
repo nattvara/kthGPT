@@ -1,15 +1,6 @@
 import styles from './course-selector.less';
 import { Lecture, Course } from '@/components/lecture';
-import {
-  Button,
-  Row,
-  Typography,
-  Input,
-  Space,
-  Card,
-  Col,
-  notification,
-} from 'antd';
+import { Button, Row, Typography, Input, Space, Col, notification } from 'antd';
 import {
   DeleteOutlined,
   PlusCircleFilled,
@@ -17,21 +8,24 @@ import {
 } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
-import apiClient from '@/http';
+import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 
 const { Search } = Input;
 const { Title, Paragraph } = Typography;
 
+interface CourseResponse extends ServerResponse {
+  data: Course[];
+}
 
 interface CourseSearchProps {
-  lecture: Lecture
-  onLectureUpdated: (lecture: Lecture) => any
+  lecture: Lecture;
+  onLectureUpdated: (lecture: Lecture) => void;
 }
 
 function CourseSearch(props: CourseSearchProps) {
   const { lecture, onLectureUpdated } = props;
-  const [ query, setQuery ] = useState<string>('');
-  const [ courses, setCourses ] = useState<Course[]>([]);
+  const [query, setQuery] = useState<string>('');
+  const [courses, setCourses] = useState<Course[]>([]);
   const { isLoading: isSearching, mutate: doSearch } = useMutation(
     async () => {
       return await apiClient.post('/search/course', {
@@ -40,13 +34,13 @@ function CourseSearch(props: CourseSearchProps) {
       });
     },
     {
-      onSuccess: (res: any) => {
+      onSuccess: (res: CourseResponse) => {
         const result = {
           data: res.data,
         };
         setCourses(result.data);
       },
-      onError: (err: any) => {
+      onError: (err: ServerErrorResponse) => {
         console.log(err);
       },
     }
@@ -55,29 +49,33 @@ function CourseSearch(props: CourseSearchProps) {
   const search = async (query: string) => {
     await setQuery(query);
     doSearch();
-  }
+  };
 
   return (
     <>
       <Row className={styles.search_bar_container}>
         <Search
-          placeholder='Search for course: Flervariabelanalys, DD2477, SE1020'
-          size='large'
+          placeholder="Search for course: Flervariabelanalys, DD2477, SE1020"
+          size="large"
           value={query}
           loading={isSearching}
-          onChange={e => {
-            let val = e.target.value;
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            const val = e.target.value;
             search(val);
           }}
         />
       </Row>
-      <Space direction='vertical' size='large'>
-        {lecture.courses.map(course => (
+      <Space direction="vertical" size="large">
+        {lecture.courses.map((course) => (
           <div key={course.course_code}>
-            <AddedCourse course={course} lecture={lecture} onLectureUpdated={onLectureUpdated} />
+            <AddedCourse
+              course={course}
+              lecture={lecture}
+              onLectureUpdated={onLectureUpdated}
+            />
           </div>
         ))}
-        {courses.map(course => {
+        {courses.map((course) => {
           for (let i = 0; i < lecture.courses.length; i++) {
             const c = lecture.courses[i];
             if (c.course_code === course.course_code) return <></>;
@@ -85,7 +83,11 @@ function CourseSearch(props: CourseSearchProps) {
 
           return (
             <div key={course.course_code}>
-              <NonAddedCourse course={course} lecture={lecture} onLectureUpdated={onLectureUpdated} />
+              <NonAddedCourse
+                course={course}
+                lecture={lecture}
+                onLectureUpdated={onLectureUpdated}
+              />
             </div>
           );
         })}
@@ -95,54 +97,61 @@ function CourseSearch(props: CourseSearchProps) {
 }
 
 interface NonAddedCourseProps {
-  course: Course
-  lecture: Lecture
-  onLectureUpdated: (lecture: Lecture) => any
+  course: Course;
+  lecture: Lecture;
+  onLectureUpdated: (lecture: Lecture) => void;
 }
 
 function NonAddedCourse(props: NonAddedCourseProps) {
   const { lecture, course, onLectureUpdated } = props;
-  const [ notificationApi, contextHolder ] = notification.useNotification();
-  const [ loading, setLoading ] = useState<boolean>(false);
+  const [notificationApi, contextHolder] = notification.useNotification();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const addCourse = async (course_code: string) => {
     await setLoading(true);
     try {
-      const response = await apiClient.post(`/lectures/${lecture.public_id}/${lecture.language}/course`, {
-        course_code,
-      });
+      const response = await apiClient.post(
+        `/lectures/${lecture.public_id}/${lecture.language}/course`,
+        {
+          course_code,
+        }
+      );
       onLectureUpdated(response.data);
       notificationApi['success']({
         message: `Added lecture to ${course_code}`,
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       notificationApi['error']({
         icon: <WarningOutlined />,
         message: 'Course was not added',
-        description: err.response.data.detail,
+        description: (err as ServerErrorResponse).response.data.detail,
       });
     } finally {
       await setLoading(false);
     }
-  }
+  };
 
   return (
     <>
       {contextHolder}
       <Row>
-        <Space direction='horizontal' size='large'>
+        <Space direction="horizontal" size="large">
           <Col>
             <Button
               onClick={() => addCourse(course.course_code)}
               className={styles.course_list_btn}
-              type='primary'
-              shape='round'
+              type="primary"
+              shape="round"
               loading={loading}
               icon={<PlusCircleFilled />}
-              >Add</Button>
+            >
+              Add
+            </Button>
           </Col>
           <Col>
-            <span className={styles.course_name}><strong>{course.course_code}</strong> - {course.display_name}</span>
+            <span className={styles.course_name}>
+              <strong>{course.course_code}</strong> - {course.display_name}
+            </span>
           </Col>
         </Space>
       </Row>
@@ -150,51 +159,56 @@ function NonAddedCourse(props: NonAddedCourseProps) {
   );
 }
 
-
 interface AddedCourseProps {
-  course: Course
-  lecture: Lecture
-  onLectureUpdated: (lecture: Lecture) => any
+  course: Course;
+  lecture: Lecture;
+  onLectureUpdated: (lecture: Lecture) => void;
 }
 
 function AddedCourse(props: AddedCourseProps) {
   const { lecture, course, onLectureUpdated } = props;
-  const [ notificationApi, contextHolder ] = notification.useNotification();
-  const [ loading, setLoading ] = useState<boolean>(false);
+  const [notificationApi, contextHolder] = notification.useNotification();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const removeCourse = async (course_code: string) => {
     await setLoading(true);
     try {
-      const response = await apiClient.delete(`/lectures/${lecture.public_id}/${lecture.language}/course/${course_code}`);
+      const response = await apiClient.delete(
+        `/lectures/${lecture.public_id}/${lecture.language}/course/${course_code}`
+      );
       onLectureUpdated(response.data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       notificationApi['warning']({
         icon: <WarningOutlined />,
         message: 'Course was not removed',
-        description: err.response.data.detail,
+        description: (err as ServerErrorResponse).response.data.detail,
       });
     } finally {
       await setLoading(false);
     }
-  }
+  };
 
   return (
     <>
       {contextHolder}
       <Row>
-        <Space direction='horizontal' size='large'>
+        <Space direction="horizontal" size="large">
           <Col>
             <Button
               onClick={() => removeCourse(course.course_code)}
-              type='default'
-              shape='round'
+              type="default"
+              shape="round"
               loading={loading}
               className={styles.course_list_btn}
               icon={<DeleteOutlined />}
-            >Remove</Button>
+            >
+              Remove
+            </Button>
           </Col>
           <Col>
-            <span className={styles.course_name}><strong>{course.course_code}</strong> - {course.display_name}</span>
+            <span className={styles.course_name}>
+              <strong>{course.course_code}</strong> - {course.display_name}
+            </span>
           </Col>
         </Space>
       </Row>
@@ -202,24 +216,27 @@ function AddedCourse(props: AddedCourseProps) {
   );
 }
 
-
 interface CourseSelectorProps {
-  lecture: Lecture
-  onLectureUpdated: (lecture: Lecture) => any
+  lecture: Lecture;
+  onLectureUpdated: (lecture: Lecture) => void;
 }
-
 
 export default function CourseSelector(props: CourseSelectorProps) {
   const { lecture, onLectureUpdated } = props;
 
   return (
     <>
-      <Space direction='vertical'>
+      <Space direction="vertical">
         <Row>
-          <Title className={styles.title} level={4} style={{margin: 0}}>Select which course this lecture belongs to</Title>
+          <Title className={styles.title} level={4} style={{ margin: 0 }}>
+            Select which course this lecture belongs to
+          </Title>
         </Row>
         <Row>
-          <Paragraph>Tagging the lecture with courses help others find it. You can add more than one course!</Paragraph>
+          <Paragraph>
+            Tagging the lecture with courses help others find it. You can add
+            more than one course!
+          </Paragraph>
         </Row>
 
         <Row>
