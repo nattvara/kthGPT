@@ -62,4 +62,4 @@ jobs:
         cd web-ui && pnpm install
 
     - name: Run eslint
-      run: npm run lint
+      run: cd web-ui && npm run lint
