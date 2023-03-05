@@ -7,7 +7,7 @@
     "postinstall": "umi setup",
     "setup": "umi setup",
     "start": "ENVIRONMENT=development npm run dev",
-    "lint": "eslint --ext .js,.ts,.jsx,.tsx src",
+    "lint": "eslint --max-warnings=0 --ext .js,.ts,.jsx,.tsx src",
     "format": "lint --fix & prettier --write 'src/**/*.{js,jsx,ts,tsx}'"
   },
   "dependencies": {
