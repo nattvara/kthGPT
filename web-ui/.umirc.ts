@@ -7,6 +7,7 @@ export default defineConfig({
     { path: '/questions/lectures/:id/:language', component: 'questions' },
     { path: '/queue', component: 'queue' },
     { path: '/denied', component: 'denied' },
+    { path: '/about', component: 'about' },
 
     { path: '*', component: '404' },
   ],

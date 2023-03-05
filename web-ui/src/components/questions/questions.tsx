@@ -34,6 +34,13 @@ const examples = [
       'Förklara kärnbegreppen i denna föreläsning, med några användbara exempel',
   },
   {
+    titleEn: `I didn't go to the lecture, what have i missed?`,
+    titleSv: 'Jag gick inte på föreläsningen, vad har jag missat?',
+    queryStringEn: `If i didn't attend this lecture what would I have to read-up on?`,
+    queryStringSv:
+      'Om jag inte deltog på den här föreläsningen, vad skulle jag behöva läsa på om?',
+  },
+  {
     titleEn: 'At which point in the lecture is X covered?',
     titleSv: 'När i föreläsningen berättar föreläsaren om X?',
     queryStringEn: 'At which point in the lecture is X covered?',

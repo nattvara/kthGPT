@@ -358,6 +358,11 @@ export default function LectureAdder() {
         </Title>
       </Paragraph>
 
+      <Paragraph className={styles.length_note}>
+        This process usually takes between 10 and 30 minutes, depending on the
+        length of the lecture and how many other lectures are being watched.
+      </Paragraph>
+
       <Space direction="vertical" style={{ width: '100%' }} size="large">
         {error !== '' && (
           <Row justify="center">

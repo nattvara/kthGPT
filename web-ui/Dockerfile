@@ -9,6 +9,7 @@ COPY pnpm-lock.yaml .
 COPY src ./src
 COPY tsconfig.json .
 COPY typings.d.ts .
+COPY update_version.sh .
 
 RUN npm install -g pnpm
 RUN pnpm install

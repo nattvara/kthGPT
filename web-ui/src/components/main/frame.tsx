@@ -1,9 +1,12 @@
-import { GithubOutlined } from '@ant-design/icons';
+import { FileTextOutlined, GithubOutlined } from '@ant-design/icons';
 import styles from './frame.less';
-import { Space, Row, Col, Layout, Image, Button } from 'antd';
+import { Space, Row, Col, Layout, Image, Button, Typography } from 'antd';
 import kthLogo from '../../assets/logo.svg';
 import Progress from './progress';
 import { history } from 'umi';
+import { buildDate, isProduction } from '@/version';
+
+const { Link } = Typography;
 
 const GITHUB_URL = 'https://github.com/nattvara/kthGPT';
 
@@ -51,11 +54,31 @@ function Frame(props: FrameProps) {
                 <h1 className={styles.subtitle}>
                   Ask GPT-3 questions about KTH lectures
                 </h1>
-                <p className={styles.subtitle}>
-                  <Button type="dashed" onClick={() => goToGithub()}>
-                    <GithubOutlined /> Source Code
-                  </Button>
-                </p>
+                <div className={styles.subtitle}>
+                  <Space direction="horizontal">
+                    <Button type="dashed" onClick={() => goToGithub()}>
+                      <GithubOutlined /> Source Code
+                    </Button>
+                    <Link href="/about">
+                      <Button type="dashed">
+                        <FileTextOutlined /> About
+                      </Button>
+                    </Link>
+                    <Link
+                      href="https://github.com/nattvara/kthGPT/releases"
+                      target="_blank"
+                    >
+                      <Button type="dashed">
+                        {isProduction && (
+                          <>
+                            kthGPT <strong>{buildDate}</strong> Version
+                          </>
+                        )}
+                        {!isProduction && <>Development build</>}
+                      </Button>
+                    </Link>
+                  </Space>
+                </div>
               </>
             )}
           </div>

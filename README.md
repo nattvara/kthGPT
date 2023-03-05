@@ -65,6 +65,10 @@ The lecture is ready. kthGPT can now use GPT-3 to answer questions about the lec
 > - Hans Peters, Game Theory: A Multi-Leveled Approach, Springer 2008 (Chapter 6) provides a deep exploration of the topics discussed in this lecture. It includes discussion on transferable utility and the core, super-aditivity, and finding efficient outcomes in non-zero sum games, as well as balancing games and linear programming.
 >
 
+**- If i didn't attend this lecture what would I have to read-up on?**
+>
+> Tends to produce quite brief answers, with very "google:able" keywords.
+
 ## Run the tool locally
 
 ### Docker
