@@ -1,9 +1,11 @@
-import { GithubOutlined } from '@ant-design/icons';
+import { FileTextOutlined, GithubOutlined } from '@ant-design/icons';
 import styles from './frame.less';
-import { Space, Row, Col, Layout, Image, Button } from 'antd';
+import { Space, Row, Col, Layout, Image, Button, Typography } from 'antd';
 import kthLogo from '../../assets/logo.svg';
 import Progress from './progress';
 import { history } from 'umi';
+
+const { Link } = Typography;
 
 const GITHUB_URL = 'https://github.com/nattvara/kthGPT';
 
@@ -52,9 +54,16 @@ function Frame(props: FrameProps) {
                   Ask GPT-3 questions about KTH lectures
                 </h1>
                 <p className={styles.subtitle}>
-                  <Button type="dashed" onClick={() => goToGithub()}>
-                    <GithubOutlined /> Source Code
-                  </Button>
+                  <Space direction="horizontal">
+                    <Button type="dashed" onClick={() => goToGithub()}>
+                      <GithubOutlined /> Source Code
+                    </Button>
+                    <Link href="/about">
+                      <Button type="dashed">
+                        <FileTextOutlined /> About
+                      </Button>
+                    </Link>
+                  </Space>
                 </p>
               </>
             )}
