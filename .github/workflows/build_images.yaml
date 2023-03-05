@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     tags:
-      - v*.*
+      # Tags must be on the format vx.x.x, eg. v1.2.0
       - v*.*.*
 
 env:
