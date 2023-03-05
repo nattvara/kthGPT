@@ -1,6 +1,5 @@
 name: Build
 on:
-  pull_request: # (this is only here temporarily, can't be tested easily with act)
   push:
     tags:
       - v*.*
