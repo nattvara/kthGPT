@@ -93,6 +93,7 @@ export function PreviewCompact(props: PreviewCompactProps) {
                 <Image
                   src={flagIcon}
                   height={18}
+                  width={lecture.language === 'en' ? 36 : 29}
                   className={styles.flag}
                   preview={false}
                 />
