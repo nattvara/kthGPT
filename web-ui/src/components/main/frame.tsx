@@ -54,16 +54,20 @@ function Frame(props: FrameProps) {
                 <h1 className={styles.subtitle}>
                   Ask GPT-3 questions about KTH lectures
                 </h1>
-                <div className={styles.subtitle}>
-                  <Space direction="horizontal">
+                <Row className={styles.subtitle} justify="center">
+                  <Col className={styles.header_btn}>
                     <Button type="dashed" onClick={() => goToGithub()}>
                       <GithubOutlined /> Source Code
                     </Button>
+                  </Col>
+                  <Col className={styles.header_btn}>
                     <Link href="/about">
                       <Button type="dashed">
                         <FileTextOutlined /> About
                       </Button>
                     </Link>
+                  </Col>
+                  <Col className={styles.header_btn}>
                     <Link
                       href="https://github.com/nattvara/kthGPT/releases"
                       target="_blank"
@@ -77,8 +81,8 @@ function Frame(props: FrameProps) {
                         {!isProduction && <>Development build</>}
                       </Button>
                     </Link>
-                  </Space>
-                </div>
+                  </Col>
+                </Row>
               </>
             )}
           </div>
