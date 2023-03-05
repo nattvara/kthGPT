@@ -53,14 +53,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-
-    - name: Install Pnpm
-      run: |
-        wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.bashrc" SHELL="$(which bash)" bash -
+    - uses: pnpm/action-setup@v2
+      with:
+        version: '7.27.0'
 
     - name: Install Modules
       run: |
-        source /home/runner/.bashrc
         cd web-ui && pnpm install
 
     - name: Run eslint
