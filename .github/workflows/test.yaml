@@ -54,9 +54,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install Modules
+    - name: Install Pnpm
       run: |
         wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.bashrc" SHELL="$(which bash)" bash -
+
+    - name: Install Modules
+      run: |
         cd web-ui && pnpm install
 
     - name: Run eslint
