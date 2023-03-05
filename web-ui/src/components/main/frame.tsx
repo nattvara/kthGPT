@@ -4,6 +4,7 @@ import { Space, Row, Col, Layout, Image, Button, Typography } from 'antd';
 import kthLogo from '../../assets/logo.svg';
 import Progress from './progress';
 import { history } from 'umi';
+import { buildDate, isProduction } from '@/version';
 
 const { Link } = Typography;
 
@@ -61,6 +62,19 @@ function Frame(props: FrameProps) {
                     <Link href="/about">
                       <Button type="dashed">
                         <FileTextOutlined /> About
+                      </Button>
+                    </Link>
+                    <Link
+                      href="https://github.com/nattvara/kthGPT/releases"
+                      target="_blank"
+                    >
+                      <Button type="dashed">
+                        {isProduction && (
+                          <>
+                            kthGPT <strong>{buildDate}</strong> Version
+                          </>
+                        )}
+                        {!isProduction && <>Development build</>}
                       </Button>
                     </Link>
                   </Space>
