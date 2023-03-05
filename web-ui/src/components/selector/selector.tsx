@@ -64,7 +64,7 @@ export default function Selector() {
           ...or add a new lecture <VideoCameraAddOutlined />
         </Title>
         <Title level={5} className={styles.subtitle}>
-          Ask kthGPT to watch a new lecture
+          Ask kthGPT to watch a new lecture, it's completely automatic.
         </Title>
 
         <LectureAdder />
