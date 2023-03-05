@@ -53,7 +53,7 @@ function Frame(props: FrameProps) {
                 <h1 className={styles.subtitle}>
                   Ask GPT-3 questions about KTH lectures
                 </h1>
-                <p className={styles.subtitle}>
+                <div className={styles.subtitle}>
                   <Space direction="horizontal">
                     <Button type="dashed" onClick={() => goToGithub()}>
                       <GithubOutlined /> Source Code
@@ -64,7 +64,7 @@ function Frame(props: FrameProps) {
                       </Button>
                     </Link>
                   </Space>
-                </p>
+                </div>
               </>
             )}
           </div>
