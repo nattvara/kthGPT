@@ -173,7 +173,7 @@ export default function Analyser(props: AnalyserProps) {
     }, UPDATE_QUEUE_INTERVAL);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchUnfinishedLectures]);
 
   useEffect(() => {
     if (lecture === null) return;
