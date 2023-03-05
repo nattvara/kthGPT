@@ -3,7 +3,7 @@
   "author": "Ludwig Kristoffersson <ludwig@kristoffersson.org>",
   "scripts": {
     "dev": "ENVIRONMENT=development umi dev",
-    "build": "COMPRESS=none ENVIRONMENT=production umi build",
+    "build": "bash update_version.sh && COMPRESS=none ENVIRONMENT=production umi build",
     "postinstall": "umi setup",
     "setup": "umi setup",
     "start": "ENVIRONMENT=development npm run dev",
