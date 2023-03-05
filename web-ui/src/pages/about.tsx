@@ -163,6 +163,17 @@ export default function AboutPage() {
                   balancing games and linear programming.
                 </em>
               </Paragraph>
+
+              <Title level={5}>
+                <blockquote>
+                  If i didn't attend this lecture what would I have to read-up
+                  on?
+                </blockquote>
+              </Title>
+              <Paragraph>
+                Tends to produce quite brief answers, with very "google:able"
+                keywords.
+              </Paragraph>
             </Col>
           </Row>
         </div>
