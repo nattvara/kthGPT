@@ -17,6 +17,10 @@ def clean():
 def create():
     index_body = {
         'settings': {
+            'index': {
+                'number_of_shards': 1,
+                'number_of_replicas': 0,
+            },
             'analysis': {
                 'filter': {
                     'word_delimiter_graph_course': {
