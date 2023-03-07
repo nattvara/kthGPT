@@ -45,6 +45,14 @@ def save_text(
             output_dir,
             save_progress,
         )
+    elif settings.WHISPER_TRANSCRIPTION_DEVICE == 'openai':
+        transcribe_openai(
+            mp3_file,
+            lecture,
+            analysis,
+            output_dir,
+            save_progress,
+        )
     else:
         raise ValueError(f'unknown transcription device: {settings.WHISPER_TRANSCRIPTION_DEVICE}')
 
@@ -56,6 +64,98 @@ def save_text(
         analysis = lecture.get_last_analysis()
         lecture.transcript_progress = 100
         analysis.save()
+
+
+def transcribe_openai(
+    mp3_file: str,
+    lecture: Lecture,
+    analysis: Analysis,
+    output_dir: Optional[str] = None,
+    save_progress: bool = True
+):
+    logger = logging.getLogger('rq.worker')
+
+    openai.api_key = settings.OPENAI_API_KEY
+
+    os.mkdir(output_dir)
+
+    audio = AudioSegment.from_mp3(mp3_file)
+    length = len(audio)
+
+    logger.info(f'total duration {length}s')
+
+    step_size = 10  # number of minutes to do at once
+    current_time = 0
+
+    parts = math.ceil(length / 1000 / 60 / step_size)
+
+    text = ''
+    segments = []
+
+    inc = 0
+    while current_time < length:
+        inc += 1
+
+        if save_progress:
+            save_message_for_analysis(analysis, 'Creating transcript...', f'Currently on part {inc}/{parts}.')  # noqa: E501
+
+        step_start = current_time
+        step_end = current_time + step_size * 1000 * 60
+
+        sample = audio[step_start:step_end]
+
+        temp_path = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix='.mp3')
+        temp_path.close()
+        sample.export(temp_path.name, format='mp3')
+
+        with open(temp_path.name, 'rb') as file:
+            response = openai.Audio.transcribe(
+                'whisper-1',
+                file,
+                response_format='verbose_json',
+                language=lecture.language,
+            )
+            text += f'{response["text"]} '
+            for segment in response['segments']:
+                segment['start'] = segment['start'] + step_start / 1000
+                segment['end'] = segment['end'] + step_start / 1000
+                segment['seek'] = segment['seek'] + step_start
+                segments.append(segment)
+
+        os.unlink(temp_path.name)
+        current_time = step_end
+
+        if not save_progress:
+            continue
+
+        progress = int((inc / parts) * 100)
+        logger.info(f'current progress {progress}%')
+        lecture.refresh()
+        analysis = lecture.get_last_analysis()
+        analysis.transcript_progress = progress
+        analysis.save()
+
+    with open(f'{output_dir}/{lecture.public_id}.mp3.txt', 'w+') as file:
+        file.write(text)
+
+    with open(f'{output_dir}/{lecture.public_id}.mp3.json', 'w+') as file:
+        json.dump({'segments': segments}, file)
+
+    with open(f'{output_dir}/{lecture.public_id}.mp3.pretty.txt', 'w+') as file:
+        def seconds_to_time_string(seconds):
+            minutes = seconds // 60
+            seconds = seconds % 60
+            return f'{minutes:02d}:{seconds:02d}'
+
+        for segment in segments:
+            line = ''
+            line += seconds_to_time_string(round(segment['start']))
+            line += ' -> '
+            line += seconds_to_time_string(round(segment['end']))
+            line += ': '
+            line += segment['text']
+            line += '\n'
+            file.write(line)
 
 
 def transcribe_locally(
