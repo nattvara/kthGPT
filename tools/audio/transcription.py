@@ -97,6 +97,8 @@ def transcribe_openai(
         inc += 1
 
         if save_progress:
+            lecture.refresh()
+            analysis = lecture.get_last_analysis()
             save_message_for_analysis(analysis, 'Creating transcript...', f'Currently on part {inc}/{parts}.')  # noqa: E501
 
         step_start = current_time
