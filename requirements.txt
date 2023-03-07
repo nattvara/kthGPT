@@ -27,7 +27,7 @@ lxml==4.9.2
 more-itertools==9.0.0
 multidict==6.0.4
 numpy==1.24.2
-openai==0.26.5
+openai==0.27.0
 openai-whisper==20230124
 opensearch-py==2.1.1
 packaging==23.0
