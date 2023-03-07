@@ -209,6 +209,32 @@ export default function Analyser(props: AnalyserProps) {
   }
 
   if (lecture.approved === null) {
+    if (lecture.analysis?.state === 'failure') {
+      return (
+        <>
+          <Result
+            status="500"
+            title="Something went wrong when classifying the video!"
+            subTitle="Unfortunately something must have gone wrong, click the button to try analyzing the video again. Sometimes restarting just fixes things ¯\_(ツ)_/¯"
+            extra={[
+              <Button
+                onClick={() => restart()}
+                loading={isPosting}
+                type="primary"
+                key="btn"
+                icon={<BulbOutlined />}
+                size="large"
+              >
+                Restart
+              </Button>,
+            ]}
+          />
+          <div className={styles.divider}></div>
+          <div className={styles.divider}></div>
+        </>
+      );
+    }
+
     return (
       <>
         <Result

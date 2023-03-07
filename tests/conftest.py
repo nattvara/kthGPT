@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 from fakeredis import FakeStrictRedis
+from random import randbytes
 from rq import Queue
 import subprocess
 import tempfile
@@ -135,3 +136,8 @@ def mp4_file():
 
     tf.close()
     os.unlink(tf.name)
+
+
+@pytest.fixture
+def mp3_file():
+    return os.path.join(os.path.dirname(__file__), 'files') + '/example.mp3'

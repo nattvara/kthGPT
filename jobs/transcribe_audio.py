@@ -1,12 +1,8 @@
-from config.settings import settings
-from redis import Redis
-from rq import Queue
 import logging
 
 from db.crud import get_lecture_by_public_id_and_language, save_message_for_analysis
 from tools.audio.transcription import save_text
 from db.models import Lecture, Analysis
-import jobs.transcribe_audio
 
 
 # 5hr timeout
@@ -58,14 +54,4 @@ def job(lecture_id: str, language: str):
 
 # Test run the job
 if __name__ == '__main__':
-    queue = Queue(connection=Redis(
-        host=settings.REDIS_HOST,
-        port=settings.REDIS_PORT,
-        password=settings.REDIS_PASSWORD,
-    ))
-    queue.enqueue(
-        jobs.transcribe_audio.job,
-        '0_8fs7zau6',
-        Lecture.Language.SWEDISH,
-        job_timeout=TIMEOUT
-    )
+    job('0_hjbdw7nf', Lecture.Language.SWEDISH)

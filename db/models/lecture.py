@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import peewee
 import pytz
 import json
+import os
 
 from .analysis import Analysis
 from tools.files.paths import (
@@ -117,6 +118,11 @@ class Lecture(Base):
         return writable_summary_filepath(self.public_id, self.language)
 
     def transcript_text(self):
+        filename = f'{self.transcript_filepath}/{self.public_id}.mp3.pretty.txt'
+        if os.path.exists(filename):
+            with open(filename, 'r') as file:
+                return file.read()
+
         filename = f'{self.transcript_filepath}/{self.public_id}.mp3.vtt'
         with open(filename, 'r') as file:
             return file.read()

@@ -18,8 +18,8 @@ import jobs
 # 20min timeout
 TIMEOUT = 20 * 60
 
-# 4 minutes
-SAMPLE_SIZE_SECONDS = 4 * 60
+# 7 minutes
+SAMPLE_SIZE_SECONDS = 7 * 60
 
 # 4 hours
 MAX_ALLOWED_VIDEO_LENGTH = 4 * 60 * 60
@@ -41,35 +41,35 @@ def job(lecture_id: str, language: str):
     analysis.save()
     save_message_for_analysis(analysis, 'Classifying video', 'Trying to classify if the video is relevant for kthGPT')
 
-    temp_path = tempfile.NamedTemporaryFile(mode='w+', delete=False)
-    temp_path_mp3 = download_mp3(lecture.content_link(), temp_path.name, SAMPLE_SIZE_SECONDS)
-
-    length = extract_mp3_len(temp_path_mp3)
-    if length > MAX_ALLOWED_VIDEO_LENGTH:
-        logger.info(f'video was to long {length} > {MAX_ALLOWED_VIDEO_LENGTH}')
-        lecture.approved = False
-        lecture.save()
-        temp_path.close()
-        return
-
-    shorten_mp3(temp_path_mp3, SAMPLE_SIZE_SECONDS)
-
-    transcript_dir = f'{temp_path_mp3}.transcription'
-    save_text(temp_path_mp3, lecture, transcript_dir, save_progress=False)
-
-    transcribed_text_path = f'{transcript_dir}/{os.path.basename(temp_path_mp3)}.txt'
-
-    with open(transcribed_text_path, 'r') as file:
-        text = file.read()
-
-    if lecture.language == Lecture.Language.ENGLISH:
-        prompt = prompts.create_text_to_decide_if_video_is_appropriate_english(text)
-    elif lecture.language == Lecture.Language.SWEDISH:
-        prompt = prompts.create_text_to_decide_if_video_is_appropriate_swedish(text)
-    else:
-        raise ValueError(f'unsupported value error {lecture.language}')
-
     try:
+        temp_path = tempfile.NamedTemporaryFile(mode='w+', delete=False)
+        temp_path_mp3 = download_mp3(lecture.content_link(), temp_path.name, SAMPLE_SIZE_SECONDS)
+
+        length = extract_mp3_len(temp_path_mp3)
+        if length > MAX_ALLOWED_VIDEO_LENGTH:
+            logger.info(f'video was to long {length} > {MAX_ALLOWED_VIDEO_LENGTH}')
+            lecture.approved = False
+            lecture.save()
+            temp_path.close()
+            return
+
+        shorten_mp3(temp_path_mp3, SAMPLE_SIZE_SECONDS)
+
+        transcript_dir = f'{temp_path_mp3}.transcription'
+        save_text(temp_path_mp3, lecture, transcript_dir, save_progress=False)
+
+        transcribed_text_path = f'{transcript_dir}/{os.path.basename(temp_path_mp3)}.txt'
+
+        with open(transcribed_text_path, 'r') as file:
+            text = file.read()
+
+        if lecture.language == Lecture.Language.ENGLISH:
+            prompt = prompts.create_text_to_decide_if_video_is_appropriate_english(text)
+        elif lecture.language == Lecture.Language.SWEDISH:
+            prompt = prompts.create_text_to_decide_if_video_is_appropriate_swedish(text)
+        else:
+            raise ValueError(f'unsupported value error {lecture.language}')
+
         response = ai.gpt3(
             prompt,
             time_to_live=60 * 60 * 5,  # 5 hrs
