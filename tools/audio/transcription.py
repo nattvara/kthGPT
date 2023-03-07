@@ -25,6 +25,7 @@ def save_text(
 ):
     logger = logging.getLogger('rq.worker')
 
+    analysis = None
     if save_progress:
         lecture.refresh()
         analysis = lecture.get_last_analysis()
@@ -69,7 +70,7 @@ def save_text(
 def transcribe_openai(
     mp3_file: str,
     lecture: Lecture,
-    analysis: Analysis,
+    analysis: Optional[Analysis] = None,
     output_dir: Optional[str] = None,
     save_progress: bool = True
 ):
@@ -163,7 +164,7 @@ def transcribe_openai(
 def transcribe_locally(
     mp3_file: str,
     lecture: Lecture,
-    analysis: Analysis,
+    analysis: Optional[Analysis] = None,
     output_dir: Optional[str] = None,
     save_progress: bool = True
 ):
