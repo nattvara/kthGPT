@@ -82,7 +82,7 @@ def transcribe_openai(
     audio = AudioSegment.from_mp3(mp3_file)
     length = len(audio)
 
-    logger.info(f'total duration {length}s')
+    logger.info(f'total duration {length / 1000}s')
 
     step_size = 10  # number of minutes to do at once
     current_time = 0
