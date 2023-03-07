@@ -1,13 +1,19 @@
-from db.crud import save_message_for_analysis
-from db.models import Lecture
+from pydub import AudioSegment
 from typing import Optional
 import subprocess
+import tempfile
 import logging
 import shutil
 import ffmpeg
+import openai
+import json
+import math
 import re
 import os
 
+
+from db.crud import save_message_for_analysis
+from db.models import Lecture, Analysis
 from config.settings import settings
 
 
@@ -25,14 +31,44 @@ def save_text(
         analysis.transcript_progress = 0
         analysis.save()
 
-    total_duration = int(float(ffmpeg.probe(mp3_file)['format']['duration']))
-    logger.info(f'total duration {total_duration}s')
-
     if output_dir is None:
         output_dir = lecture.transcript_dirname()
 
     if os.path.isdir(output_dir):
         shutil.rmtree(output_dir, ignore_errors=False)
+
+    if settings.WHISPER_TRANSCRIPTION_DEVICE in ['cuda', 'cpu']:
+        transcribe_locally(
+            mp3_file,
+            lecture,
+            analysis,
+            output_dir,
+            save_progress,
+        )
+    else:
+        raise ValueError(f'unknown transcription device: {settings.WHISPER_TRANSCRIPTION_DEVICE}')
+
+    if save_progress:
+        lecture.refresh()
+        lecture.transcript_filepath = output_dir
+        lecture.save()
+
+        analysis = lecture.get_last_analysis()
+        lecture.transcript_progress = 100
+        analysis.save()
+
+
+def transcribe_locally(
+    mp3_file: str,
+    lecture: Lecture,
+    analysis: Analysis,
+    output_dir: Optional[str] = None,
+    save_progress: bool = True
+):
+    logger = logging.getLogger('rq.worker')
+
+    total_duration = int(float(ffmpeg.probe(mp3_file)['format']['duration']))
+    logger.info(f'total duration {total_duration}s')
 
     if lecture.language == Lecture.Language.ENGLISH:
         lang = 'en'
@@ -102,14 +138,5 @@ def save_text(
             analysis = lecture.get_last_analysis()
             analysis.transcript_progress = progress
             analysis.save()
-
-    if save_progress:
-        lecture.refresh()
-        lecture.transcript_filepath = output_dir
-        lecture.save()
-
-        analysis = lecture.get_last_analysis()
-        lecture.transcript_progress = 100
-        analysis.save()
 
     process.stdout.close()
