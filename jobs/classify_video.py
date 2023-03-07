@@ -18,8 +18,8 @@ import jobs
 # 20min timeout
 TIMEOUT = 20 * 60
 
-# 4 minutes
-SAMPLE_SIZE_SECONDS = 4 * 60
+# 7 minutes
+SAMPLE_SIZE_SECONDS = 7 * 60
 
 # 4 hours
 MAX_ALLOWED_VIDEO_LENGTH = 4 * 60 * 60
