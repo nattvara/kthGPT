@@ -138,13 +138,14 @@ def transcribe_openai(
         analysis.transcript_progress = progress
         analysis.save()
 
-    with open(f'{output_dir}/{lecture.public_id}.mp3.txt', 'w+') as file:
+    filename = os.path.basename(mp3_file)
+    with open(f'{output_dir}/{filename}.mp3.txt', 'w+') as file:
         file.write(text)
 
-    with open(f'{output_dir}/{lecture.public_id}.mp3.json', 'w+') as file:
+    with open(f'{output_dir}/{filename}.mp3.json', 'w+') as file:
         json.dump({'segments': segments}, file)
 
-    with open(f'{output_dir}/{lecture.public_id}.mp3.pretty.txt', 'w+') as file:
+    with open(f'{output_dir}/{filename}.mp3.pretty.txt', 'w+') as file:
         def seconds_to_time_string(seconds):
             minutes = seconds // 60
             seconds = seconds % 60
