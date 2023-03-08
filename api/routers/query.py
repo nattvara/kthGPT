@@ -53,6 +53,9 @@ def new_query(input_data: InputModel) -> OutputModel:
     elif input_data.override_cache:
         should_create_new_query = True
 
+    elif query.cache_is_valid is False:
+        should_create_new_query = True
+
     if should_create_new_query:
         cached = False
         query = create_query(lecture, input_data.query_string)

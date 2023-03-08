@@ -102,7 +102,15 @@ def delete_all_except_last_message_in_analysis(analysis_id: int):
 # Query
 def get_most_recent_query_by_sha(lecture, sha: str):
     from db.models.query import Query
-    return Query.filter(Query.lecture_id == lecture.id).filter(Query.query_hash == sha).order_by(Query.modified_at.desc()).first()  # noqa: E501
+    return Query.filter(
+        Query.lecture_id == lecture.id
+    ).filter(
+        Query.query_hash == sha
+    ).filter(
+        Query.cache_is_valid == True
+    ).order_by(
+        Query.modified_at.desc()
+    ).first()
 
 
 def create_query(lecture, query_string: str):
