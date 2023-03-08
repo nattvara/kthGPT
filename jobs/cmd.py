@@ -5,6 +5,7 @@ from db.crud import (
     get_all_lectures,
 )
 from jobs import (
+    schedule_analysis_of_lecture,
     schedule_cleanup_of_lecture,
     get_metadata_queue,
     capture_preview,
@@ -55,3 +56,12 @@ def cleanup_for_all_lectures():
     for lecture in lectures:
         print(f'scheduling clean of {lecture.id}')
         schedule_cleanup_of_lecture(lecture)
+
+
+def reanalyse_all_lectures():
+    print('dispatching jobs to re-analyse all lectures')
+
+    lectures = get_all_ready_lectures()
+    for lecture in lectures:
+        print(f'scheduling analysis of {lecture.id}')
+        schedule_analysis_of_lecture(lecture)
