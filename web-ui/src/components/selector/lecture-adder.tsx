@@ -246,6 +246,7 @@ export default function LectureAdder() {
 
   const { isLoading: isPosting, mutate: postUrl } = useMutation(
     async () => {
+      setError('');
       return await apiClient.post(`/url/${source}`, {
         url,
         language,
