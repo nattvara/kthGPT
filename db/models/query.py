@@ -10,6 +10,7 @@ class Query(Base):
     query_hash = peewee.CharField(index=True, null=False)
     query_string = peewee.TextField(null=False)
     count = peewee.IntegerField(null=False, default=0)
+    cache_is_valid = peewee.BooleanField(null=False, default=True)
     response = peewee.TextField(null=True)
 
     @staticmethod
