@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
+from db.models import Lecture, Analysis
 from fakeredis import FakeStrictRedis
-from random import randbytes
 from rq import Queue
 import subprocess
 import tempfile
@@ -86,6 +86,36 @@ def teardown(db):
 def api_client():
     client = TestClient(api.get_app())
     return client
+
+
+@pytest.fixture
+def analysed_lecture():
+    id = 'some_id'
+
+    lecture = Lecture(
+        public_id=id,
+        language='sv',
+    )
+    lecture.save()
+
+    analysis = Analysis(lecture_id=lecture.id)
+    analysis.save()
+
+    save_dummy_summary_for_lecture(lecture)
+
+    return lecture
+
+
+def save_dummy_summary_for_lecture(lecture: Lecture):
+    summary_filename = lecture.summary_filename()
+    if os.path.isfile(summary_filename):
+        os.unlink(summary_filename)
+
+    with open(summary_filename, 'w+') as file:
+        file.write('some summary')
+
+    lecture.summary_filepath = summary_filename
+    lecture.save()
 
 
 @pytest.fixture
