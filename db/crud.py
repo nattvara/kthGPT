@@ -120,6 +120,11 @@ def create_query(lecture, query_string: str):
     return query
 
 
+def find_all_queries_for_lecture(lecture):
+    from db.models.query import Query
+    return Query.select().where(Query.lecture_id == lecture.id)
+
+
 # Message
 def save_message_for_analysis(analysis, title: str, body: Union[str, None] = None):
     from db.models.message import Message
