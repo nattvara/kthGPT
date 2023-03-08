@@ -360,7 +360,7 @@ export default function LectureAdder() {
       </Paragraph>
 
       <Paragraph className={styles.length_note}>
-        This process usually takes between 10 and 30 minutes, depending on the
+        This process usually takes between 5 and 15 minutes, depending on the
         length of the lecture and how many other lectures are being watched.
       </Paragraph>
 
