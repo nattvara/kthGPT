@@ -1,6 +1,11 @@
-import { SendOutlined, CloseOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+  SendOutlined,
+  CloseOutlined,
+  ReloadOutlined,
+  FileTextOutlined,
+} from '@ant-design/icons';
 import styles from './questions.less';
-import { Row, Col, Space, Button, Skeleton, Result } from 'antd';
+import { Row, Col, Space, Button, Skeleton, Result, Modal } from 'antd';
 import { notification } from 'antd';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
@@ -77,6 +82,10 @@ interface QueryResponse extends ServerResponse {
   };
 }
 
+interface TranscriptResponse extends ServerResponse {
+  data: string;
+}
+
 interface QuestionsProps {
   id: string;
   language: string;
@@ -93,6 +102,8 @@ export default function Questions(props: QuestionsProps) {
   const [notFound, setNotFound] = useState<boolean | null>(null);
   const [overrideCache, setOverrideCache] = useState<boolean>(false);
   const [wasCached, setWasCached] = useState<boolean>(false);
+  const [showTranscript, setShowTranscript] = useState<boolean>(false);
+  const [transcript, setTranscript] = useState<string>('');
 
   const { mutate: fetchLecture } = useMutation(
     async () => {
@@ -164,6 +175,27 @@ export default function Questions(props: QuestionsProps) {
       },
     }
   );
+
+  const { isLoading: isFetchingTranscript, mutate: fetchTranscript } =
+    useMutation(
+      async () => {
+        setTranscript('');
+        return await apiClient.get(`/lectures/${id}/${language}/transcript`);
+      },
+      {
+        onSuccess: (res: TranscriptResponse) => {
+          const result = {
+            status: res.status + '-' + res.statusText,
+            headers: res.headers,
+            data: res.data,
+          };
+          setTranscript(result.data);
+        },
+        onError: (err: ServerErrorResponse) => {
+          console.error(err);
+        },
+      }
+    );
 
   useEffect(() => {
     fetchLecture();
@@ -283,6 +315,50 @@ export default function Questions(props: QuestionsProps) {
               </Col>
               <Col>
                 <Button
+                  size="large"
+                  type="default"
+                  onClick={() => {
+                    fetchTranscript();
+                    setShowTranscript(true);
+                  }}
+                >
+                  <FileTextOutlined /> Show transcript
+                </Button>
+                <Modal
+                  title="Lecture Transcript"
+                  open={showTranscript}
+                  onCancel={() => setShowTranscript(false)}
+                  onOk={() => setShowTranscript(false)}
+                  cancelText="Close"
+                  width={1000}
+                >
+                  <div className={styles.transcript}>
+                    {isFetchingTranscript && (
+                      <>
+                        <Skeleton
+                          active
+                          paragraph={{ rows: randomInt(1, 8) }}
+                        />
+                        <Skeleton
+                          active
+                          paragraph={{ rows: randomInt(6, 10) }}
+                        />
+                        <Skeleton
+                          active
+                          paragraph={{ rows: randomInt(1, 4) }}
+                        />
+                      </>
+                    )}
+                    {!isFetchingTranscript && (
+                      <>
+                        <pre className={styles.response}>{transcript}</pre>
+                      </>
+                    )}
+                  </div>
+                </Modal>
+              </Col>
+              <Col>
+                <Button
                   type="default"
                   size="large"
                   onClick={() => history.push('/')}
@@ -290,7 +366,8 @@ export default function Questions(props: QuestionsProps) {
                   <CloseOutlined /> Another lecture
                 </Button>
               </Col>
-
+            </Row>
+            <Row gutter={[10, 10]}>
               <Col>
                 <Button
                   type="text"
