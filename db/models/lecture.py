@@ -16,6 +16,7 @@ from .base import Base
 from db.crud import (
     find_all_courses_relations_for_lecture_id,
     find_all_courses_for_lecture_id,
+    find_all_queries_for_lecture,
 )
 
 
@@ -149,6 +150,10 @@ class Lecture(Base):
                 .filter(Analysis.lecture_id == self.id)
                 .order_by(Analysis.modified_at.desc())
                 .first())
+
+    def queries(self):
+        queries = find_all_queries_for_lecture(self)
+        return queries
 
     def courses(self):
         out = []

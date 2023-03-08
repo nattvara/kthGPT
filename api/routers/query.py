@@ -42,7 +42,21 @@ def new_query(input_data: InputModel) -> OutputModel:
     query = get_most_recent_query_by_sha(lecture, Query.make_sha(input_data.query_string))
 
     cached = True
-    if query is None or query.response is None or input_data.override_cache is True:
+    should_create_new_query = False
+
+    if query is None:
+        should_create_new_query = True
+
+    elif query.response is None:
+        should_create_new_query = True
+
+    elif input_data.override_cache:
+        should_create_new_query = True
+
+    elif query.cache_is_valid is False:
+        should_create_new_query = True
+
+    if should_create_new_query:
         cached = False
         query = create_query(lecture, input_data.query_string)
 
