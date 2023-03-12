@@ -175,6 +175,21 @@ function UrlPopover(props: UrlPopoverProps) {
     placeholder = 'Enter video.. eg. https://play.kth.se/media/...';
   }
 
+  let label = <>Lecture URL</>;
+  if (source === SOURCE_YOUTUBE) {
+    label = (
+      <>
+        Lecture URL (<strong>https://www.youtube.com/watch?v=nnkCE...</strong>)
+      </>
+    );
+  } else if (source === SOURCE_KTH) {
+    label = (
+      <>
+        Lecture URL (<strong>https://play.kth.se/media/...</strong>)
+      </>
+    );
+  }
+
   const save = async () => {
     await setUrl(localUrl);
     await dismiss();
@@ -201,7 +216,7 @@ function UrlPopover(props: UrlPopoverProps) {
             <Form form={form} layout="vertical" autoComplete="off">
               <Form.Item
                 name="Lecture URL"
-                label="Lecture URL"
+                label={label}
                 rules={[{ required: true }, { type: 'url', warningOnly: true }]}
               >
                 <Input
