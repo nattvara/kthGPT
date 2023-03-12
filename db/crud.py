@@ -142,7 +142,7 @@ def get_all_courses():
     from db.models.course import Course, CourseGroup, CourseWrapper
     out = []
 
-    courses = Course.filter(Course.group_id is None)
+    courses = Course.filter(Course.group_id == None)
     for course in courses:
         out.append(CourseWrapper.from_course(course))
 
