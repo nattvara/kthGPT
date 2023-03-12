@@ -107,7 +107,7 @@ def get_most_recent_query_by_sha(lecture, sha: str):
     ).filter(
         Query.query_hash == sha
     ).filter(
-        Query.cache_is_valid == True
+        Query.cache_is_valid == True  # noqa: E712
     ).order_by(
         Query.modified_at.desc()
     ).first()
@@ -142,7 +142,7 @@ def get_all_courses():
     from db.models.course import Course, CourseGroup, CourseWrapper
     out = []
 
-    courses = Course.filter(Course.group_id == None)
+    courses = Course.filter(Course.group_id == None)  # noqa: E711
     for course in courses:
         out.append(CourseWrapper.from_course(course))
 
