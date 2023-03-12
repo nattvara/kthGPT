@@ -171,3 +171,8 @@ def mp4_file():
 @pytest.fixture
 def mp3_file():
     return os.path.join(os.path.dirname(__file__), 'files') + '/example.mp3'
+
+
+@pytest.fixture
+def img_file():
+    return os.path.join(os.path.dirname(__file__), 'files') + '/example.png'
