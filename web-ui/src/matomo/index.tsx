@@ -12,6 +12,8 @@ export const CATEGORY_COURSE_BROWSER = 'course_browser';
 
 export const EVENT_ASKED_QUESTION = 'asked_question';
 
+export const EVENT_RECEIVED_QUESTION_ANSWER = 'received_question_response';
+
 export const EVENT_ASKED_QUESTION_NO_CACHE =
   'asked_question_with_cache_override';
 

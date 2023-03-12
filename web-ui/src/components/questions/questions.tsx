@@ -20,6 +20,7 @@ import {
   emitEvent,
   ACTION_NONE,
   CATEGORY_QUESTIONS,
+  EVENT_RECEIVED_QUESTION_ANSWER,
 } from '@/matomo';
 import CourseSelector from '../analyser/course-selector';
 
@@ -154,6 +155,11 @@ export default function Questions(props: QuestionsProps) {
           headers: res.headers,
           data: res.data,
         };
+        emitEvent(
+          CATEGORY_QUESTIONS,
+          EVENT_RECEIVED_QUESTION_ANSWER,
+          ACTION_NONE
+        );
         setError('');
         setResponse(result.data.response);
         setWasCached(result.data.cached);
