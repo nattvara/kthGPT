@@ -6,7 +6,7 @@ export const CATEGORY_QUESTIONS = 'questions';
 
 export const CATEGORY_PREVIEW = 'preview';
 
-export const CATEGORY_ADDER = 'adder';
+export const CATEGORY_URL = 'submit_url';
 
 export const CATEGORY_COURSE_BROWSER = 'course_browser';
 
@@ -17,7 +17,11 @@ export const EVENT_ASKED_QUESTION_NO_CACHE =
 
 export const EVENT_FEELING_LUCKY = 'feeling_lucky';
 
-export const EVENT_SUBMIT_URL = 'submit_url';
+export const EVENT_SUBMIT_URL_KTH = 'url_kth';
+
+export const EVENT_SUBMIT_URL_YOUTUBE = 'url_youtube';
+
+export const EVENT_SUBMIT_URL_UNKNOWN = 'url_unknown';
 
 export const EVENT_GOTO_LECTURE = 'goto_lecture';
 

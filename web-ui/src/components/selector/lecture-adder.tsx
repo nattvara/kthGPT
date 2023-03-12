@@ -23,7 +23,13 @@ import kthLogo from '@/assets/kth.svg';
 import youtubeLogo from '@/assets/youtube.svg';
 import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';
-import { CATEGORY_ADDER, emitEvent, EVENT_SUBMIT_URL } from '@/matomo';
+import {
+  emitEvent,
+  CATEGORY_URL,
+  EVENT_SUBMIT_URL_KTH,
+  EVENT_SUBMIT_URL_YOUTUBE,
+  EVENT_SUBMIT_URL_UNKNOWN,
+} from '@/matomo';
 
 const { Title, Link, Paragraph } = Typography;
 const { Meta } = Card;
@@ -269,7 +275,13 @@ export default function LectureAdder() {
 
   const submit = async () => {
     await postUrl();
-    emitEvent(CATEGORY_ADDER, EVENT_SUBMIT_URL, source);
+    if (source === SOURCE_YOUTUBE) {
+      emitEvent(CATEGORY_URL, EVENT_SUBMIT_URL_YOUTUBE, url);
+    } else if (source === SOURCE_KTH) {
+      emitEvent(CATEGORY_URL, EVENT_SUBMIT_URL_KTH, url);
+    } else {
+      emitEvent(CATEGORY_URL, EVENT_SUBMIT_URL_UNKNOWN, url);
+    }
   };
 
   return (
