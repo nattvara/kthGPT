@@ -214,7 +214,7 @@ export default function Questions(props: QuestionsProps) {
 
     makeQuery();
 
-    emitEvent(CATEGORY_QUESTIONS, EVENT_ASKED_QUESTION, ACTION_NONE);
+    emitEvent(CATEGORY_QUESTIONS, EVENT_ASKED_QUESTION, queryString);
   };
 
   const askQuestionWithoutCache = async () => {
@@ -223,7 +223,7 @@ export default function Questions(props: QuestionsProps) {
     await setOverrideCache(true);
     askQuestion();
 
-    emitEvent(CATEGORY_QUESTIONS, EVENT_ASKED_QUESTION_NO_CACHE, ACTION_NONE);
+    emitEvent(CATEGORY_QUESTIONS, EVENT_ASKED_QUESTION_NO_CACHE, queryString);
   };
 
   if (notFound === true) {
