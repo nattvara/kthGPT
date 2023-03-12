@@ -1,5 +1,4 @@
 import shutil
-import os
 
 from jobs import capture_preview
 from db.models import Lecture
