@@ -19,7 +19,13 @@ import { history } from 'umi';
 import Preview from '../preview';
 import LectureProgress from './lecture-progress';
 import CourseSelector from './course-selector';
-import { CATEGORY_QUESTIONS, EVENT_GOTO_LECTURE, emitEvent } from '@/matomo';
+import {
+  emitEvent,
+  CATEGORY_QUESTIONS,
+  EVENT_GOTO_LECTURE,
+  CATEGORY_ANALYSE,
+  EVENT_ERROR_RESPONSE,
+} from '@/matomo';
 
 const { Paragraph, Link } = Typography;
 
@@ -76,6 +82,7 @@ export default function Analyser(props: AnalyserProps) {
         if (err.response.status === 404) {
           setNotFound(true);
         }
+        emitEvent(CATEGORY_ANALYSE, EVENT_ERROR_RESPONSE, 'fetchLecture');
       },
     }
   );
@@ -98,6 +105,11 @@ export default function Analyser(props: AnalyserProps) {
           message: 'Failed to get lectures',
           description: err.response.data.detail,
         });
+        emitEvent(
+          CATEGORY_ANALYSE,
+          EVENT_ERROR_RESPONSE,
+          'fetchUnfinishedLectures'
+        );
       },
     }
   );
@@ -137,6 +149,7 @@ export default function Analyser(props: AnalyserProps) {
           message: 'Failed restart analysis',
           description: err.response.data.detail,
         });
+        emitEvent(CATEGORY_ANALYSE, EVENT_ERROR_RESPONSE, 'postUrl');
       },
     }
   );

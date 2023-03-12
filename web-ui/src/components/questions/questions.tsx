@@ -20,6 +20,8 @@ import {
   emitEvent,
   ACTION_NONE,
   CATEGORY_QUESTIONS,
+  EVENT_RECEIVED_QUESTION_ANSWER,
+  EVENT_ERROR_RESPONSE,
 } from '@/matomo';
 import CourseSelector from '../analyser/course-selector';
 
@@ -127,6 +129,7 @@ export default function Questions(props: QuestionsProps) {
         if (err.response.status === 404) {
           setNotFound(true);
         }
+        emitEvent(CATEGORY_QUESTIONS, EVENT_ERROR_RESPONSE, 'fetchLecture');
       },
     }
   );
@@ -154,6 +157,11 @@ export default function Questions(props: QuestionsProps) {
           headers: res.headers,
           data: res.data,
         };
+        emitEvent(
+          CATEGORY_QUESTIONS,
+          EVENT_RECEIVED_QUESTION_ANSWER,
+          ACTION_NONE
+        );
         setError('');
         setResponse(result.data.response);
         setWasCached(result.data.cached);
@@ -172,6 +180,7 @@ export default function Questions(props: QuestionsProps) {
         } else {
           setError('Something went wrong when communicating with OpenAI.');
         }
+        emitEvent(CATEGORY_QUESTIONS, EVENT_ERROR_RESPONSE, 'makeQuery');
       },
     }
   );
@@ -193,6 +202,11 @@ export default function Questions(props: QuestionsProps) {
         },
         onError: (err: ServerErrorResponse) => {
           console.error(err);
+          emitEvent(
+            CATEGORY_QUESTIONS,
+            EVENT_ERROR_RESPONSE,
+            'fetchTranscript'
+          );
         },
       }
     );
@@ -214,7 +228,7 @@ export default function Questions(props: QuestionsProps) {
 
     makeQuery();
 
-    emitEvent(CATEGORY_QUESTIONS, EVENT_ASKED_QUESTION, ACTION_NONE);
+    emitEvent(CATEGORY_QUESTIONS, EVENT_ASKED_QUESTION, queryString);
   };
 
   const askQuestionWithoutCache = async () => {
@@ -223,7 +237,7 @@ export default function Questions(props: QuestionsProps) {
     await setOverrideCache(true);
     askQuestion();
 
-    emitEvent(CATEGORY_QUESTIONS, EVENT_ASKED_QUESTION_NO_CACHE, ACTION_NONE);
+    emitEvent(CATEGORY_QUESTIONS, EVENT_ASKED_QUESTION_NO_CACHE, queryString);
   };
 
   if (notFound === true) {
