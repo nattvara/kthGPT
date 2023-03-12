@@ -29,6 +29,8 @@ import {
   EVENT_SUBMIT_URL_KTH,
   EVENT_SUBMIT_URL_YOUTUBE,
   EVENT_SUBMIT_URL_UNKNOWN,
+  CATEGORY_LECTURE_ADDER,
+  EVENT_ERROR_RESPONSE,
 } from '@/matomo';
 
 const { Title, Link, Paragraph } = Typography;
@@ -269,6 +271,7 @@ export default function LectureAdder() {
       },
       onError: (err: ServerErrorResponse) => {
         setError(err.response.data.detail);
+        emitEvent(CATEGORY_LECTURE_ADDER, EVENT_ERROR_RESPONSE, 'postUrl');
       },
     }
   );

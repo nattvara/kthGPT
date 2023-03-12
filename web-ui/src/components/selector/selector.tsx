@@ -5,6 +5,7 @@ import { FileSearchOutlined, VideoCameraAddOutlined } from '@ant-design/icons';
 import CourseBrowser from './course-browser';
 import apiClient from '@/http';
 import LectureAdder from './lecture-adder';
+import { emitEvent, CATEGORY_SELECTOR, EVENT_ERROR_RESPONSE } from '@/matomo';
 
 const { Title } = Typography;
 
@@ -27,6 +28,7 @@ export default function Selector() {
       await setStats(response.data);
     } catch (err: unknown) {
       console.log(err);
+      emitEvent(CATEGORY_SELECTOR, EVENT_ERROR_RESPONSE, 'fetchStats');
     }
   };
 

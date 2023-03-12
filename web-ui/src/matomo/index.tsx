@@ -8,7 +8,17 @@ export const CATEGORY_PREVIEW = 'preview';
 
 export const CATEGORY_URL = 'submit_url';
 
+export const CATEGORY_LECTURE_ADDER = 'lecture_adder';
+
 export const CATEGORY_COURSE_BROWSER = 'course_browser';
+
+export const CATEGORY_COURSE_SELECTOR = 'course_selector';
+
+export const CATEGORY_QUEUE_TABLE = 'queue_table';
+
+export const CATEGORY_FAILURE_TABLE = 'failure_table';
+
+export const CATEGORY_DENIED_TABLE = 'denied_table';
 
 export const EVENT_ASKED_QUESTION = 'asked_question';
 
@@ -30,6 +40,8 @@ export const EVENT_GOTO_LECTURE = 'goto_lecture';
 export const EVENT_GOTO_CONTENT = 'goto_content';
 
 export const EVENT_GOTO_COURSE = 'goto_course';
+
+export const EVENT_ERROR_RESPONSE = 'error_response';
 
 export const ACTION_NONE = '_';
 

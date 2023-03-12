@@ -21,6 +21,7 @@ import {
   ACTION_NONE,
   CATEGORY_QUESTIONS,
   EVENT_RECEIVED_QUESTION_ANSWER,
+  EVENT_ERROR_RESPONSE,
 } from '@/matomo';
 import CourseSelector from '../analyser/course-selector';
 
@@ -128,6 +129,7 @@ export default function Questions(props: QuestionsProps) {
         if (err.response.status === 404) {
           setNotFound(true);
         }
+        emitEvent(CATEGORY_QUESTIONS, EVENT_ERROR_RESPONSE, 'fetchLecture');
       },
     }
   );
@@ -178,6 +180,7 @@ export default function Questions(props: QuestionsProps) {
         } else {
           setError('Something went wrong when communicating with OpenAI.');
         }
+        emitEvent(CATEGORY_QUESTIONS, EVENT_ERROR_RESPONSE, 'makeQuery');
       },
     }
   );
@@ -199,6 +202,11 @@ export default function Questions(props: QuestionsProps) {
         },
         onError: (err: ServerErrorResponse) => {
           console.error(err);
+          emitEvent(
+            CATEGORY_QUESTIONS,
+            EVENT_ERROR_RESPONSE,
+            'fetchTranscript'
+          );
         },
       }
     );

@@ -16,6 +16,7 @@ import {
   EVENT_GOTO_COURSE,
   emitEvent,
   EVENT_GOTO_LECTURE,
+  EVENT_ERROR_RESPONSE,
 } from '@/matomo';
 
 const { Search } = Input;
@@ -70,6 +71,11 @@ export default function CourseBrowser(props: CourseBrowserProps) {
       },
       onError: (err: ServerErrorResponse) => {
         console.log(err);
+        emitEvent(
+          CATEGORY_COURSE_BROWSER,
+          EVENT_ERROR_RESPONSE,
+          'doCourseSearch'
+        );
       },
     }
   );
@@ -89,6 +95,11 @@ export default function CourseBrowser(props: CourseBrowserProps) {
         },
         onError: (err: ServerErrorResponse) => {
           console.log(err);
+          emitEvent(
+            CATEGORY_COURSE_BROWSER,
+            EVENT_ERROR_RESPONSE,
+            'doLectureSearch'
+          );
         },
       }
     );

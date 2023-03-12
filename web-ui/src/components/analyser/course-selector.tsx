@@ -9,6 +9,11 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
+import {
+  emitEvent,
+  CATEGORY_COURSE_SELECTOR,
+  EVENT_ERROR_RESPONSE,
+} from '@/matomo';
 
 const { Search } = Input;
 const { Title, Paragraph } = Typography;
@@ -42,6 +47,7 @@ function CourseSearch(props: CourseSearchProps) {
       },
       onError: (err: ServerErrorResponse) => {
         console.log(err);
+        emitEvent(CATEGORY_COURSE_SELECTOR, EVENT_ERROR_RESPONSE, 'doSearch');
       },
     }
   );
@@ -126,6 +132,7 @@ function NonAddedCourse(props: NonAddedCourseProps) {
         message: 'Course was not added',
         description: (err as ServerErrorResponse).response.data.detail,
       });
+      emitEvent(CATEGORY_COURSE_SELECTOR, EVENT_ERROR_RESPONSE, 'addCourse');
     } finally {
       await setLoading(false);
     }
@@ -183,6 +190,7 @@ function AddedCourse(props: AddedCourseProps) {
         message: 'Course was not removed',
         description: (err as ServerErrorResponse).response.data.detail,
       });
+      emitEvent(CATEGORY_COURSE_SELECTOR, EVENT_ERROR_RESPONSE, 'removeCourse');
     } finally {
       await setLoading(false);
     }
