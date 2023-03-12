@@ -198,15 +198,8 @@ function UrlPopover(props: UrlPopoverProps) {
   useEffect(() => {
     if (!isOpen) return;
 
-    ref.current?.input?.focus();
-
-    if (screens.lg !== undefined && screens.lg !== true) {
-      setTimeout(() => {
-        ref.current?.input?.scrollIntoView();
-      }, 200);
-    }
     setLocalUrl(url);
-  }, [url, screens, isOpen]);
+  }, [url, isOpen]);
 
   return (
     <>
