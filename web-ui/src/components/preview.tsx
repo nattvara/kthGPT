@@ -50,6 +50,8 @@ export function PreviewCompact(props: PreviewCompactProps) {
     icon = youtubeLogoSmall;
   } else if (lecture.source === 'kth') {
     icon = kthLogo;
+  } else if (lecture.source === 'kth_raw') {
+    icon = kthLogo;
   }
 
   return (
