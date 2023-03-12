@@ -12,7 +12,6 @@ import {
   InputRef,
   Form,
   Alert,
-  Grid,
 } from 'antd';
 import { BulbOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
@@ -35,7 +34,6 @@ import {
 
 const { Title, Link, Paragraph } = Typography;
 const { Meta } = Card;
-const { useBreakpoint } = Grid;
 
 const SOURCE_KTH = 'kth';
 const SOURCE_YOUTUBE = 'youtube';
@@ -163,8 +161,6 @@ function UrlPopover(props: UrlPopoverProps) {
   const [localUrl, setLocalUrl] = useState<string>('');
   const ref = useRef<InputRef>(null);
   const [form] = Form.useForm();
-
-  const screens = useBreakpoint();
 
   let placeholder = '';
   if (source === SOURCE_YOUTUBE) {
