@@ -136,6 +136,15 @@ export default function Preview(props: PreviewProps) {
     flagIcon = enFlag;
   }
 
+  let icon = '';
+  if (lecture.source === 'youtube') {
+    icon = youtubeLogoSmall;
+  } else if (lecture.source === 'kth') {
+    icon = kthLogo;
+  } else if (lecture.source === 'kth_raw') {
+    icon = kthLogo;
+  }
+
   let dateString = '';
   if (lecture.date !== null) {
     dateString = new Date(lecture.date).toISOString().split('T')[0];
@@ -185,6 +194,18 @@ export default function Preview(props: PreviewProps) {
                           src={flagIcon}
                           height={20}
                           className={styles.flag}
+                          preview={false}
+                        />
+                      </Col>
+                      <Col>
+                        <h3 className={styles.source}>From</h3>
+                      </Col>
+                      <Col>
+                        <Image
+                          src={icon}
+                          height={20}
+                          width={20}
+                          className={styles.logo}
                           preview={false}
                         />
                       </Col>
