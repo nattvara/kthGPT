@@ -12,7 +12,6 @@ import {
   InputRef,
   Form,
   Alert,
-  Grid,
 } from 'antd';
 import { BulbOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
@@ -35,7 +34,6 @@ import {
 
 const { Title, Link, Paragraph } = Typography;
 const { Meta } = Card;
-const { useBreakpoint } = Grid;
 
 const SOURCE_KTH = 'kth';
 const SOURCE_YOUTUBE = 'youtube';
@@ -164,8 +162,6 @@ function UrlPopover(props: UrlPopoverProps) {
   const ref = useRef<InputRef>(null);
   const [form] = Form.useForm();
 
-  const screens = useBreakpoint();
-
   let placeholder = '';
   if (source === SOURCE_YOUTUBE) {
     placeholder = 'Enter video.. eg. https://www.youtube.com/watch?v=nnkCE...';
@@ -173,6 +169,21 @@ function UrlPopover(props: UrlPopoverProps) {
     placeholder = 'Enter video.. eg. https://play.kth.se/media/...';
   } else {
     placeholder = 'Enter video.. eg. https://play.kth.se/media/...';
+  }
+
+  let label = <>Lecture URL</>;
+  if (source === SOURCE_YOUTUBE) {
+    label = (
+      <>
+        Lecture URL (<strong>https://www.youtube.com/watch?v=nnkCE...</strong>)
+      </>
+    );
+  } else if (source === SOURCE_KTH) {
+    label = (
+      <>
+        Lecture URL (<strong>https://play.kth.se/media/...</strong>)
+      </>
+    );
   }
 
   const save = async () => {
@@ -183,15 +194,8 @@ function UrlPopover(props: UrlPopoverProps) {
   useEffect(() => {
     if (!isOpen) return;
 
-    ref.current?.input?.focus();
-
-    if (screens.lg !== undefined && screens.lg !== true) {
-      setTimeout(() => {
-        ref.current?.input?.scrollIntoView();
-      }, 200);
-    }
     setLocalUrl(url);
-  }, [url, screens, isOpen]);
+  }, [url, isOpen]);
 
   return (
     <>
@@ -201,7 +205,7 @@ function UrlPopover(props: UrlPopoverProps) {
             <Form form={form} layout="vertical" autoComplete="off">
               <Form.Item
                 name="Lecture URL"
-                label="Lecture URL"
+                label={label}
                 rules={[{ required: true }, { type: 'url', warningOnly: true }]}
               >
                 <Input
