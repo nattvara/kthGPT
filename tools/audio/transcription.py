@@ -23,8 +23,6 @@ def save_text(
     output_dir: Optional[str] = None,
     save_progress: bool = True
 ):
-    logger = logging.getLogger('rq.worker')
-
     analysis = None
     if save_progress:
         lecture.refresh()

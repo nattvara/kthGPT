@@ -45,8 +45,7 @@ jobs:
 
     - name: Run flake8
       run: |
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=20 --max-line-length=127 --statistics --exclude venv
+        flake8 . --count --max-complexity=20 --max-line-length=127 --statistics --exclude venv
 
   lint_ts:
     name: Lint Typescript files
