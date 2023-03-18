@@ -18,7 +18,7 @@ def clean_response(response: dict, fields: List[str]) -> List[dict]:
     return out
 
 
-client = client = OpenSearch(
+client = OpenSearch(
     hosts=[{'host': settings.OPENSEARCH_HOST, 'port': settings.OPENSEARCH_PORT}],
     http_compress=True,
     http_auth=(settings.OPENSEARCH_USERNAME, settings.OPENSEARCH_PASSWORD),
