@@ -71,7 +71,7 @@ def test_result_can_be_limited_to_non_courses_with_given_lecture_count(mocker, a
         }
     ])
 
-    response = api_client.post('/search/course?lecture_count_above_or_equal=100', json={
+    api_client.post('/search/course?lecture_count_above_or_equal=100', json={
         'query': 'XX1337',
         'limit': 40,
     })
@@ -83,5 +83,46 @@ def test_result_can_be_limited_to_non_courses_with_given_lecture_count(mocker, a
         lecture_count_above_or_equal=100,
         unlimited=True,
         sort_by_lecture_count=True,
+        apply_filter=True
+    )
+
+
+def test_lecture_search_inside_course(mocker, api_client, analysed_lecture):
+    doc = analysed_lecture.to_doc()
+    doc['date'] = doc['date'].isoformat()
+    index = mocker.patch('index.lecture.search', return_value=[
+        doc,
+        doc,
+    ])
+
+    response = api_client.post('/search/course/XX1337', json={
+        'query': 'some query',
+    })
+
+    assert len(response.json()) == 2
+    assert index.call_count == 1
+    assert index.mock_calls[0] == call(
+        'some query',
+        'XX1337',
+        True,
+    )
+
+
+def test_lecture_search_for_lectures_without_courses(mocker, api_client, analysed_lecture):
+    doc = analysed_lecture.to_doc()
+    doc['date'] = doc['date'].isoformat()
+    index = mocker.patch('index.lecture.search', return_value=[
+        doc,
+    ])
+
+    response = api_client.post('/search/course/no_course', json={
+        'query': 'some query',
+    })
+
+    assert len(response.json()) == 1
+    assert index.call_count == 1
+    assert index.mock_calls[0] == call(
+        'some query',
+        no_course=True,
         apply_filter=True
     )
