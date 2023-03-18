@@ -98,7 +98,7 @@ def index(lecture: Lecture):
     )
 
 
-def search(
+def search_in_course(
     search_string: str,
     course_code: Optional[str] = None,
     apply_filter: Optional[bool] = True,

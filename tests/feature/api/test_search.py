@@ -90,7 +90,7 @@ def test_result_can_be_limited_to_non_courses_with_given_lecture_count(mocker, a
 def test_lecture_search_inside_course(mocker, api_client, analysed_lecture):
     doc = analysed_lecture.to_doc()
     doc['date'] = doc['date'].isoformat()
-    index = mocker.patch('index.lecture.search', return_value=[
+    index = mocker.patch('index.lecture.search_in_course', return_value=[
         doc,
         doc,
     ])
@@ -111,7 +111,7 @@ def test_lecture_search_inside_course(mocker, api_client, analysed_lecture):
 def test_lecture_search_for_lectures_without_courses(mocker, api_client, analysed_lecture):
     doc = analysed_lecture.to_doc()
     doc['date'] = doc['date'].isoformat()
-    index = mocker.patch('index.lecture.search', return_value=[
+    index = mocker.patch('index.lecture.search_in_course', return_value=[
         doc,
     ])
 

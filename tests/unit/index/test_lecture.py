@@ -1,7 +1,7 @@
 import index.lecture as lecture_index
 
 
-def test_search_performs_bool_query(mocker):
+def test_search_in_course_performs_bool_query(mocker):
     client = mocker.patch('index.client.search', return_value={
         'hits': {
             'hits': [
@@ -14,7 +14,7 @@ def test_search_performs_bool_query(mocker):
         }
     })
 
-    response = lecture_index.search('Some title', 'XX1337')
+    response = lecture_index.search_in_course('Some title', 'XX1337')
 
     assert response[0]['title'] == 'Some title'
 

@@ -74,14 +74,14 @@ def search_lecture(
         apply_filter = False
 
     if course_code == 'no_course':
-        response = lecture_index.search(
+        response = lecture_index.search_in_course(
             input_data.query,
             no_course=True,
             apply_filter=apply_filter,
         )
         return response
 
-    response = lecture_index.search(
+    response = lecture_index.search_in_course(
         input_data.query,
         course_code,
         apply_filter,
