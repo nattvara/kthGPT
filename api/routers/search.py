@@ -118,10 +118,31 @@ def search_lecture(input_data: InputModelSearchCourseCode) -> List[LectureSummar
 @router.post('/search/image', dependencies=[Depends(get_db)])
 def search_image(file: UploadFile) -> ImageCreationOutputModel:
     _, extension = os.path.splitext(file.filename)
+    extension = extension.replace('.', '')
+    extension = extension.lower()
+
+    allowed_extensions = [
+        'jpg',
+        'jpeg',
+        'jji',
+        'jpe',
+        'jif',
+        'jfif',
+        'heif',
+        'heic',
+        'png',
+        'gif',
+        'webp',
+        'tiff',
+        'tif',
+    ]
+
+    if extension not in allowed_extensions:
+        raise HTTPException(status_code=400, detail='Invalid image format, please provide an image in one of the following formats ' + ', '.join(allowed_extensions))
 
     image = ImageUpload(
         public_id=ImageUpload.make_public_id(),
-        file_format=extension.replace('.', ''),
+        file_format=extension,
     )
     image.save()
 
