@@ -1,5 +1,5 @@
 import styles from './selector.less';
-import { Row, Col, Typography, Divider, Statistic } from 'antd';
+import { Row, Col, Typography, Divider, Statistic, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import {
   FileSearchOutlined,
@@ -11,6 +11,7 @@ import apiClient from '@/http';
 import LectureAdder from './lecture-adder';
 import { emitEvent, CATEGORY_SELECTOR, EVENT_ERROR_RESPONSE } from '@/matomo';
 import SearchTool from './search-tool';
+import ImageSearch from './image-search';
 
 const { Title } = Typography;
 
@@ -76,7 +77,12 @@ export default function Selector() {
           Search across all courses and lectures
         </Title>
 
-        <SearchTool />
+        <Row className={styles.search_row}>
+          <ImageSearch />
+        </Row>
+        <Row className={styles.search_row}>
+          <SearchTool />
+        </Row>
       </Col>
 
       <Col xs={0} sm={1} className={styles.divider}>
