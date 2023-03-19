@@ -12,3 +12,4 @@ from .course import (
     CourseWrapper,
     CourseLectureRelation,
 )
+from .image_upload import ImageUpload

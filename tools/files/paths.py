@@ -56,3 +56,13 @@ def writable_summary_filepath(name: str, language: str) -> str:
         os.mkdir(directory)
 
     return os.path.join(directory, f'{name}-{language}')
+
+
+def writable_image_upload_filepath(name: str, extension: str) -> str:
+    create_root_if_not_exists()
+
+    directory = os.path.join(settings.STORAGE_DIRECTORY, 'img_uploads')
+    if not os.path.isdir(directory):
+        os.mkdir(directory)
+
+    return os.path.join(directory, f'{name}.{extension}')

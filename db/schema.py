@@ -10,6 +10,7 @@ from .models import (
     CourseLectureRelation,
     QueueInfo,
     TokenUsage,
+    ImageUpload,
 )
 
 
@@ -24,6 +25,7 @@ all_models = [
     CourseLectureRelation,
     QueueInfo,
     TokenUsage,
+    ImageUpload,
 ]
 
 
