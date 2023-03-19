@@ -1,5 +1,5 @@
 from fastapi import Depends, APIRouter, HTTPException, Response
-from typing import Union, List
+from typing import Optional, Union, List
 from pydantic import BaseModel
 import random as rand
 
@@ -47,6 +47,11 @@ class CourseOutputModel(BaseModel):
     display_name: str
 
 
+class HighlightsOutputModel(BaseModel):
+    transcript: Optional[List[str]]
+    title: Optional[List[str]]
+
+
 class LectureOutputModel(BaseModel):
     public_id: str
     language: str
@@ -80,6 +85,7 @@ class LectureSummaryOutputModel(BaseModel):
     preview_uri: Union[str, None] = None
     preview_small_uri: Union[str, None] = None
     overall_progress: Union[int, None] = None
+    highlight: Union[HighlightsOutputModel, None] = None
 
 
 @router.get('/lectures', dependencies=[Depends(get_db)])

@@ -14,11 +14,15 @@ def clean_response(response: dict, fields: List[str]) -> List[dict]:
                 item[field] = None
             else:
                 item[field] = hit['fields'][field][0]
+
+        if 'highlight' in hit:
+            item['highlight'] = hit['highlight']
         out.append(item)
+
     return out
 
 
-client = client = OpenSearch(
+client = OpenSearch(
     hosts=[{'host': settings.OPENSEARCH_HOST, 'port': settings.OPENSEARCH_PORT}],
     http_compress=True,
     http_auth=(settings.OPENSEARCH_USERNAME, settings.OPENSEARCH_PASSWORD),

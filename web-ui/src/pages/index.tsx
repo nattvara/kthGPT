@@ -10,7 +10,7 @@ export default function IndexPage() {
 
   return (
     <>
-      <Frame step={0}>
+      <Frame>
         <Selector></Selector>
       </Frame>
     </>

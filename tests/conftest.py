@@ -95,6 +95,8 @@ def analysed_lecture():
     lecture = Lecture(
         public_id=id,
         language='sv',
+        approved=True,
+        title='A lecture',
     )
     lecture.save()
 
@@ -102,6 +104,7 @@ def analysed_lecture():
     analysis.save()
 
     save_dummy_summary_for_lecture(lecture)
+    save_dummy_transcript_for_lecture(lecture)
 
     return lecture
 
@@ -115,6 +118,21 @@ def save_dummy_summary_for_lecture(lecture: Lecture):
         file.write('some summary')
 
     lecture.summary_filepath = summary_filename
+    lecture.save()
+
+
+def save_dummy_transcript_for_lecture(lecture: Lecture):
+    transcript_dirname = lecture.transcript_dirname()
+    if os.path.exists(transcript_dirname):
+        shutil.rmtree(transcript_dirname, ignore_errors=True)
+
+    os.mkdir(transcript_dirname)
+
+    transcript_filename = f'{transcript_dirname}/{lecture.public_id}.mp3.pretty.txt'
+    with open(transcript_filename, 'w+') as file:
+        file.write('transcript content...')
+
+    lecture.transcript_filepath = transcript_dirname
     lecture.save()
 
 

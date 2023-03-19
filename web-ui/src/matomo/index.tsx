@@ -14,6 +14,8 @@ export const CATEGORY_COURSE_BROWSER = 'course_browser';
 
 export const CATEGORY_COURSE_SELECTOR = 'course_selector';
 
+export const CATEGORY_SEARCH_TOOL = 'search_tool';
+
 export const CATEGORY_QUEUE_TABLE = 'queue_table';
 
 export const CATEGORY_FAILURE_TABLE = 'failure_table';

@@ -231,7 +231,8 @@ class Lecture(Base):
             'preview_small_uri': self.preview_small_uri(),
             'content_link': self.content_link(),
             'courses': course_codes,
-            'no_course': len(course_codes) == 0
+            'no_course': len(course_codes) == 0,
+            'transcript': self.transcript_text(),
         }
 
     def to_summary_dict(self):
