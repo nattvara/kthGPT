@@ -42,7 +42,9 @@ function Frame(props: FrameProps) {
                   height={100}
                   width={100}
                   src={kthLogo}
-                  className={styles.logo}
+                  className={`${styles.logo} ${
+                    !isProduction ? styles.development : ''
+                  }`}
                   preview={false}
                 />
                 <h1 className={styles.huge}>kthGPT</h1>
