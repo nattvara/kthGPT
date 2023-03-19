@@ -2,7 +2,6 @@ import { FileTextOutlined, GithubOutlined } from '@ant-design/icons';
 import styles from './frame.less';
 import { Space, Row, Col, Layout, Image, Button, Typography } from 'antd';
 import kthLogo from '../../assets/logo.svg';
-import Progress from './progress';
 import { history } from 'umi';
 import { buildDate, isProduction } from '@/version';
 
@@ -90,8 +89,6 @@ function Frame(props: FrameProps) {
       </Row>
 
       <Layout className={styles.main}>
-        {step !== undefined && <Progress step={step}></Progress>}
-
         <Layout className={styles.noBg}>{children}</Layout>
       </Layout>
     </>
