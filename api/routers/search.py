@@ -1,10 +1,14 @@
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter, HTTPException, UploadFile
+from fastapi.responses import FileResponse
 from typing import List, Optional
 from pydantic import BaseModel
+import os
 
 from api.routers.lectures import LectureSummaryOutputModel
+from db.crud import get_image_upload_by_public_id
 import index.courses as courses_index
 import index.lecture as lecture_index
+from db.models import ImageUpload
 from db import get_db
 
 router = APIRouter()
@@ -19,6 +23,18 @@ class CourseOutputModel(BaseModel):
     course_code: str
     display_name: str
     lectures: Optional[int] = None
+
+
+class ImageCreationOutputModel(BaseModel):
+    id: str
+
+
+class ImageOutputModel(BaseModel):
+    id: str
+    created_at: str
+    modified_at: str
+    text_content: Optional[str]
+    description: Optional[str]
 
 
 @router.post('/search/course', dependencies=[Depends(get_db)])
@@ -97,3 +113,40 @@ def search_lecture(input_data: InputModelSearchCourseCode) -> List[LectureSummar
     )
 
     return response
+
+
+@router.post('/search/image', dependencies=[Depends(get_db)])
+def search_image(file: UploadFile) -> ImageCreationOutputModel:
+    _, extension = os.path.splitext(file.filename)
+
+    image = ImageUpload(
+        public_id=ImageUpload.make_public_id(),
+        file_format=extension.replace('.', ''),
+    )
+    image.save()
+
+    image.save_image_data(file)
+
+    return {
+        'id': image.public_id,
+    }
+
+
+@router.get('/search/image/{public_id}', dependencies=[Depends(get_db)])
+def get_image_info(public_id: str) -> ImageOutputModel:
+    upload = get_image_upload_by_public_id(public_id)
+
+    if upload is None:
+        raise HTTPException(status_code=404)
+
+    return upload.to_dict()
+
+
+@router.get('/search/image/{public_id}/img', dependencies=[Depends(get_db)])
+def get_image_data(public_id: str) -> FileResponse:
+    upload = get_image_upload_by_public_id(public_id)
+
+    if upload is None:
+        raise HTTPException(status_code=404)
+
+    return FileResponse(upload.get_filename())

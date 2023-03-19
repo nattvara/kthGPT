@@ -233,3 +233,9 @@ def find_relation_between_lecture_and_course_group(lecture_id: int, group_id: in
 def delete_lecture_course_relation(id: int):
     from db.models.course import CourseLectureRelation
     return CourseLectureRelation.delete().where(CourseLectureRelation.id == id).execute()
+
+
+# ImageUpload
+def get_image_upload_by_public_id(id: str):
+    from db.models import ImageUpload
+    return ImageUpload.filter(ImageUpload.public_id == id).first()

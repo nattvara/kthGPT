@@ -10,6 +10,7 @@ import shutil
 import os
 
 from config.settings import settings
+from db.models import ImageUpload
 from db.schema import all_models
 import api
 
@@ -134,6 +135,23 @@ def save_dummy_transcript_for_lecture(lecture: Lecture):
 
     lecture.transcript_filepath = transcript_dirname
     lecture.save()
+
+
+@pytest.fixture
+def image_upload(img_file):
+    _, extension = os.path.splitext(img_file)
+
+    image = ImageUpload(
+        public_id=ImageUpload.make_public_id(),
+        file_format=extension.replace('.', ''),
+    )
+    image.save()
+
+    with open(image.get_filename(), 'wb+') as img:
+        with open(img_file, 'rb') as src:
+            img.write(src.read())
+
+    return image
 
 
 @pytest.fixture

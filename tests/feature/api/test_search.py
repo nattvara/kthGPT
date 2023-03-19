@@ -1,4 +1,11 @@
 from unittest.mock import call
+from io import BytesIO
+from PIL import Image
+import tempfile
+import filecmp
+import os
+
+from db.crud import get_image_upload_by_public_id
 
 
 def test_api_can_search_courses(mocker, api_client):
@@ -150,3 +157,50 @@ def test_lecture_transcript_search(mocker, api_client, analysed_lecture):
     assert len(response.json()) == 1
     assert index.call_count == 1
     assert response.json()[0]['highlight']['transcript'][0] == '00:00 -> 00:30 foo'
+
+
+def test_image_search_creates_image_upload(api_client, img_file):
+    response = api_client.post(
+        '/search/image',
+        files={
+            'file': ('a_file_name.png', open(img_file, 'rb'), 'image/png')
+        }
+    )
+
+    image_id = response.json()['id']
+
+    upload = get_image_upload_by_public_id(image_id)
+
+    assert upload is not None
+
+
+def test_image_search_saves_png_file_upload(api_client, img_file):
+    response = api_client.post(
+        '/search/image',
+        files={
+            'file': ('a_file_name.png', open(img_file, 'rb'), 'image/png')
+        }
+    )
+
+    image_id = response.json()['id']
+
+    upload = get_image_upload_by_public_id(image_id)
+    assert filecmp.cmp(img_file, upload.get_filename())
+
+
+def test_image_search_can_retrieve_image(api_client, image_upload):
+    response = api_client.get(f'/search/image/{image_upload.public_id}/img')
+
+    image = Image.open(BytesIO(response.content))
+    assert image.format == 'PNG'
+
+
+def test_image_search_can_retrieve_info(api_client, image_upload):
+    image_upload.text_content = 'foo'
+    image_upload.description = 'bar'
+    image_upload.save()
+
+    response = api_client.get(f'/search/image/{image_upload.public_id}')
+
+    assert response.json()['text_content'] == 'foo'
+    assert response.json()['description'] == 'bar'
