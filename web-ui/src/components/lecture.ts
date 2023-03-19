@@ -10,6 +10,11 @@ export interface Course {
   lectures: null | number;
 }
 
+export interface Highlight {
+  transcript: null | string[];
+  title: null | string[];
+}
+
 interface Analysis {
   id: number;
   created_at: Date;
@@ -44,6 +49,7 @@ export interface Lecture {
   content_link: string;
   analysis: Analysis | null;
   overall_progress: number | null; // for the summary response
+  highlight: Highlight | null;
   combined_public_id_and_lang: string;
   key: string;
 }

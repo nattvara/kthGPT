@@ -1,11 +1,16 @@
 import styles from './selector.less';
 import { Row, Col, Typography, Divider, Statistic } from 'antd';
 import { useEffect, useState } from 'react';
-import { FileSearchOutlined, VideoCameraAddOutlined } from '@ant-design/icons';
+import {
+  FileSearchOutlined,
+  SearchOutlined,
+  VideoCameraAddOutlined,
+} from '@ant-design/icons';
 import CourseBrowser from './course-browser';
 import apiClient from '@/http';
 import LectureAdder from './lecture-adder';
 import { emitEvent, CATEGORY_SELECTOR, EVENT_ERROR_RESPONSE } from '@/matomo';
+import SearchTool from './search-tool';
 
 const { Title } = Typography;
 
@@ -40,9 +45,9 @@ export default function Selector() {
 
   return (
     <Row className={styles.selector}>
-      <Col xs={24} sm={11}>
+      <Col xs={24} sm={7}>
         <Title level={2}>
-          Find a lecture <FileSearchOutlined />
+          Find a course <FileSearchOutlined />
         </Title>
         <Title level={5} className={styles.subtitle}>
           kthGPT has already watched <Statistic value={stats.lectures} />
@@ -58,10 +63,27 @@ export default function Selector() {
           lecturesWithoutCourses={stats.lectures_without_courses}
         />
       </Col>
-      <Col xs={0} sm={2} className={styles.divider}>
+
+      <Col xs={0} sm={1} className={styles.divider}>
         <Divider type="vertical" />
       </Col>
-      <Col xs={24} sm={11}>
+
+      <Col xs={24} sm={8}>
+        <Title level={2}>
+          Search <SearchOutlined />
+        </Title>
+        <Title level={5} className={styles.subtitle}>
+          Search across all courses and lectures
+        </Title>
+
+        <SearchTool />
+      </Col>
+
+      <Col xs={0} sm={1} className={styles.divider}>
+        <Divider type="vertical" />
+      </Col>
+
+      <Col xs={24} sm={7}>
         <Title level={2}>
           ...or add a new lecture <VideoCameraAddOutlined />
         </Title>
