@@ -148,4 +148,5 @@ def test_lecture_transcript_search(mocker, api_client, analysed_lecture):
     })
 
     assert len(response.json()) == 1
+    assert index.call_count == 1
     assert response.json()[0]['highlight']['transcript'][0] == '00:00 -> 00:30 foo'
