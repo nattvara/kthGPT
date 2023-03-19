@@ -108,7 +108,7 @@ def test_lecture_search_inside_course(mocker, api_client, analysed_lecture):
     )
 
 
-def test_lecture_search_for_lectures_without_courses(mocker, api_client, analysed_lecture):
+def test_lecture_search_inside_no_course(mocker, api_client, analysed_lecture):
     doc = analysed_lecture.to_doc()
     doc['date'] = doc['date'].isoformat()
     index = mocker.patch('index.lecture.search_in_course', return_value=[
@@ -126,3 +126,26 @@ def test_lecture_search_for_lectures_without_courses(mocker, api_client, analyse
         no_course=True,
         apply_filter=True
     )
+
+
+def test_lecture_transcript_search(mocker, api_client, analysed_lecture):
+    doc = analysed_lecture.to_doc()
+    doc['date'] = doc['date'].isoformat()
+    doc['highlight'] = {
+        'transcript': [
+            '00:00 -> 00:30 foo',
+            '01:00 -> 01:20 <strong>match</strong>',
+        ],
+        'title': ['<strong>match</strong>'],
+    }
+
+    index = mocker.patch('index.lecture.search_in_transcripts_and_titles', return_value=[
+        doc,
+    ])
+
+    response = api_client.post('/search/lecture', json={
+        'query': 'some query',
+    })
+
+    assert len(response.json()) == 1
+    assert response.json()[0]['highlight']['transcript'][0] == '00:00 -> 00:30 foo'

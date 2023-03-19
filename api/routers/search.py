@@ -64,7 +64,7 @@ class InputModelSearchCourseCode(BaseModel):
 
 
 @router.post('/search/course/{course_code}', dependencies=[Depends(get_db)])
-def search_lecture(
+def search_course_lectures(
     course_code: str,
     input_data: InputModelSearchCourseCode,
 ) -> List[LectureSummaryOutputModel]:
@@ -85,6 +85,15 @@ def search_lecture(
         input_data.query,
         course_code,
         apply_filter,
+    )
+
+    return response
+
+
+@router.post('/search/lecture', dependencies=[Depends(get_db)])
+def search_lecture(input_data: InputModelSearchCourseCode) -> List[LectureSummaryOutputModel]:
+    response = lecture_index.search_in_transcripts_and_titles(
+        input_data.query,
     )
 
     return response
