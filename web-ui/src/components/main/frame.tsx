@@ -10,13 +10,12 @@ const { Link } = Typography;
 const GITHUB_URL = 'https://github.com/nattvara/kthGPT';
 
 interface FrameProps {
-  step?: number;
   showDescription?: boolean;
   children: JSX.Element;
 }
 
 function Frame(props: FrameProps) {
-  const { step, showDescription, children } = props;
+  const { showDescription, children } = props;
 
   const goToGithub = () => {
     window.open(GITHUB_URL, '_blank');

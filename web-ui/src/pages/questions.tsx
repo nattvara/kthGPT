@@ -21,7 +21,7 @@ export default function QuestionsPage() {
 
   return (
     <>
-      <Frame step={2}>
+      <Frame>
         <Questions id={id} language={language}></Questions>
       </Frame>
     </>

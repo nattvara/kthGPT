@@ -21,7 +21,7 @@ export default function AnalysePage() {
 
   return (
     <>
-      <Frame step={1}>
+      <Frame>
         <Analyser id={id} language={language}></Analyser>
       </Frame>
     </>
