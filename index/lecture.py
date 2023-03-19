@@ -6,6 +6,22 @@ from db.models import Lecture
 
 INDEX_NAME = 'lecture'
 
+LECTURE_OUTPUT_FIELDS = [
+    'public_id',
+    'language',
+    'approved',
+    'source',
+    'date',
+    'words',
+    'length',
+    'title',
+    'title.standard',
+    'preview_uri',
+    'preview_small_uri',
+    'content_link',
+    'courses',
+]
+
 
 def clean():
     client.indices.delete(
@@ -104,22 +120,6 @@ def search_in_course(
     apply_filter: Optional[bool] = True,
     no_course: Optional[bool] = False,
 ):
-    output_fields = [
-        'public_id',
-        'language',
-        'approved',
-        'source',
-        'date',
-        'words',
-        'length',
-        'title',
-        'title.standard',
-        'preview_uri',
-        'preview_small_uri',
-        'content_link',
-        'courses',
-    ]
-
     query = {
         'query': {
             'bool': {
@@ -139,7 +139,7 @@ def search_in_course(
             },
         },
         'size': 5000,
-        'fields': output_fields,
+        'fields': LECTURE_OUTPUT_FIELDS,
         '_source': False,
     }
 
@@ -175,7 +175,46 @@ def search_in_course(
         body=query,
     )
 
-    return clean_response(response, output_fields)
+    return clean_response(response, LECTURE_OUTPUT_FIELDS)
+
+
+def search_in_transcripts_and_titles(search_string: str):
+    query = {
+        'query': {
+            'multi_match': {
+                'query': search_string,
+                'fields': [
+                    'title',
+                    'transcript',
+                ],
+            }
+        },
+        'highlight': {
+            'number_of_fragments': 3,
+            'fragment_size': 150,
+            'fields': {
+                'transcript': {
+                    'pre_tags': ['<strong>'],
+                    'post_tags': ['</strong>'],
+                },
+                'title': {
+                    'pre_tags': ['<strong>'],
+                    'post_tags': ['</strong>'],
+                    'number_of_fragments': 0
+                },
+            }
+        },
+        'size': 10,
+        'fields': LECTURE_OUTPUT_FIELDS,
+        '_source': False,
+    }
+
+    response = client.search(
+        index=INDEX_NAME,
+        body=query,
+    )
+
+    return clean_response(response, LECTURE_OUTPUT_FIELDS)
 
 
 def match_all_count() -> int:

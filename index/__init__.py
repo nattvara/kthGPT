@@ -14,7 +14,11 @@ def clean_response(response: dict, fields: List[str]) -> List[dict]:
                 item[field] = None
             else:
                 item[field] = hit['fields'][field][0]
+
+        if 'highlight' in hit:
+            item['highlight'] = hit['highlight']
         out.append(item)
+
     return out
 
 
