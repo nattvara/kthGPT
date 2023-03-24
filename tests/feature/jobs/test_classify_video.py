@@ -60,6 +60,7 @@ def test_classification_can_deny_video(mocker, mp4_file, mp3_file):
     mocker.patch('tools.audio.transcription.save_text', side_effect=save_text)
     mocker.patch('tools.text.ai.gpt3', return_value=classification)
     schedule_analysis_of_lecture_mock = mocker.patch('jobs.schedule_analysis_of_lecture')
+    schedule_fetch_of_lecture_metadata_mock = mocker.patch('jobs.schedule_fetch_of_lecture_metadata')
 
     lecture = Lecture(
         public_id='some_id',
@@ -77,5 +78,9 @@ def test_classification_can_deny_video(mocker, mp4_file, mp3_file):
 
     assert lecture.approved is False
     assert schedule_analysis_of_lecture_mock.call_count == 0
+
+    # Even though the video got denied, we want to make sure it's easy to see
+    # which video that was
+    assert schedule_fetch_of_lecture_metadata_mock.call_count == 1
 
     os.unlink(tf.name)

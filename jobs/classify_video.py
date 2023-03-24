@@ -7,11 +7,12 @@ from tools.audio.shorten import shorten_mp3
 from db.models import Lecture, Analysis
 import tools.audio.transcription
 import tools.youtube.download
+import tools.text.prompts
+import tools.text.ai
 from db.crud import (
     get_lecture_by_public_id_and_language,
     save_message_for_analysis
 )
-import tools.text
 import jobs
 
 
@@ -108,6 +109,7 @@ def job(lecture_id: str, language: str):
     if category_is_ok:
         jobs.schedule_analysis_of_lecture(lecture)
     else:
+        jobs.schedule_fetch_of_lecture_metadata(lecture)
         analysis = lecture.get_last_analysis()
         analysis.state = Analysis.State.DENIED
         analysis.save()

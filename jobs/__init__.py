@@ -157,6 +157,20 @@ def schedule_analysis_of_lecture(
     return analysis
 
 
+def schedule_fetch_of_lecture_metadata(
+    lecture,
+    queue_metadata: Queue = get_metadata_queue,
+):
+    log().info(f'Scheduling fetch of metadata for {lecture.public_id}')
+
+    next(queue_metadata()).enqueue(
+        fetch_metadata.job,
+        lecture.public_id,
+        lecture.language,
+        job_timeout=fetch_metadata.TIMEOUT,
+    )
+
+
 def schedule_approval_of_lecture(
     lecture,
     queue_approval: Queue = get_approval_queue,
