@@ -3,15 +3,15 @@ import logging
 import os.path
 
 from tools.audio.extraction import extract_mp3_len
-from tools.audio.transcription import save_text
-from tools.youtube.download import download_mp3
 from tools.audio.shorten import shorten_mp3
 from db.models import Lecture, Analysis
-from tools.text import prompts, ai
+import tools.audio.transcription
+import tools.youtube.download
 from db.crud import (
     get_lecture_by_public_id_and_language,
     save_message_for_analysis
 )
+import tools.text
 import jobs
 
 
@@ -43,7 +43,7 @@ def job(lecture_id: str, language: str):
 
     try:
         temp_path = tempfile.NamedTemporaryFile(mode='w+', delete=False)
-        temp_path_mp3 = download_mp3(lecture.content_link(), temp_path.name, SAMPLE_SIZE_SECONDS)
+        temp_path_mp3 = tools.youtube.download.download_mp3(lecture.content_link(), temp_path.name, SAMPLE_SIZE_SECONDS)
 
         length = extract_mp3_len(temp_path_mp3)
         if length > MAX_ALLOWED_VIDEO_LENGTH:
@@ -56,7 +56,7 @@ def job(lecture_id: str, language: str):
         shorten_mp3(temp_path_mp3, SAMPLE_SIZE_SECONDS)
 
         transcript_dir = f'{temp_path_mp3}.transcription'
-        save_text(temp_path_mp3, lecture, transcript_dir, save_progress=False)
+        tools.audio.transcription.save_text(temp_path_mp3, lecture, transcript_dir, save_progress=False)
 
         transcribed_text_path = f'{transcript_dir}/{os.path.basename(temp_path_mp3)}.txt'
 
@@ -64,13 +64,13 @@ def job(lecture_id: str, language: str):
             text = file.read()
 
         if lecture.language == Lecture.Language.ENGLISH:
-            prompt = prompts.create_text_to_decide_if_video_is_appropriate_english(text)
+            prompt = tools.text.prompts.create_text_to_decide_if_video_is_appropriate_english(text)
         elif lecture.language == Lecture.Language.SWEDISH:
-            prompt = prompts.create_text_to_decide_if_video_is_appropriate_swedish(text)
+            prompt = tools.text.prompts.create_text_to_decide_if_video_is_appropriate_swedish(text)
         else:
             raise ValueError(f'unsupported value error {lecture.language}')
 
-        response = ai.gpt3(
+        response = tools.text.ai.gpt3(
             prompt,
             time_to_live=60 * 60 * 5,  # 5 hrs
             max_retries=10,
@@ -97,7 +97,7 @@ def job(lecture_id: str, language: str):
         raise e
 
     category_is_ok = False
-    if prompts.CATEGORY_RECORDED_LECTURE.lower() in response.lower():
+    if tools.text.prompts.CATEGORY_RECORDED_LECTURE.lower() in response.lower():
         category_is_ok = True
 
     logger.info(f'response from openAI: {response}')

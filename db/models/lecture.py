@@ -202,6 +202,7 @@ class Lecture(Base):
         self.public_id = update.public_id
         self.language = update.language
         self.length = update.length
+        self.approved = update.approved
         self.words = update.words
         self.title = update.title
         self.date = update.date
