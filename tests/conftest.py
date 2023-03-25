@@ -14,6 +14,9 @@ from db.models import ImageUpload
 from db.schema import all_models
 import api
 
+TEST_API_ENDPOINT = 'https://example.com'
+TEST_MATHPIX_APP_ID = 'some_id'
+TEST_MATHPIX_APP_KEY = 'some_key'
 
 TEST_DB_FILEPATH = '/tmp/kthgpt.test.db'
 TEST_STORAGE_DIRECTORY = '/tmp/kthgpt-test-filesystem'
@@ -27,11 +30,16 @@ QUEUE_MONITORING = 'fake_monitoring'
 QUEUE_APPROVAL = 'fake_approval'
 QUEUE_GPT = 'fake_gpt'
 QUEUE_METADATA = 'fake_metadata'
+QUEUE_IMAGE = 'fake_image'
 
 
 def pytest_configure(config):
     settings.STORAGE_DIRECTORY = TEST_STORAGE_DIRECTORY
     settings.OPENAI_API_KEY = 'sk-xxx...'
+    settings.API_ENDPOINT = TEST_API_ENDPOINT
+
+    settings.MATHPIX_APP_ID = TEST_MATHPIX_APP_ID
+    settings.MATHPIX_APP_KEY = TEST_MATHPIX_APP_KEY
 
     if os.path.exists(TEST_DB_FILEPATH):
         os.unlink(TEST_DB_FILEPATH)
@@ -70,6 +78,7 @@ def run_around_tests(mocker):
     mocker.patch('jobs.get_monitoring_queue', return_value=get_fake_queue(QUEUE_MONITORING))
     mocker.patch('jobs.get_approval_queue', return_value=get_fake_queue(QUEUE_APPROVAL))
     mocker.patch('jobs.get_metadata_queue', return_value=get_fake_queue(QUEUE_METADATA))
+    mocker.patch('jobs.get_image_queue', return_value=get_fake_queue(QUEUE_IMAGE))
 
     yield
     teardown(db)
