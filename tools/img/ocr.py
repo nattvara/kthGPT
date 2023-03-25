@@ -1,7 +1,10 @@
+from typing import Tuple
 import requests
 import json
+import time
 
 from config.settings import settings
+from db.models import MathpixRequest
 
 MATHPIX_ENDPOINT = 'https://api.mathpix.com/v3/text'
 
@@ -15,10 +18,11 @@ MATHPIX_PARAMS = {
 }
 
 
-def get_text_content(image_url: str):
+def get_text_content(image_url: str) -> Tuple[str, MathpixRequest]:
+    start_time = time.perf_counter()
+
     params = MATHPIX_PARAMS
     params['src'] = image_url
-
     response = requests.post(
         url=MATHPIX_ENDPOINT,
         headers={
@@ -29,4 +33,21 @@ def get_text_content(image_url: str):
         data=json.dumps(params)
     )
 
-    return response.json()['text']
+    data = response.json()
+
+    end_time = time.perf_counter()
+    took_ms = int((end_time - start_time) * 1000)
+
+    request = MathpixRequest(
+        took_ms=took_ms,
+        request_id=data['request_id'],
+        version=data['version'],
+        image_width=data['image_width'],
+        image_height=data['image_height'],
+        is_printed=data['is_printed'],
+        is_handwritten=data['is_handwritten'],
+        confidence=data['confidence'],
+        confidence_rate=data['confidence_rate'],
+    )
+
+    return (data['text'], request)

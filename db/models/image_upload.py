@@ -8,6 +8,9 @@ from tools.files.paths import (
     get_sha_of_binary_file,
 )
 from .base import Base
+from db.crud import (
+    get_mathpix_requests_by_image_upload_id
+)
 
 
 class ImageUpload(Base):
@@ -30,6 +33,9 @@ class ImageUpload(Base):
         self.description = update.description
         self.search_queries_en = update.search_queries_en
         self.search_queries_sv = update.search_queries_sv
+
+    def mathpix_requests(self) -> list:
+        return list(get_mathpix_requests_by_image_upload_id(self.id))
 
     def get_filename(self) -> str:
         return writable_image_upload_filepath(self.public_id, self.file_format)

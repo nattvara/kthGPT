@@ -20,8 +20,12 @@ def job(image_id: str):
         raise ValueError(f'image {image_id} was not found')
 
     try:
-        text_content = get_text_content(make_img_url(upload))
+        text_content, request = get_text_content(make_img_url(upload))
         upload.text_content = text_content
         upload.save()
+
+        request.image_upload_id = upload.id
+        request.save()
+
     except Exception as e:
         raise e

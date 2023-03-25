@@ -11,6 +11,7 @@ from .models import (
     QueueInfo,
     TokenUsage,
     ImageUpload,
+    MathpixRequest,
 )
 
 
@@ -26,6 +27,7 @@ all_models = [
     QueueInfo,
     TokenUsage,
     ImageUpload,
+    MathpixRequest,
 ]
 
 

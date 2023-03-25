@@ -244,3 +244,9 @@ def get_image_upload_by_public_id(id: str):
 def get_image_upload_by_image_sha(sha: str):
     from db.models import ImageUpload
     return ImageUpload.filter(ImageUpload.image_sha == sha).first()
+
+
+# Mathpix requests
+def get_mathpix_requests_by_image_upload_id(id: int):
+    from db.models import MathpixRequest
+    return MathpixRequest.filter(MathpixRequest.image_upload_id == id)
