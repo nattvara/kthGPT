@@ -22,6 +22,11 @@ class ImageUpload(Base):
     search_queries_en = peewee.BlobField(null=True)
     search_queries_sv = peewee.BlobField(null=True)
 
+    # image_search steps
+    parse_image_content_ok = peewee.BooleanField(null=True)
+    parse_image_content_failure_reason = peewee.TextField(null=True)
+
+
     @staticmethod
     def make_public_id() -> str:
         return str(uuid.uuid4())
@@ -33,6 +38,8 @@ class ImageUpload(Base):
         self.description = update.description
         self.search_queries_en = update.search_queries_en
         self.search_queries_sv = update.search_queries_sv
+        self.parse_image_content_ok = update.parse_image_content_ok
+        self.parse_image_content_failure_reason = update.parse_image_content_failure_reason
 
     def mathpix_requests(self) -> list:
         return list(get_mathpix_requests_by_image_upload_id(self.id))

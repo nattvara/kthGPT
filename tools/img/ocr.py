@@ -18,6 +18,10 @@ MATHPIX_PARAMS = {
 }
 
 
+class MathpixException(Exception):
+    pass
+
+
 def get_text_content(image_url: str) -> Tuple[str, MathpixRequest]:
     start_time = time.perf_counter()
 
@@ -34,6 +38,9 @@ def get_text_content(image_url: str) -> Tuple[str, MathpixRequest]:
     )
 
     data = response.json()
+
+    if 'error' in data:
+        raise MathpixException(data['error'])
 
     end_time = time.perf_counter()
     took_ms = int((end_time - start_time) * 1000)

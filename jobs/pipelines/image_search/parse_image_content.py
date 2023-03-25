@@ -13,8 +13,6 @@ def make_img_url(upload: ImageUpload) -> str:
 
 
 def job(image_id: str):
-    logger = logging.getLogger('rq.worker')
-
     upload = get_image_upload_by_public_id(image_id)
     if upload is None:
         raise ValueError(f'image {image_id} was not found')
@@ -22,10 +20,14 @@ def job(image_id: str):
     try:
         text_content, request = get_text_content(make_img_url(upload))
         upload.text_content = text_content
+        upload.parse_image_content_ok = True
         upload.save()
 
         request.image_upload_id = upload.id
         request.save()
 
     except Exception as e:
+        upload.parse_image_content_ok = False
+        upload.parse_image_content_failure_reason = str(e)
+        upload.save()
         raise e

@@ -38,6 +38,7 @@ def test_parse_image_job_sends_request_to_mathpix(mocker, image_upload):
     image_upload.refresh()
 
     assert image_upload.text_content == 'E=mc^2'
+    assert image_upload.parse_image_content_ok is True
 
     # Request should include reachable link to the image
     assert requests_mock.call_count == 1
@@ -86,3 +87,28 @@ def test_parse_image_job_saves_mathpix_metadata(mocker, image_upload):
     assert requests[0].is_handwritten is False
     assert requests[0].confidence == Decimal('0.99951171875')
     assert requests[0].confidence_rate == Decimal('0.9999023246709239')
+
+
+def test_parse_image_job_saves_error_on_mathpix_error(mocker, image_upload):
+    mock_response = mocker.Mock()
+    mock_response.status_code = 200  # for some reason actually does respond with a 200 when there is an error
+    mock_response.json.return_value = {
+        'request_id': 'some_id',
+        'version': 'RSK-M112',
+        'error': 'Cannot read image',
+        'error_info': {
+            'id': 'image_decode_error',
+            'message': 'Cannot read image'
+        }
+    }
+    mocker.patch('requests.post', return_value=mock_response)
+
+    try:
+        parse_image_content.job(image_upload.public_id)
+    except Exception:
+        pass
+
+    image_upload.refresh()
+
+    assert image_upload.parse_image_content_ok is False
+    assert image_upload.parse_image_content_failure_reason == 'Cannot read image'
