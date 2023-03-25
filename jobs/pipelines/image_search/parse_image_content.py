@@ -21,6 +21,7 @@ def job(image_id: str):
         text_content, request = get_text_content(make_img_url(upload))
         upload.text_content = text_content
         upload.parse_image_content_ok = True
+        upload.parse_image_content_failure_reason = None
         upload.save()
 
         request.image_upload_id = upload.id
