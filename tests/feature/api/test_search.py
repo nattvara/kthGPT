@@ -174,6 +174,25 @@ def test_image_search_creates_image_upload(api_client, img_file):
     assert upload is not None
 
 
+def test_image_search_will_not_save_the_same_image_twice(api_client, img_file):
+    def func():
+        response = api_client.post(
+            '/search/image',
+            files={
+                'file': ('a_file_name.png', open(img_file, 'rb'), 'image/png')
+            }
+        )
+        return response
+
+    response = func()
+    image_id_1 = response.json()['id']
+
+    response = func()
+    image_id_2 = response.json()['id']
+
+    assert image_id_1 == image_id_2
+
+
 def test_image_search_saves_png_file_upload(api_client, img_file):
     response = api_client.post(
         '/search/image',

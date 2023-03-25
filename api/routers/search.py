@@ -4,12 +4,16 @@ from typing import List, Optional
 from pydantic import BaseModel
 import os
 
+from tools.files.paths import get_sha_of_binary_file_descriptor
 from api.routers.lectures import LectureSummaryOutputModel
-from db.crud import get_image_upload_by_public_id
 import index.courses as courses_index
 import index.lecture as lecture_index
 from db.models import ImageUpload
 from db import get_db
+from db.crud import (
+    get_image_upload_by_image_sha,
+    get_image_upload_by_public_id,
+)
 import jobs
 
 router = APIRouter()
@@ -141,15 +145,19 @@ def search_image(file: UploadFile) -> ImageCreationOutputModel:
     if extension not in allowed_extensions:
         raise HTTPException(status_code=400, detail='Invalid image format, please provide an image in one of the following formats ' + ', '.join(allowed_extensions))
 
-    image = ImageUpload(
-        public_id=ImageUpload.make_public_id(),
-        file_format=extension,
-    )
-    image.save()
+    sha = get_sha_of_binary_file_descriptor(file.file)
+    image = get_image_upload_by_image_sha(sha)
 
-    image.save_image_data(file)
+    if image is None:
+        image = ImageUpload(
+            public_id=ImageUpload.make_public_id(),
+            file_format=extension,
+        )
+        image.save()
 
-    jobs.schedule_image_search(image.public_id)
+        image.save_image_data(file)
+
+        jobs.schedule_image_search(image.public_id)
 
     return {
         'id': image.public_id,

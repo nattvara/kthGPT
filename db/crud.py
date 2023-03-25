@@ -239,3 +239,8 @@ def delete_lecture_course_relation(id: int):
 def get_image_upload_by_public_id(id: str):
     from db.models import ImageUpload
     return ImageUpload.filter(ImageUpload.public_id == id).first()
+
+
+def get_image_upload_by_image_sha(sha: str):
+    from db.models import ImageUpload
+    return ImageUpload.filter(ImageUpload.image_sha == sha).first()

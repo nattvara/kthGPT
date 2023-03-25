@@ -3,12 +3,16 @@ import peewee
 import pytz
 import uuid
 
-from tools.files.paths import writable_image_upload_filepath
+from tools.files.paths import (
+    writable_image_upload_filepath,
+    get_sha_of_binary_file,
+)
 from .base import Base
 
 
 class ImageUpload(Base):
     public_id = peewee.CharField(null=False, unique=True)
+    image_sha = peewee.CharField(null=True, unique=True)
     file_format = peewee.CharField(null=False)
     text_content = peewee.TextField(null=True)
     description = peewee.TextField(null=True)
@@ -33,6 +37,9 @@ class ImageUpload(Base):
     def save_image_data(self, upload: UploadFile):
         with open(self.get_filename(), 'wb+') as img:
             img.write(upload.file.read())
+
+        self.image_sha = get_sha_of_binary_file(self.get_filename())
+        self.save()
 
     def to_dict(self):
         tz = pytz.timezone('UTC')
