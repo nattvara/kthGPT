@@ -40,6 +40,7 @@ class ImageOutputModel(BaseModel):
     modified_at: str
     text_content: Optional[str]
     description: Optional[str]
+    parse_image_content_ok: Optional[bool]
 
 
 @router.post('/search/course', dependencies=[Depends(get_db)])

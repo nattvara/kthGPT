@@ -65,4 +65,5 @@ class ImageUpload(Base):
             'modified_at': modified_at.isoformat(),
             'text_content': self.text_content,
             'description': self.description,
+            'parse_image_content_ok': self.parse_image_content_ok,
         }
