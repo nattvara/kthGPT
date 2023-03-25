@@ -147,8 +147,10 @@ def search_image(file: UploadFile) -> ImageCreationOutputModel:
 
     sha = get_sha_of_binary_file_descriptor(file.file)
     image = get_image_upload_by_image_sha(sha)
+    should_start_image_search_pipeline = False
 
     if image is None:
+        should_start_image_search_pipeline = True
         image = ImageUpload(
             public_id=ImageUpload.make_public_id(),
             file_format=extension,
@@ -157,7 +159,11 @@ def search_image(file: UploadFile) -> ImageCreationOutputModel:
 
         image.save_image_data(file)
 
-        jobs.schedule_image_search(image.public_id)
+    if not image.parse_image_content_ok:
+        should_start_image_search_pipeline = True
+
+    if should_start_image_search_pipeline:
+        jobs.schedule_image_search(image)
 
     return {
         'id': image.public_id,
