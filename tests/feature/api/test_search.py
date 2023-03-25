@@ -204,3 +204,19 @@ def test_image_search_can_retrieve_info(api_client, image_upload):
 
     assert response.json()['text_content'] == 'foo'
     assert response.json()['description'] == 'bar'
+
+
+def test_image_upload_schedules_image_search_pipeline(mocker, api_client, img_file):
+    schedule_image_search_mock = mocker.patch('jobs.schedule_image_search')
+
+    response = api_client.post(
+        '/search/image',
+        files={
+            'file': ('a_file_name.png', open(img_file, 'rb'), 'image/png')
+        }
+    )
+
+    image_id = response.json()['id']
+
+    assert schedule_image_search_mock.call_count == 1
+    assert schedule_image_search_mock.mock_calls[0] == call(image_id)

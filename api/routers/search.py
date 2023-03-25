@@ -10,6 +10,7 @@ import index.courses as courses_index
 import index.lecture as lecture_index
 from db.models import ImageUpload
 from db import get_db
+import jobs
 
 router = APIRouter()
 
@@ -147,6 +148,8 @@ def search_image(file: UploadFile) -> ImageCreationOutputModel:
     image.save()
 
     image.save_image_data(file)
+
+    jobs.schedule_image_search(image.public_id)
 
     return {
         'id': image.public_id,

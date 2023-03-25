@@ -34,6 +34,7 @@ MONITORING = 'monitoring'
 APPROVAL = 'approval'
 GPT = 'gpt'
 METADATA = 'metadata'
+IMAGE = 'image'
 
 
 def get_default_queue() -> Queue:
@@ -103,6 +104,15 @@ def get_metadata_queue() -> Queue:
     try:
         conn = get_connection()
         queue = Queue(METADATA, connection=conn)
+        yield queue
+    finally:
+        queue.connection.close()
+
+
+def get_image_queue() -> Queue:
+    try:
+        conn = get_connection()
+        queue = Queue(IMAGE, connection=conn)
         yield queue
     finally:
         queue.connection.close()
@@ -217,3 +227,12 @@ def analysis_queues_restart(
     for lecture in lectures:
         print(f'scheduling re-analysis of lecture {lecture.id}')
         schedule_analysis_of_lecture(lecture)
+
+
+def schedule_image_search(
+    lecture,
+    queue_default: Queue = get_default_queue,
+    queue_image: Queue = get_image_queue,
+):
+    # analysis sequence
+    pass
