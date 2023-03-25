@@ -1,9 +1,7 @@
 from unittest.mock import call
 from io import BytesIO
 from PIL import Image
-import tempfile
 import filecmp
-import os
 
 from db.crud import get_image_upload_by_public_id
 
@@ -236,6 +234,7 @@ def test_image_upload_schedules_image_search_pipeline(mocker, api_client, img_fi
     )
 
     image_id = response.json()['id']
+    image = get_image_upload_by_public_id(image_id)
 
     assert schedule_image_search_mock.call_count == 1
-    assert schedule_image_search_mock.mock_calls[0] == call(image_id)
+    assert schedule_image_search_mock.mock_calls[0] == call(image)

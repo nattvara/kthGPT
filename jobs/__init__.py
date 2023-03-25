@@ -12,6 +12,9 @@ from jobs.pipelines.analyse_lecture import (
     summarise_transcript,
     transcribe_audio,
 )
+from jobs.pipelines.image_search import (
+    parse_image_content,
+)
 from config.settings import settings
 from jobs.tasks.lecture import (
     capture_preview,
@@ -230,9 +233,12 @@ def analysis_queues_restart(
 
 
 def schedule_image_search(
-    lecture,
+    image_upload,
     queue_default: Queue = get_default_queue,
     queue_image: Queue = get_image_queue,
 ):
     # analysis sequence
-    pass
+    next(queue_image()).enqueue(
+        parse_image_content.job,
+        image_upload.public_id,
+    )
