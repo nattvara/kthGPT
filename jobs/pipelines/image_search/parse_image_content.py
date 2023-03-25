@@ -9,7 +9,7 @@ from db.crud import (
 
 
 def make_img_url(upload: ImageUpload) -> str:
-    return f'{settings.API_ENDPOINT}/search/image/{upload.public_id}'
+    return f'{settings.API_ENDPOINT}search/image/{upload.public_id}/img'
 
 
 def job(image_id: str):
