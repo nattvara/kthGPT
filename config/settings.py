@@ -4,6 +4,7 @@ from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
 
 class Settings(BaseSettings):
     NAME: str
+    API_ENDPOINT: str
     STORAGE_DIRECTORY: str
     OPENAI_API_KEY: str
     WHISPER_TRANSCRIPTION_DEVICE: str
