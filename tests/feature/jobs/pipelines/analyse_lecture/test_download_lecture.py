@@ -1,9 +1,9 @@
 import shutil
 import os
 
+from jobs.pipelines.analyse_lecture import download_lecture
 from tools.ffmpeg.progress import ProgressFFmpeg
 from db.models import Lecture, Analysis
-from jobs import download_lecture
 
 
 def test_download_of_kth_play_lecture_saves_mp4_file(mocker, mp4_file):

@@ -9,7 +9,7 @@ import asyncio
 
 from config.settings import settings
 from config.logger import log
-import jobs.gpt_request
+import jobs.tasks.gpt_request
 
 
 MODEL = 'text-davinci-003'
@@ -79,7 +79,7 @@ def gpt3(
     q = next(queue_approval())
 
     job = q.enqueue(
-        jobs.gpt_request.job,
+        jobs.tasks.gpt_request.job,
         prompt,
         analysis_id,
         query_id,

@@ -1,3 +1,4 @@
+from jobs.tasks.lecture import capture_preview, fetch_metadata
 from rq import Queue
 
 from db.crud import (
@@ -8,8 +9,6 @@ from jobs import (
     schedule_analysis_of_lecture,
     schedule_cleanup_of_lecture,
     get_metadata_queue,
-    capture_preview,
-    fetch_metadata,
 )
 
 

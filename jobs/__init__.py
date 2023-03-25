@@ -5,20 +5,24 @@ from db.crud import (
     get_unfinished_lectures,
     save_message_for_analysis,
 )
-from config.settings import settings
 from db.models.analysis import Analysis
-from config.logger import log
-from jobs import (
-    capture_preview,
+from jobs.pipelines.analyse_lecture import (
     download_lecture,
     extract_audio,
-    transcribe_audio,
     summarise_transcript,
+    transcribe_audio,
+)
+from config.settings import settings
+from jobs.tasks.lecture import (
+    capture_preview,
     classify_video,
     clean_lecture,
-    fetch_metadata,
-    index_lecture,
+    index_lecture
 )
+from jobs.tasks.lecture import (
+    fetch_metadata,
+)
+from config.logger import log
 
 
 DEFAULT = 'default'

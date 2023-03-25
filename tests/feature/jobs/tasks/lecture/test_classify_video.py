@@ -3,8 +3,8 @@ import tempfile
 import shutil
 import os
 
+from jobs.tasks.lecture import classify_video
 from db.models import Lecture, Analysis
-from jobs import classify_video
 
 
 def test_classification_can_approve_video(mocker, mp4_file, mp3_file):

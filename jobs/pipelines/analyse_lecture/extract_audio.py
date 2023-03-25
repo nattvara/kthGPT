@@ -6,7 +6,7 @@ import logging
 from db.crud import get_lecture_by_public_id_and_language, save_message_for_analysis
 from db.models import Lecture, Analysis
 import tools.audio.extraction
-import jobs.extract_audio
+import jobs.pipelines.analyse_lecture.extract_audio
 
 
 # 20min timeout
@@ -62,4 +62,4 @@ if __name__ == '__main__':
         port=settings.REDIS_PORT,
         password=settings.REDIS_PASSWORD,
     ))
-    queue.enqueue(jobs.extract_audio.job, '0_blzql89t', Lecture.Language.ENGLISH)
+    queue.enqueue(jobs.pipelines.analyse_lecture.extract_audio.job, '0_blzql89t', Lecture.Language.ENGLISH)

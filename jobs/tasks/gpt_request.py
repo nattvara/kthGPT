@@ -10,7 +10,7 @@ from tools.text.openai import completion
 from db.models.analysis import Analysis
 from config.settings import settings
 from db.models import Lecture
-import jobs.gpt_request
+import jobs.tasks.gpt_request
 
 
 def job(prompt: str, analysis_id: Optional[int] = None, query_id: Optional[int] = None):
@@ -43,7 +43,7 @@ if __name__ == '__main__':
         password=settings.REDIS_PASSWORD,
     ))
     j = queue.enqueue(
-        jobs.gpt_request.job,
+        jobs.tasks.gpt_request.job,
         'say hello',
         'ev_wkULk2sk',
         Lecture.Language.SWEDISH,

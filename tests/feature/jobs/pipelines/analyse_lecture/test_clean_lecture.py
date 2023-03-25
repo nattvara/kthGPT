@@ -1,6 +1,6 @@
 from db.models import Lecture, Analysis, Message
 from db.crud import save_message_for_analysis
-from jobs import clean_lecture
+from jobs.tasks.lecture import clean_lecture
 
 
 def test_clean_lecture_deletes_all_but_last_message_for_lecture():

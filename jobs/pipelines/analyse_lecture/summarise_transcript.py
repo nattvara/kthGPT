@@ -6,7 +6,7 @@ import os
 
 from db.crud import get_lecture_by_public_id_and_language, save_message_for_analysis
 from db.models import Lecture, Analysis
-import jobs.summarise_transcript
+import jobs.pipelines.analyse_lecture.summarise_transcript
 
 
 # 90min timeout
@@ -80,7 +80,7 @@ if __name__ == '__main__':
         password=settings.REDIS_PASSWORD,
     ))
     queue.enqueue(
-        jobs.summarise_transcript.job,
+        jobs.pipelines.analyse_lecture.summarise_transcript.job,
         'rVzDRfO2sgs',
         Lecture.Language.ENGLISH,
         job_timeout=TIMEOUT

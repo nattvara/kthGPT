@@ -6,8 +6,8 @@ from db.crud import (
     find_all_courses_relations_for_course_group_id,
     find_all_courses_relations_for_course_id,
 )
-from .base import Base
 from .lecture import Lecture
+from .base import Base
 
 
 # for grouping courses such as SF19XY
@@ -99,7 +99,10 @@ class CourseWrapper:
         )
 
     def reindex(self):
-        from jobs import get_metadata_queue, index_course
+        # Doing imports here to avoid circular imports
+        from jobs.tasks.course import index_course
+        from jobs import get_metadata_queue
+
         q = next(get_metadata_queue())
         q.enqueue(index_course.job, self.course_code)
 

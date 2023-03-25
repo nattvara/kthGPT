@@ -1,8 +1,8 @@
 import shutil
 import os
 
+from jobs.pipelines.analyse_lecture import extract_audio
 from db.models import Lecture, Analysis
-from jobs import extract_audio
 
 
 def test_extract_audio_job_creates_mp3_from_mp4(mocker, mp4_file, mp3_file):
