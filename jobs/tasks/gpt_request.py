@@ -13,7 +13,12 @@ from db.models import Lecture
 import jobs.tasks.gpt_request
 
 
-def job(prompt: str, analysis_id: Optional[int] = None, query_id: Optional[int] = None):
+def job(
+    prompt: str,
+    analysis_id: Optional[int] = None,
+    query_id: Optional[int] = None,
+    upload_id: Optional[int] = None,
+):
     logger = logging.getLogger('rq.worker')
     try:
         response, usage = completion(prompt)
@@ -23,6 +28,9 @@ def job(prompt: str, analysis_id: Optional[int] = None, query_id: Optional[int] 
 
         if query_id is not None:
             usage.query_id = query_id
+
+        if query_id is not None:
+            usage.upload_id = upload_id
 
         usage.save()
 

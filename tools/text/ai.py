@@ -75,6 +75,7 @@ def gpt3(
     queue_approval: Queue = get_gpt_queue,
     analysis_id: Optional[int] = None,
     query_id: Optional[int] = None,
+    upload_id: Optional[int] = None,
 ) -> str:
     q = next(queue_approval())
 
@@ -83,6 +84,7 @@ def gpt3(
         prompt,
         analysis_id,
         query_id,
+        upload_id,
         ttl=time_to_live,
         retry=Retry(max=max_retries, interval=retry_interval)
     )
