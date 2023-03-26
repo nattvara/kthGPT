@@ -5,7 +5,7 @@ from .base import Base
 
 
 class MathpixRequest(Base):
-    image_upload_id = peewee.ForeignKeyField(ImageUpload, null=False, backref='imageupload')
+    image_upload_id = peewee.ForeignKeyField(ImageUpload, null=False, backref='imageupload', on_delete='cascade')
 
     # metadata
     took_ms = peewee.IntegerField(null=False)
