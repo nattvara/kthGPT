@@ -15,6 +15,7 @@ from jobs.pipelines.analyse_lecture import (
 from jobs.pipelines.image_search import (
     parse_image_content,
     create_description,
+    create_search_queries,
 )
 from config.settings import settings
 from jobs.tasks.lecture import (
@@ -255,3 +256,5 @@ def schedule_image_search(
     # analysis sequence
     text_content = img_queue.enqueue(parse_image_content.job, image_upload.public_id)  # noqa: E501
     description = img_questions_queue.enqueue(create_description.job, image_upload.public_id, depends_on=text_content)  # noqa: E501
+    search_queries_en = img_questions_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=[text_content, description])  # noqa: E501, F841
+    search_queries_sv = img_questions_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=[text_content, description])  # noqa: E501, F841
