@@ -89,4 +89,7 @@ class ImageUpload(Base):
             'text_content': self.text_content,
             'description': self.description,
             'parse_image_content_ok': self.parse_image_content_ok,
+            'create_description_ok': self.create_description_ok,
+            'create_search_queries_en_ok': self.create_search_queries_en_ok,
+            'create_search_queries_sv_ok': self.create_search_queries_sv_ok,
         }
