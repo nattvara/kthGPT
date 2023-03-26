@@ -141,10 +141,36 @@ Beslut:
 
 def describe_text_content_in_image(upload: ImageUpload) -> str:
     return f'''
-Consider the content of an assignment captured from an image. Describe the assignment and what one needs to know to complete the assignment.
+Consider the content of an assignment captured from an image. Describe the assignment and
+what one needs to know to complete the assignment.
 
 Assignment:
 {upload.text_content}
 
 Description:
+'''.strip()
+
+
+def create_search_query_for_upload_english(upload: ImageUpload) -> str:
+    return f'''
+Consider the following assignment. To find the answer to this assignment, what would should I search for? Answer
+with 5 queries in a list where each entry is separated by a newline without any numbers or bullets.
+
+Assignment:
+{upload.text_content}
+
+Queries:
+'''.strip()
+
+
+def create_search_query_for_upload_swedish(upload: ImageUpload) -> str:
+    return f'''
+Consider the following assignments. To find the answer to this assignment, what would should I search for? Answer
+with 5 queries in a list where each entry is separated by a newline without any numbers or bullets. The search
+queries must be in swedish.
+
+Assignment:
+{upload.text_content}
+
+Queries:
 '''.strip()

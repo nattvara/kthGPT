@@ -1,7 +1,9 @@
+from typing import List, Optional
 from fastapi import UploadFile
 import peewee
 import pytz
 import uuid
+import json
 
 from tools.files.paths import (
     writable_image_upload_filepath,
@@ -27,11 +29,24 @@ class ImageUpload(Base):
     parse_image_content_failure_reason = peewee.TextField(null=True)
     create_description_ok = peewee.BooleanField(null=True)
     create_description_failure_reason = peewee.TextField(null=True)
+    create_search_queries_en_ok = peewee.BooleanField(null=True)
+    create_search_queries_en_failure_reason = peewee.TextField(null=True)
+    create_search_queries_sv_ok = peewee.BooleanField(null=True)
+    create_search_queries_sv_failure_reason = peewee.TextField(null=True)
 
+    class Language:
+        ENGLISH = 'en'
+        SWEDISH = 'sv'
 
     @staticmethod
     def make_public_id() -> str:
         return str(uuid.uuid4())
+
+    def get_search_queries_en(self) -> Optional[List[str]]:
+        return json.loads(self.search_queries_en)
+
+    def get_search_queries_sv(self) -> Optional[List[str]]:
+        return json.loads(self.search_queries_sv)
 
     def refresh(self):
         update = ImageUpload.get(self.id)
@@ -44,6 +59,10 @@ class ImageUpload(Base):
         self.parse_image_content_failure_reason = update.parse_image_content_failure_reason
         self.create_description_ok = update.create_description_ok
         self.create_description_failure_reason = update.create_description_failure_reason
+        self.create_search_queries_en_ok = update.create_search_queries_en_ok
+        self.create_search_queries_en_failure_reason = update.create_search_queries_en_failure_reason
+        self.create_search_queries_sv_ok = update.create_search_queries_sv_ok
+        self.create_search_queries_sv_failure_reason = update.create_search_queries_sv_failure_reason
 
     def mathpix_requests(self) -> list:
         return list(get_mathpix_requests_by_image_upload_id(self.id))
