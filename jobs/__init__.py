@@ -14,6 +14,7 @@ from jobs.pipelines.analyse_lecture import (
 )
 from jobs.pipelines.image_search import (
     parse_image_content,
+    create_description,
 )
 from config.settings import settings
 from jobs.tasks.lecture import (
@@ -38,6 +39,7 @@ APPROVAL = 'approval'
 GPT = 'gpt'
 METADATA = 'metadata'
 IMAGE = 'image'
+IMAGE_QUESTIONS = 'image_questions'
 
 
 def get_default_queue() -> Queue:
@@ -116,6 +118,15 @@ def get_image_queue() -> Queue:
     try:
         conn = get_connection()
         queue = Queue(IMAGE, connection=conn)
+        yield queue
+    finally:
+        queue.connection.close()
+
+
+def get_image_questions_queue() -> Queue:
+    try:
+        conn = get_connection()
+        queue = Queue(IMAGE_QUESTIONS, connection=conn)
         yield queue
     finally:
         queue.connection.close()
@@ -236,9 +247,11 @@ def schedule_image_search(
     image_upload,
     queue_default: Queue = get_default_queue,
     queue_image: Queue = get_image_queue,
+    queue_image_questions: Queue = get_image_questions_queue,
 ):
+    img_queue = next(queue_image())
+    img_questions_queue = next(queue_image_questions())
+
     # analysis sequence
-    next(queue_image()).enqueue(
-        parse_image_content.job,
-        image_upload.public_id,
-    )
+    text_content = img_queue.enqueue(parse_image_content.job, image_upload.public_id)  # noqa: E501
+    description = img_questions_queue.enqueue(create_description.job, image_upload.public_id, depends_on=text_content)  # noqa: E501
