@@ -166,6 +166,12 @@ def search_image(file: UploadFile) -> ImageCreationOutputModel:
     if not image.create_description_ok:
         should_start_image_search_pipeline = True
 
+    if not image.create_search_queries_en_ok:
+        should_start_image_search_pipeline = True
+
+    if not image.create_search_queries_sv_ok:
+        should_start_image_search_pipeline = True
+
     if should_start_image_search_pipeline:
         jobs.schedule_image_search(image)
 
