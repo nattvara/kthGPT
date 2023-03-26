@@ -1,4 +1,4 @@
-from db.models import Lecture, Query
+from db.models import Lecture, Query, ImageUpload
 
 
 CATEGORY_RECORDED_LECTURE = 'Recorded Lecture'
@@ -136,4 +136,15 @@ Videons innehåll:
 {text}
 
 Beslut:
+'''.strip()
+
+
+def describe_text_content_in_image(upload: ImageUpload) -> str:
+    return f'''
+Consider the content of an assignment captured from an image. Describe the assignment and what one needs to know to complete the assignment.
+
+Assignment:
+{upload.text_content}
+
+Description:
 '''.strip()

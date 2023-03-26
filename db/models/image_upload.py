@@ -25,6 +25,8 @@ class ImageUpload(Base):
     # image_search steps
     parse_image_content_ok = peewee.BooleanField(null=True)
     parse_image_content_failure_reason = peewee.TextField(null=True)
+    create_description_ok = peewee.BooleanField(null=True)
+    create_description_failure_reason = peewee.TextField(null=True)
 
 
     @staticmethod
@@ -40,6 +42,8 @@ class ImageUpload(Base):
         self.search_queries_sv = update.search_queries_sv
         self.parse_image_content_ok = update.parse_image_content_ok
         self.parse_image_content_failure_reason = update.parse_image_content_failure_reason
+        self.create_description_ok = update.create_description_ok
+        self.create_description_failure_reason = update.create_description_failure_reason
 
     def mathpix_requests(self) -> list:
         return list(get_mathpix_requests_by_image_upload_id(self.id))
