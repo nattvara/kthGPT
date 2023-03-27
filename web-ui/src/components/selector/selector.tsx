@@ -11,7 +11,7 @@ import apiClient from '@/http';
 import LectureAdder from './lecture-adder';
 import { emitEvent, CATEGORY_SELECTOR, EVENT_ERROR_RESPONSE } from '@/matomo';
 import SearchTool from './search-tool';
-import ImageSearch from './image-search';
+import ImageSearch from '@/components/image-search/image-search';
 
 const { Title } = Typography;
 
