@@ -6,11 +6,12 @@ import os
 
 from tools.files.paths import get_sha_of_binary_file_descriptor
 from api.routers.lectures import LectureSummaryOutputModel
+from db.models import ImageUpload, ImageQuestion
 import index.courses as courses_index
 import index.lecture as lecture_index
-from db.models import ImageUpload
 from db import get_db
 from db.crud import (
+    get_image_question_by_public_id,
     get_image_upload_by_image_sha,
     get_image_upload_by_public_id,
 )
@@ -44,6 +45,14 @@ class ImageOutputModel(BaseModel):
     create_description_ok: Optional[bool]
     create_search_queries_en_ok: Optional[bool]
     create_search_queries_sv_ok: Optional[bool]
+
+
+class InputModelImageQuestion(BaseModel):
+    query: str
+
+
+class ImageQuestionOutputModel(BaseModel):
+    hits: list
 
 
 @router.post('/search/course', dependencies=[Depends(get_db)])
@@ -201,3 +210,24 @@ def get_image_data(public_id: str) -> FileResponse:
         raise HTTPException(status_code=404)
 
     return FileResponse(upload.get_filename())
+
+
+@router.post('/search/image/{image_public_id}/questions', dependencies=[Depends(get_db)])
+def create_image_question(
+    image_public_id: str,
+    input_data: InputModelImageQuestion
+) -> ImageQuestionOutputModel:
+    upload = get_image_upload_by_public_id(image_public_id)
+
+    if upload is None:
+        raise HTTPException(status_code=404)
+
+    question = ImageQuestion(
+        image_upload_id=upload.id,
+        query_string=input_data.query,
+    )
+    question.save()
+
+    return {
+        'hits': [],
+    }

@@ -3,7 +3,10 @@ from io import BytesIO
 from PIL import Image
 import filecmp
 
-from db.crud import get_image_upload_by_public_id
+from db.crud import (
+    get_image_question_by_public_id,
+    get_image_upload_by_public_id,
+)
 
 
 def test_api_can_search_courses(mocker, api_client):
@@ -238,3 +241,17 @@ def test_image_upload_schedules_image_search_pipeline(mocker, api_client, img_fi
 
     assert schedule_image_search_mock.call_count == 1
     assert schedule_image_search_mock.mock_calls[0] == call(image)
+
+
+def test_image_question_can_be_created_for_uploaded_image(api_client, image_upload):
+    assert len(image_upload.questions()) == 0
+
+    api_client.post(
+        f'/search/image/{image_upload.public_id}/questions',
+        json={
+            'query': 'help me',
+        }
+    )
+
+    assert len(image_upload.questions()) == 1
+    assert image_upload.questions()[0].query_string == 'help me'
