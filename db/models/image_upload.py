@@ -11,7 +11,8 @@ from tools.files.paths import (
 )
 from .base import Base
 from db.crud import (
-    get_mathpix_requests_by_image_upload_id
+    get_mathpix_requests_by_image_upload_id,
+    get_image_questions_by_image_upload_id,
 )
 
 
@@ -66,6 +67,9 @@ class ImageUpload(Base):
 
     def mathpix_requests(self) -> list:
         return list(get_mathpix_requests_by_image_upload_id(self.id))
+
+    def questions(self) -> list:
+        return list(get_image_questions_by_image_upload_id(self.id))
 
     def get_filename(self) -> str:
         return writable_image_upload_filepath(self.public_id, self.file_format)
