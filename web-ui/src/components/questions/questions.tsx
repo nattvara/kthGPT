@@ -1,5 +1,4 @@
 import {
-  SendOutlined,
   CloseOutlined,
   ReloadOutlined,
   FileTextOutlined,
@@ -11,19 +10,19 @@ import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { history } from 'umi';
-import TextArea from 'antd/es/input/TextArea';
 import Preview from '../preview';
 import { Lecture } from '@/components/lecture';
 import {
+  emitEvent,
   EVENT_ASKED_QUESTION,
   EVENT_ASKED_QUESTION_NO_CACHE,
-  emitEvent,
   ACTION_NONE,
   CATEGORY_QUESTIONS,
   EVENT_RECEIVED_QUESTION_ANSWER,
   EVENT_ERROR_RESPONSE,
 } from '@/matomo';
 import CourseSelector from '../analyser/course-selector';
+import QuestionInput from '../question-input/question-input';
 
 const examples = [
   {
@@ -223,7 +222,8 @@ export default function Questions(props: QuestionsProps) {
     }
   }, [lecture]);
 
-  const askQuestion = () => {
+  const askQuestion = async (q: string) => {
+    await setQueryString(q);
     if (isMakingQuery) return;
 
     makeQuery();
@@ -235,7 +235,7 @@ export default function Questions(props: QuestionsProps) {
     if (isMakingQuery) return;
 
     await setOverrideCache(true);
-    askQuestion();
+    askQuestion(queryString);
 
     emitEvent(CATEGORY_QUESTIONS, EVENT_ASKED_QUESTION_NO_CACHE, queryString);
   };
@@ -299,118 +299,55 @@ export default function Questions(props: QuestionsProps) {
       {contextHolder}
       <Row>
         <Col sm={smLeft} md={mdLeft} lg={lgLeft}>
-          <Space direction="vertical" size="large" style={{ width: '100%' }}>
-            <Row>
-              <Col span={24}>
-                <TextArea
-                  className={styles.hugeInput}
-                  value={queryString}
-                  onChange={(e) => {
-                    let val = e.target.value;
-                    val = val.replaceAll('\n', '');
-                    setQueryString(val);
-                  }}
-                  onPressEnter={() => askQuestion()}
-                  placeholder={placeholder}
-                  autoSize={true}
-                />
-              </Col>
-            </Row>
-            <Row gutter={[10, 10]}>
-              <Col>
-                <Button
-                  onClick={() => askQuestion()}
-                  loading={isMakingQuery}
-                  type="primary"
-                  size="large"
-                >
-                  <SendOutlined /> Ask
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  size="large"
-                  type="default"
-                  onClick={() => {
-                    fetchTranscript();
-                    setShowTranscript(true);
-                  }}
-                >
-                  <FileTextOutlined /> Show transcript
-                </Button>
-                <Modal
-                  title="Lecture Transcript"
-                  open={showTranscript}
-                  onCancel={() => setShowTranscript(false)}
-                  onOk={() => setShowTranscript(false)}
-                  cancelText="Close"
-                  width={1000}
-                >
-                  <div className={styles.transcript}>
-                    {isFetchingTranscript && (
-                      <>
-                        <Skeleton
-                          active
-                          paragraph={{ rows: randomInt(1, 8) }}
-                        />
-                        <Skeleton
-                          active
-                          paragraph={{ rows: randomInt(6, 10) }}
-                        />
-                        <Skeleton
-                          active
-                          paragraph={{ rows: randomInt(1, 4) }}
-                        />
-                      </>
-                    )}
-                    {!isFetchingTranscript && (
-                      <>
-                        <pre className={styles.response}>{transcript}</pre>
-                      </>
-                    )}
-                  </div>
-                </Modal>
-              </Col>
-              <Col>
-                <Button
-                  type="default"
-                  size="large"
-                  onClick={() => history.push('/')}
-                >
-                  <CloseOutlined /> Another lecture
-                </Button>
-              </Col>
-            </Row>
-            <Row gutter={[10, 10]}>
-              <Col>
-                <Button
-                  type="text"
-                  size="small"
-                  style={{ pointerEvents: 'none' }}
-                >
-                  Some examples
-                </Button>
-              </Col>
-              {examples.map((example) => (
-                <Col key={example.titleEn}>
-                  <Button
-                    type="dashed"
-                    size="small"
-                    onClick={() => {
-                      if (language === 'en') {
-                        setQueryString(example.queryStringEn);
-                      } else if (language === 'sv') {
-                        setQueryString(example.queryStringSv);
-                      }
-                    }}
-                  >
-                    {lecture.language === 'en' && example.titleEn}
-                    {lecture.language === 'sv' && example.titleSv}
-                  </Button>
-                </Col>
-              ))}
-            </Row>
-          </Space>
+          <QuestionInput
+            language={language}
+            placeholder={placeholder}
+            isAsking={isMakingQuery}
+            examples={examples}
+            onAsk={(queryString: string) => askQuestion(queryString)}
+            extraButtons={[
+              <Button
+                size="large"
+                type="default"
+                onClick={() => {
+                  fetchTranscript();
+                  setShowTranscript(true);
+                }}
+              >
+                <FileTextOutlined /> Show transcript
+              </Button>,
+              <Button
+                type="default"
+                size="large"
+                onClick={() => history.push('/')}
+              >
+                <CloseOutlined /> Another lecture
+              </Button>,
+            ]}
+          />
+          <Modal
+            title="Lecture Transcript"
+            open={showTranscript}
+            onCancel={() => setShowTranscript(false)}
+            onOk={() => setShowTranscript(false)}
+            cancelText="Close"
+            width={1000}
+          >
+            <div className={styles.transcript}>
+              {isFetchingTranscript && (
+                <>
+                  <Skeleton active paragraph={{ rows: randomInt(1, 8) }} />
+                  <Skeleton active paragraph={{ rows: randomInt(6, 10) }} />
+                  <Skeleton active paragraph={{ rows: randomInt(1, 4) }} />
+                </>
+              )}
+              {!isFetchingTranscript && (
+                <>
+                  <pre className={styles.response}>{transcript}</pre>
+                </>
+              )}
+            </div>
+          </Modal>
           <Row>
             <Col span={24}>
               {error !== '' && (
@@ -421,7 +358,7 @@ export default function Questions(props: QuestionsProps) {
                     subTitle={error}
                     extra={
                       <Button
-                        onClick={() => askQuestion()}
+                        onClick={() => askQuestion(queryString)}
                         loading={isMakingQuery}
                         type="primary"
                         size="large"
