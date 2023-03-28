@@ -1,7 +1,7 @@
 import { SendOutlined } from '@ant-design/icons';
 import styles from './question-input.less';
 import { Row, Col, Button, Space, Input } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const { TextArea } = Input;
 
@@ -16,15 +16,31 @@ interface QuestionInputProps {
   language: string;
   placeholder: string;
   isAsking: boolean;
+  huge: boolean;
   examples: Example[];
   onAsk: (queryString: string) => void;
+  defaultQueryString?: string;
   extraButtons?: JSX.Element[];
+  disabled: boolean;
 }
 
 export default function QuestionInput(props: QuestionInputProps) {
-  const { placeholder, onAsk, isAsking, examples, language, extraButtons } =
-    props;
+  const {
+    placeholder,
+    onAsk,
+    isAsking,
+    examples,
+    language,
+    extraButtons,
+    huge,
+    defaultQueryString,
+    disabled,
+  } = props;
   const [queryString, setQueryString] = useState('');
+
+  useEffect(() => {
+    if (defaultQueryString) setQueryString(defaultQueryString);
+  }, [defaultQueryString, setQueryString]);
 
   return (
     <>
@@ -32,7 +48,9 @@ export default function QuestionInput(props: QuestionInputProps) {
         <Row>
           <Col span={24}>
             <TextArea
-              className={styles.hugeInput}
+              className={`${huge ? styles.hugeInput : styles.normalInput} ${
+                disabled ? styles.disabled : ''
+              }`}
               value={queryString}
               onChange={(e) => {
                 let val = e.target.value;
@@ -50,6 +68,7 @@ export default function QuestionInput(props: QuestionInputProps) {
             <Button
               onClick={() => onAsk(queryString)}
               loading={isAsking}
+              disabled={disabled}
               type="primary"
               size="large"
             >

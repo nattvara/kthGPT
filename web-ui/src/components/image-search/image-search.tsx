@@ -25,12 +25,15 @@ import {
 } from '@/matomo';
 import { UploadChangeParam, UploadFile } from 'antd/es/upload';
 import { Image as ImageType } from '../search';
+import QuestionInput from '../question-input/question-input';
 
 const { Dragger } = Upload;
 
 const { Paragraph } = Typography;
 
 const UPDATE_INTERVAL = 1000;
+
+const DEFAULT_QUERY_STRING = 'Where can I find the answer to this assignment?';
 
 interface ImageResponse extends ServerResponse {
   data: ImageType;
@@ -40,6 +43,7 @@ export default function ImageSearch() {
   const [id, setId] = useState<null | string>(null);
   const [error, setError] = useState<string>('');
   const [image, setImage] = useState<null | ImageType>(null);
+  const [queryString, setQueryString] = useState<string>('');
   const [notificationApi, contextHolder] = notification.useNotification();
 
   const previewUrl = makeUrl(`/search/image/${id}/img`);
@@ -84,6 +88,27 @@ export default function ImageSearch() {
     }
   );
 
+  const { isLoading: isAskingQuestion, mutate: sendQuestion } = useMutation(
+    async () => {
+      return await apiClient.post(`/search/image/${id}/questions`, {
+        query: queryString,
+      });
+    },
+    {
+      onSuccess: (res: ImageResponse) => {
+        const result = {
+          status: res.status + '-' + res.statusText,
+          headers: res.headers,
+          data: res.data,
+        };
+        console.log(result);
+      },
+      onError: (err: ServerErrorResponse) => {
+        console.error(err);
+      },
+    }
+  );
+
   useEffect(() => {
     if (id !== null) fetchImage();
   }, [id, fetchImage]);
@@ -96,12 +121,20 @@ export default function ImageSearch() {
     return () => clearInterval(interval);
   }, [id, fetchImage]);
 
-  if (id === null || image === null) {
-    return (
-      <div className={styles.image_search}>
-        {contextHolder}
-        <Space direction="vertical" style={{ width: '100%' }}>
-          <Row>
+  const askQuestion = async (q: string) => {
+    await setQueryString(q);
+
+    if (isAskingQuestion) return;
+
+    sendQuestion();
+  };
+
+  return (
+    <div className={styles.image_search}>
+      {contextHolder}
+      <Space direction="vertical" style={{ width: '100%' }}>
+        <Row>
+          {(id === null || image === null) && (
             <Dragger className={styles.dragger} {...uploadProps}>
               <p className="ant-upload-drag-icon">
                 <FileImageOutlined />
@@ -110,34 +143,12 @@ export default function ImageSearch() {
                 Click or drag image to this area to upload
               </p>
             </Dragger>
-          </Row>
-          <Row>
-            {error !== '' && (
-              <Row justify="center">
-                <Col>
-                  <Alert
-                    message="The image was not accepted"
-                    description={error}
-                    type="error"
-                    showIcon
-                  />
-                </Col>
-              </Row>
-            )}
-          </Row>
-        </Space>
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.image_search}>
-      {contextHolder}
-      <Space direction="vertical" style={{ width: '100%' }}>
-        <Row>
-          <Dragger className={styles.dragger} {...uploadProps}>
-            <Image height={200} src={previewUrl} preview={false} />
-          </Dragger>
+          )}
+          {!(id === null || image === null) && (
+            <Dragger className={styles.dragger} {...uploadProps}>
+              <Image height={200} src={previewUrl} preview={false} />
+            </Dragger>
+          )}
         </Row>
         <Row>
           {error !== '' && (
@@ -153,11 +164,40 @@ export default function ImageSearch() {
             </Row>
           )}
         </Row>
-        <Row className={styles.description}>
-          <Paragraph>
-            <blockquote>Description: {image.description}</blockquote>
-          </Paragraph>
-        </Row>
+        <div className={styles.question_box}>
+          <QuestionInput
+            language={'en'}
+            placeholder={'Enter a question about this image...'}
+            disabled={id === null}
+            defaultQueryString={DEFAULT_QUERY_STRING}
+            isAsking={isAskingQuestion}
+            examples={[
+              {
+                titleEn: 'Help me find the answer',
+                titleSv: '',
+                queryStringEn:
+                  'Where can I find the answer to this assignment?',
+                queryStringSv: '',
+              },
+              {
+                titleEn: 'Find similar assignments',
+                titleSv: '',
+                queryStringEn:
+                  'Where can I find similar assignments to this question?',
+                queryStringSv: '',
+              },
+            ]}
+            huge={false}
+            onAsk={(queryString: string) => askQuestion(queryString)}
+          />
+          {image !== null && (
+            <Row className={styles.description}>
+              <Paragraph>
+                <blockquote>Description: {image.description}</blockquote>
+              </Paragraph>
+            </Row>
+          )}
+        </div>
       </Space>
     </div>
   );

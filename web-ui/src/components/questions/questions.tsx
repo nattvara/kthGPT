@@ -304,6 +304,8 @@ export default function Questions(props: QuestionsProps) {
             placeholder={placeholder}
             isAsking={isMakingQuery}
             examples={examples}
+            huge={true}
+            disabled={false}
             onAsk={(queryString: string) => askQuestion(queryString)}
             extraButtons={[
               <Button
