@@ -8,6 +8,7 @@ import {
   Space,
   Typography,
   notification,
+  Tag,
 } from 'antd';
 import type { UploadProps } from 'antd';
 import { useMutation } from '@tanstack/react-query';
@@ -17,7 +18,11 @@ import apiClient, {
   ServerErrorResponse,
   ServerResponse,
 } from '@/http';
-import { FileImageOutlined } from '@ant-design/icons';
+import {
+  CheckCircleOutlined,
+  FileImageOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import {
   emitEvent,
   CATEGORY_IMAGE_SEARCH,
@@ -104,10 +109,55 @@ export default function ImageSearch() {
         console.log(result);
       },
       onError: (err: ServerErrorResponse) => {
+        // TODO: handle this
         console.error(err);
       },
     }
   );
+
+  const askQuestion = async (q: string) => {
+    await setQueryString(q);
+
+    if (isAskingQuestion) return;
+
+    sendQuestion();
+  };
+
+  let canAskQuestion = false;
+  let parsingStates: any[] = [];
+  if (image !== null) {
+    if (
+      image.parse_image_content_ok &&
+      image.create_description_ok &&
+      image.create_search_queries_sv_ok &&
+      image.create_search_queries_en_ok
+    ) {
+      canAskQuestion = true;
+    }
+
+    parsingStates = [
+      {
+        key: 'parse_image_content_ok',
+        name: 'Parsing image',
+        value: image.parse_image_content_ok,
+      },
+      {
+        key: 'create_description_ok',
+        name: 'Creating description',
+        value: image.create_description_ok,
+      },
+      {
+        key: 'create_search_queries_sv_ok',
+        name: 'Search terms (swedish)',
+        value: image.create_search_queries_sv_ok,
+      },
+      {
+        key: 'create_search_queries_en_ok',
+        name: 'Search terms (english)',
+        value: image.create_search_queries_en_ok,
+      },
+    ];
+  }
 
   useEffect(() => {
     if (id !== null) fetchImage();
@@ -120,14 +170,6 @@ export default function ImageSearch() {
 
     return () => clearInterval(interval);
   }, [id, fetchImage]);
-
-  const askQuestion = async (q: string) => {
-    await setQueryString(q);
-
-    if (isAskingQuestion) return;
-
-    sendQuestion();
-  };
 
   return (
     <div className={styles.image_search}>
@@ -164,11 +206,29 @@ export default function ImageSearch() {
             </Row>
           )}
         </Row>
+        <div className={styles.progress_box}>
+          <Space size={[0, 8]} wrap>
+            {parsingStates.map((state) => (
+              <div key={state.key}>
+                {state.value === true && (
+                  <Tag icon={<CheckCircleOutlined />} color="success">
+                    {state.name}
+                  </Tag>
+                )}
+                {state.value !== true && (
+                  <Tag icon={<SyncOutlined spin />} color="processing">
+                    {state.name}
+                  </Tag>
+                )}
+              </div>
+            ))}
+          </Space>
+        </div>
         <div className={styles.question_box}>
           <QuestionInput
             language={'en'}
             placeholder={'Enter a question about this image...'}
-            disabled={id === null}
+            disabled={!canAskQuestion}
             defaultQueryString={DEFAULT_QUERY_STRING}
             isAsking={isAskingQuestion}
             examples={[
