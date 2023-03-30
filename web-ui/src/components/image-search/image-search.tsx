@@ -29,8 +29,12 @@ import {
   EVENT_ERROR_RESPONSE,
 } from '@/matomo';
 import { UploadChangeParam, UploadFile } from 'antd/es/upload';
-import { Image as ImageType } from '../search';
+import { Image as ImageType, Question } from '../search';
 import QuestionInput from '../question-input/question-input';
+import { Lecture } from '../lecture';
+import { PreviewCompact } from '../preview';
+import { history } from 'umi';
+import { QuestionAnswer } from './question-answer';
 
 const { Dragger } = Upload;
 
@@ -44,11 +48,17 @@ interface ImageResponse extends ServerResponse {
   data: ImageType;
 }
 
+interface QuestionResponse extends ServerResponse {
+  data: Question;
+}
+
 export default function ImageSearch() {
   const [id, setId] = useState<null | string>(null);
   const [error, setError] = useState<string>('');
   const [image, setImage] = useState<null | ImageType>(null);
   const [queryString, setQueryString] = useState<string>('');
+  const [questionId, setQuestionId] = useState<string>('');
+  const [lectures, setLectures] = useState<Lecture[]>([]);
   const [notificationApi, contextHolder] = notification.useNotification();
 
   const previewUrl = makeUrl(`/search/image/${id}/img`);
@@ -100,17 +110,15 @@ export default function ImageSearch() {
       });
     },
     {
-      onSuccess: (res: ImageResponse) => {
+      onSuccess: (res: QuestionResponse) => {
         const result = {
-          status: res.status + '-' + res.statusText,
-          headers: res.headers,
           data: res.data,
         };
-        console.log(result);
+        setLectures(result.data.hits);
+        setQuestionId(result.data.id);
       },
       onError: (err: ServerErrorResponse) => {
-        // TODO: handle this
-        console.error(err);
+        console.log(err);
       },
     }
   );
@@ -121,6 +129,20 @@ export default function ImageSearch() {
     if (isAskingQuestion) return;
 
     sendQuestion();
+  };
+
+  const goToLecture = async (lecture: Lecture, newTab = false) => {
+    const url = `/questions/lectures/${lecture.public_id}/${lecture.language}`;
+
+    if (newTab) {
+      window.open(url, '_blank');
+    } else {
+      await history.push(url);
+    }
+
+    // TODO:
+    // emitEvent(
+    // );
   };
 
   let canAskQuestion = false;
@@ -255,6 +277,38 @@ export default function ImageSearch() {
               <Paragraph>
                 <blockquote>Description: {image.description}</blockquote>
               </Paragraph>
+            </Row>
+          )}
+          {image !== null && questionId !== null && (
+            <Row className={styles.result}>
+              <Space direction="vertical" size="large">
+                {lectures.map((lecture, index) => {
+                  return (
+                    <Row key={lecture.public_id + lecture.language}>
+                      <Col span={2} className={styles.row_number}>
+                        {index + 1}
+                      </Col>
+                      <Col span={22}>
+                        <Row>
+                          <PreviewCompact
+                            lecture={lecture}
+                            onClick={() => goToLecture(lecture)}
+                            onMetaClick={() => goToLecture(lecture, true)}
+                            onCtrlClick={() => goToLecture(lecture, true)}
+                          />
+                        </Row>
+                        <Row>
+                          <QuestionAnswer
+                            lecture={lecture}
+                            imageId={image.id}
+                            questionId={questionId}
+                          />
+                        </Row>
+                      </Col>
+                    </Row>
+                  );
+                })}
+              </Space>
             </Row>
           )}
         </div>

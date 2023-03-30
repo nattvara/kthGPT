@@ -1,3 +1,5 @@
+import { Lecture } from './lecture';
+
 export interface Image {
   id: string;
   created_at: Date;
@@ -8,4 +10,9 @@ export interface Image {
   create_search_queries_en_ok: null | boolean;
   create_description_ok: null | boolean;
   parse_image_content_ok: null | boolean;
+}
+
+export interface Question {
+  id: string;
+  hits: Lecture[];
 }
