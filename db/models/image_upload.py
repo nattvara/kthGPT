@@ -44,10 +44,20 @@ class ImageUpload(Base):
         return str(uuid.uuid4())
 
     def get_search_queries_en(self) -> Optional[List[str]]:
-        return json.loads(self.search_queries_en)
+        val = self.search_queries_en
+        if isinstance(val, str):
+            return json.loads(val)
+        if not isinstance(val, bytes):
+            val = val.tobytes()
+        return json.loads(val)
 
     def get_search_queries_sv(self) -> Optional[List[str]]:
-        return json.loads(self.search_queries_sv)
+        val = self.search_queries_sv
+        if isinstance(val, str):
+            return json.loads(val)
+        if not isinstance(val, bytes):
+            val = val.tobytes()
+        return json.loads(val)
 
     def refresh(self):
         update = ImageUpload.get(self.id)

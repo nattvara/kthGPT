@@ -8,14 +8,16 @@ from tools.files.paths import get_sha_of_binary_file_descriptor
 from api.routers.lectures import LectureSummaryOutputModel
 from db.models import ImageUpload, ImageQuestion
 import index.courses as courses_index
-import index.lecture as lecture_index
+import index.lecture
 from db import get_db
 from db.crud import (
-    get_image_question_by_public_id,
     get_image_upload_by_image_sha,
     get_image_upload_by_public_id,
+    get_lecture_by_id,
 )
 import jobs
+
+MAX_NUMBER_IMAGE_HITS = 6
 
 router = APIRouter()
 
@@ -23,6 +25,10 @@ router = APIRouter()
 class InputModelSearchCourse(BaseModel):
     query: str
     limit: Optional[int] = None
+
+
+class InputModelSearchCourseCode(BaseModel):
+    query: str
 
 
 class CourseOutputModel(BaseModel):
@@ -52,7 +58,8 @@ class InputModelImageQuestion(BaseModel):
 
 
 class ImageQuestionOutputModel(BaseModel):
-    hits: list
+    id: str
+    hits: List[LectureSummaryOutputModel]
 
 
 @router.post('/search/course', dependencies=[Depends(get_db)])
@@ -93,10 +100,6 @@ def search_course(
     return response
 
 
-class InputModelSearchCourseCode(BaseModel):
-    query: str
-
-
 @router.post('/search/course/{course_code}', dependencies=[Depends(get_db)])
 def search_course_lectures(
     course_code: str,
@@ -108,14 +111,14 @@ def search_course_lectures(
         apply_filter = False
 
     if course_code == 'no_course':
-        response = lecture_index.search_in_course(
+        response = index.lecture.search_in_course(
             input_data.query,
             no_course=True,
             apply_filter=apply_filter,
         )
         return response
 
-    response = lecture_index.search_in_course(
+    response = index.lecture.search_in_course(
         input_data.query,
         course_code,
         apply_filter,
@@ -126,7 +129,7 @@ def search_course_lectures(
 
 @router.post('/search/lecture', dependencies=[Depends(get_db)])
 def search_lecture(input_data: InputModelSearchCourseCode) -> List[LectureSummaryOutputModel]:
-    response = lecture_index.search_in_transcripts_and_titles(
+    response = index.lecture.search_in_transcripts_and_titles(
         input_data.query,
     )
 
@@ -223,11 +226,40 @@ def create_image_question(
         raise HTTPException(status_code=404)
 
     question = ImageQuestion(
+        public_id=ImageQuestion.make_public_id(),
         image_upload_id=upload.id,
         query_string=input_data.query,
     )
     question.save()
 
+    docs = {}
+
+    def add_hits_to_docs(hits: list):
+        for hit in hits:
+            if hit['_id'] not in docs:
+                docs[hit['_id']] = []
+            docs[hit['_id']].append(hit['_score'])
+
+    for query in upload.get_search_queries_sv():
+        hits = index.lecture.search_in_transcripts_and_titles(query, include_id=True, include_score=True)
+        add_hits_to_docs(hits)
+
+    for query in upload.get_search_queries_en():
+        hits = index.lecture.search_in_transcripts_and_titles(query, include_id=True, include_score=True)
+        add_hits_to_docs(hits)
+
+    total = {}
+    for doc in docs:
+        total[doc] = sum(docs[doc])
+
+    sorted_docs = sorted(total.items(), key=lambda x: x[1], reverse=True)
+    top_docs = sorted_docs[:MAX_NUMBER_IMAGE_HITS]
+
+    lectures = []
+    for (id, _) in top_docs:
+        lectures.append(get_lecture_by_id(id).to_dict())
+
     return {
-        'hits': [],
+        'id': question.public_id,
+        'hits': lectures,
     }

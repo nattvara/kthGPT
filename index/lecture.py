@@ -178,7 +178,7 @@ def search_in_course(
     return clean_response(response, LECTURE_OUTPUT_FIELDS)
 
 
-def search_in_transcripts_and_titles(search_string: str):
+def search_in_transcripts_and_titles(search_string: str, include_id=False, include_score=False):
     query = {
         'query': {
             'multi_match': {
@@ -214,7 +214,7 @@ def search_in_transcripts_and_titles(search_string: str):
         body=query,
     )
 
-    return clean_response(response, LECTURE_OUTPUT_FIELDS)
+    return clean_response(response, LECTURE_OUTPUT_FIELDS, include_id=include_id, include_score=include_score)
 
 
 def match_all_count() -> int:

@@ -2,9 +2,11 @@ from unittest.mock import call
 from io import BytesIO
 from PIL import Image
 import filecmp
+import random
 
+from db.models import Lecture
+import api.routers.search
 from db.crud import (
-    get_image_question_by_public_id,
     get_image_upload_by_public_id,
 )
 
@@ -243,7 +245,10 @@ def test_image_upload_schedules_image_search_pipeline(mocker, api_client, img_fi
     assert schedule_image_search_mock.mock_calls[0] == call(image)
 
 
-def test_image_question_can_be_created_for_uploaded_image(api_client, image_upload):
+def test_image_question_can_be_created_for_uploaded_image(mocker, api_client, image_upload):
+    mocker.patch('tools.text.ai.gpt3', return_value='')
+    mocker.patch('index.lecture.search_in_transcripts_and_titles')
+
     assert len(image_upload.questions()) == 0
 
     api_client.post(
@@ -255,3 +260,130 @@ def test_image_question_can_be_created_for_uploaded_image(api_client, image_uplo
 
     assert len(image_upload.questions()) == 1
     assert image_upload.questions()[0].query_string == 'help me'
+
+
+def test_image_question_runs_searches_for_each_query(mocker, api_client, image_upload):
+    mocker.patch('tools.text.ai.gpt3', return_value='')
+    index_mock = mocker.patch('index.lecture.search_in_transcripts_and_titles')
+
+    swedish_queries = len(image_upload.get_search_queries_sv())
+    english_queries = len(image_upload.get_search_queries_en())
+
+    api_client.post(
+        f'/search/image/{image_upload.public_id}/questions',
+        json={
+            'query': 'help me',
+        }
+    )
+
+    assert index_mock.call_count == swedish_queries + english_queries
+
+
+def test_image_question_aggregates_the_top_hits(mocker, api_client, image_upload):
+    mocker.patch('tools.text.ai.gpt3', return_value='')
+
+    lecture1 = Lecture(
+        public_id='id-1',
+        language='sv',
+        approved=True,
+        title='A lecture',
+    )
+    lecture1.save()
+    lecture2 = Lecture(
+        public_id='id-2',
+        language='sv',
+        approved=True,
+        title='A lecture',
+    )
+    lecture2.save()
+
+    # Override the limit to match the sample below,
+    # with the given sample below, we only care about two docs (matching the created lectures)
+    api.routers.search.MAX_NUMBER_IMAGE_HITS = 2
+
+    # Create two sample of hits
+    # The documents at index 3 and 6 have way higher scores
+    # This test should prove that these two gets returned
+    sample_1 = [
+        {
+            '_id': 100,
+            '_score': 1.1,
+        },
+        {
+            '_id': 101,
+            '_score': 1.17,
+        },
+        {
+            '_id': lecture1.id,
+            '_score': 5.51,
+        },
+        {
+            '_id': 102,
+            '_score': 1.4,
+        },
+        {
+            '_id': 103,
+            '_score': 2.23,
+        },
+        {
+            '_id': lecture2.id,
+            '_score': 1.1253,
+        },
+        {
+            '_id': 104,
+            '_score': 1.3344,
+        },
+    ]
+    sample_2 = [
+        {
+            '_id': 100,
+            '_score': 3.42341,
+        },
+        {
+            '_id': 101,
+            '_score': 1.17342,
+        },
+        {
+            '_id': lecture1.id,
+            '_score': 7.92344,
+        },
+        {
+            '_id': 102,
+            '_score': 2.544,
+        },
+        {
+            '_id': 103,
+            '_score': 0.73234,
+        },
+        {
+            '_id': lecture2.id,
+            '_score': 5.177423,
+        },
+        {
+            '_id': 104,
+            '_score': 0.1,
+        },
+    ]
+
+    def random_sample(query: str, include_id=False, include_score=False):
+        random_number = random.randint(0, 1)
+        if random_number == 0:
+            return sample_1
+        return sample_2
+
+    index_mock = mocker.patch('index.lecture.search_in_transcripts_and_titles', side_effect=random_sample)
+
+    swedish_queries = len(image_upload.get_search_queries_sv())
+    english_queries = len(image_upload.get_search_queries_en())
+
+    response = api_client.post(
+        f'/search/image/{image_upload.public_id}/questions',
+        json={
+            'query': 'help me',
+        }
+    )
+
+    assert index_mock.call_count == swedish_queries + english_queries
+    assert len(response.json()['hits']) == 2
+    for lecture in response.json()['hits']:
+        assert lecture['public_id'] in ['id-1', 'id-2']

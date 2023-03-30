@@ -7,6 +7,7 @@ import tempfile
 import peewee
 import pytest
 import shutil
+import json
 import os
 
 from config.settings import settings
@@ -155,6 +156,8 @@ def image_upload(img_file):
     image = ImageUpload(
         public_id=ImageUpload.make_public_id(),
         file_format=extension.replace('.', ''),
+        search_queries_sv=json.dumps(['fråga 1', 'fråga 2']),
+        search_queries_en=json.dumps(['query 1', 'query 2']),
     )
     image.save()
 

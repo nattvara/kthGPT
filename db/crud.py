@@ -13,6 +13,11 @@ def get_lecture_by_public_id_and_language(id: str, language: str):
     return Lecture.filter(Lecture.public_id == id).filter(Lecture.language == language).first()
 
 
+def get_lecture_by_id(id: int):
+    from db.models.lecture import Lecture
+    return Lecture.filter(Lecture.id == id).first()
+
+
 def get_all_lectures():
     from db.models.lecture import Lecture
     query = Lecture.select().order_by(Lecture.created_at.asc())
