@@ -8,9 +8,12 @@ from tools.files.paths import get_sha_of_binary_file_descriptor
 from api.routers.lectures import LectureSummaryOutputModel
 from db.models import ImageUpload, ImageQuestion
 import index.courses as courses_index
+import tools.text.prompts as prompts
 import index.lecture
 from db import get_db
+import tools.text.ai
 from db.crud import (
+    get_lecture_by_public_id_and_language,
     get_image_upload_by_image_sha,
     get_image_upload_by_public_id,
     get_lecture_by_id,
@@ -60,6 +63,14 @@ class InputModelImageQuestion(BaseModel):
 class ImageQuestionOutputModel(BaseModel):
     id: str
     hits: List[LectureSummaryOutputModel]
+
+
+class LectureAnswerOutputModel(BaseModel):
+    answer: str
+
+
+class LectureRelevanceOutputModel(BaseModel):
+    relevance: str
 
 
 @router.post('/search/course', dependencies=[Depends(get_db)])
@@ -232,6 +243,20 @@ def create_image_question(
     )
     question.save()
 
+    prompt = prompts.create_prompt_to_operationalise_question(
+        upload,
+        question,
+    )
+    response = tools.text.ai.gpt3(
+        prompt,
+        time_to_live=60,
+        max_retries=3,
+        retry_interval=[10, 20],
+        upload_id=upload.id,
+    )
+    question.operationalised_query = response
+    question.save()
+
     docs = {}
 
     def add_hits_to_docs(hits: list):
@@ -262,4 +287,94 @@ def create_image_question(
     return {
         'id': question.public_id,
         'hits': lectures,
+    }
+
+
+@router.get('/search/image/{image_public_id}/questions/{question_public_id}/{lecture_public_id}/{lecture_language}/answer', dependencies=[Depends(get_db)])
+def get_answer_to_question_hit(
+    image_public_id: str,
+    question_public_id: str,
+    lecture_public_id: str,
+    lecture_language: str,
+) -> LectureAnswerOutputModel:
+    upload = get_image_upload_by_public_id(image_public_id)
+
+    if upload is None:
+        raise HTTPException(status_code=404)
+
+    question = None
+    for q in upload.questions():
+        if q.public_id == question_public_id:
+            question = q
+
+    if question is None:
+        raise HTTPException(status_code=404)
+
+    lecture = get_lecture_by_public_id_and_language(
+        lecture_public_id,
+        lecture_language,
+    )
+    if lecture is None:
+        raise HTTPException(status_code=404)
+
+    prompt = prompts.create_prompt_to_answer_question_about_hit(
+        lecture,
+        upload,
+        question,
+    )
+    response = tools.text.ai.gpt3(
+        prompt,
+        time_to_live=60,
+        max_retries=2,
+        retry_interval=[10, 20],
+        upload_id=upload.id,
+    )
+
+    return {
+        'answer': response,
+    }
+
+
+@router.get('/search/image/{image_public_id}/questions/{question_public_id}/{lecture_public_id}/{lecture_language}/relevance', dependencies=[Depends(get_db)])
+def get_relevance_of_question_hit(
+    image_public_id: str,
+    question_public_id: str,
+    lecture_public_id: str,
+    lecture_language: str,
+) -> LectureRelevanceOutputModel:
+    upload = get_image_upload_by_public_id(image_public_id)
+
+    if upload is None:
+        raise HTTPException(status_code=404)
+
+    question = None
+    for q in upload.questions():
+        if q.public_id == question_public_id:
+            question = q
+
+    if question is None:
+        raise HTTPException(status_code=404)
+
+    lecture = get_lecture_by_public_id_and_language(
+        lecture_public_id,
+        lecture_language,
+    )
+    if lecture is None:
+        raise HTTPException(status_code=404)
+
+    prompt = prompts.create_prompt_to_explain_hit_relevance(
+        lecture,
+        upload,
+        question,
+    )
+    response = tools.text.ai.gpt3(
+        prompt,
+        time_to_live=60,
+        max_retries=2,
+        retry_interval=[10, 20],
+        upload_id=upload.id,
+    )
+
+    return {
+        'relevance': response,
     }

@@ -7,6 +7,7 @@ import random
 from db.models import Lecture
 import api.routers.search
 from db.crud import (
+    get_image_question_by_public_id,
     get_image_upload_by_public_id,
 )
 
@@ -387,3 +388,81 @@ def test_image_question_aggregates_the_top_hits(mocker, api_client, image_upload
     assert len(response.json()['hits']) == 2
     for lecture in response.json()['hits']:
         assert lecture['public_id'] in ['id-1', 'id-2']
+
+
+def test_image_question_operationalises_query(mocker, api_client, image_upload):
+    mocker.patch('index.lecture.search_in_transcripts_and_titles')
+    mocker.patch('tools.text.ai.gpt3', return_value='here is how the questions to ask')
+
+    response = api_client.post(
+        f'/search/image/{image_upload.public_id}/questions',
+        json={
+            'query': 'help me',
+        }
+    )
+
+    question = get_image_question_by_public_id(response.json()['id'])
+
+    assert question.operationalised_query == 'here is how the questions to ask'
+
+
+def test_answer_to_question_hit_can_be_retrieved(
+    mocker,
+    api_client,
+    image_upload,
+    analysed_lecture,
+):
+    mocker.patch('index.lecture.search_in_transcripts_and_titles', return_value=[
+        {
+            '_id': analysed_lecture.id,
+            '_score': 3.14,
+        }
+    ])
+    mocker.patch('tools.text.ai.gpt3', return_value='you can find the answer here')
+
+    response = api_client.post(
+        f'/search/image/{image_upload.public_id}/questions',
+        json={
+            'query': 'help me',
+        }
+    )
+
+    question_id = response.json()['id']
+    hit = response.json()['hits'][0]
+
+    response = api_client.get(
+        f'/search/image/{image_upload.public_id}/questions/{question_id}/{hit["public_id"]}/{hit["language"]}/answer',
+    )
+
+    assert response.json()['answer'] == 'you can find the answer here'
+
+
+def test_relevance_of_hit_can_be_retrieved(
+    mocker,
+    api_client,
+    image_upload,
+    analysed_lecture,
+):
+    mocker.patch('index.lecture.search_in_transcripts_and_titles', return_value=[
+        {
+            '_id': analysed_lecture.id,
+            '_score': 3.14,
+        }
+    ])
+    mocker.patch('tools.text.ai.gpt3', return_value='this is relevant because')
+
+    response = api_client.post(
+        f'/search/image/{image_upload.public_id}/questions',
+        json={
+            'query': 'help me',
+        }
+    )
+
+    question_id = response.json()['id']
+    hit = response.json()['hits'][0]
+
+    response = api_client.get(
+        f'/search/image/{image_upload.public_id}/questions/{question_id}/{hit["public_id"]}/{hit["language"]}/relevance',
+    )
+
+    assert response.json()['relevance'] == 'this is relevant because'

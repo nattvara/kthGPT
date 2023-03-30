@@ -1,4 +1,4 @@
-from db.models import Lecture, Query, ImageUpload
+from db.models import Lecture, Query, ImageUpload, ImageQuestion
 
 
 CATEGORY_RECORDED_LECTURE = 'Recorded Lecture'
@@ -173,4 +173,55 @@ Assignment:
 {upload.text_content}
 
 Queries:
+'''.strip()
+
+
+def create_prompt_to_operationalise_question(image: ImageUpload, question: ImageQuestion) -> str:
+    return f'''
+Consider an assignment and a prompt from the user. Given that I have the transcript of a relevant lecture. What should I ask about that transcript to best reply to the prompt? And specifically how it relates to this lecture. Respond with two questions in a bulleted list.
+
+Assignment:
+{image.text_content}
+
+Prompt:
+{question.query_string}
+
+Questions:
+'''.strip()
+
+
+def create_prompt_to_answer_question_about_hit(lecture: Lecture, image: ImageUpload, question: ImageQuestion) -> str:
+    return f'''
+Answer the following question using the specified format, use the html tags. If the lecture answers the question, use references to the transcript. Use no more than 50 words per relevant section.
+
+Lecture transcript:
+{lecture.summary_text()}
+
+Assignment:
+{image.text_content}
+
+Questions:
+{question.operationalised_query}
+
+Format to use:
+<strong>xx:xx:xx - xx:xx:xx</strong> [answer] \n
+
+Relevant segments and answer to each:
+'''.strip()
+
+
+def create_prompt_to_explain_hit_relevance(lecture: Lecture, image: ImageUpload, question: ImageQuestion) -> str:
+    return f'''
+Answer why this lecture is relevant to the following question. Be brief, use less than 20 words.
+
+Lecture transcript:
+{lecture.summary_text()}
+
+Assignment:
+{image.text_content}
+
+Questions:
+{question.operationalised_query}
+
+Relevance:
 '''.strip()
