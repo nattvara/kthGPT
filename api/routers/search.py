@@ -9,6 +9,7 @@ from api.routers.lectures import LectureSummaryOutputModel
 from db.models import ImageUpload, ImageQuestion
 import index.courses as courses_index
 import tools.text.prompts as prompts
+from config.logger import log
 import index.lecture
 from db import get_db
 import tools.text.ai
@@ -20,7 +21,7 @@ from db.crud import (
 )
 import jobs
 
-MAX_NUMBER_IMAGE_HITS = 6
+MAX_NUMBER_IMAGE_HITS = 10
 
 router = APIRouter()
 
@@ -49,9 +50,11 @@ class ImageOutputModel(BaseModel):
     created_at: str
     modified_at: str
     text_content: Optional[str]
-    description: Optional[str]
+    description_en: Optional[str]
+    description_sv: Optional[str]
     parse_image_content_ok: Optional[bool]
-    create_description_ok: Optional[bool]
+    create_description_en_ok: Optional[bool]
+    create_description_sv_ok: Optional[bool]
     create_search_queries_en_ok: Optional[bool]
     create_search_queries_sv_ok: Optional[bool]
 
@@ -189,7 +192,10 @@ def search_image(file: UploadFile) -> ImageCreationOutputModel:
     if not image.parse_image_content_ok:
         should_start_image_search_pipeline = True
 
-    if not image.create_description_ok:
+    if not image.create_description_en_ok:
+        should_start_image_search_pipeline = True
+
+    if not image.create_description_sv_ok:
         should_start_image_search_pipeline = True
 
     if not image.create_search_queries_en_ok:
@@ -252,10 +258,12 @@ def create_image_question(
             docs[hit['_id']].append(hit['_score'])
 
     for query in upload.get_search_queries_sv():
+        log().info(f'searching for (sv): {query}')
         hits = index.lecture.search_in_transcripts_and_titles(query, include_id=True, include_score=True)
         add_hits_to_docs(hits)
 
     for query in upload.get_search_queries_en():
+        log().info(f'searching for (en): {query}')
         hits = index.lecture.search_in_transcripts_and_titles(query, include_id=True, include_score=True)
         add_hits_to_docs(hits)
 
@@ -264,11 +272,13 @@ def create_image_question(
         total[doc] = sum(docs[doc])
 
     sorted_docs = sorted(total.items(), key=lambda x: x[1], reverse=True)
-    top_docs = sorted_docs[:MAX_NUMBER_IMAGE_HITS]
-
     lectures = []
-    for (id, _) in top_docs:
-        lectures.append(get_lecture_by_id(id).to_dict())
+    for (id, _) in sorted_docs:
+        if len(lectures) >= MAX_NUMBER_IMAGE_HITS:
+            break
+
+        lecture = get_lecture_by_id(id)
+        lectures.append(lecture.to_dict())
 
     return {
         'id': question.public_id,

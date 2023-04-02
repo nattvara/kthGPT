@@ -21,15 +21,18 @@ class ImageUpload(Base):
     image_sha = peewee.CharField(null=True, unique=True)
     file_format = peewee.CharField(null=False)
     text_content = peewee.TextField(null=True)
-    description = peewee.TextField(null=True)
+    description_en = peewee.TextField(null=True)
+    description_sv = peewee.TextField(null=True)
     search_queries_en = peewee.BlobField(null=True)
     search_queries_sv = peewee.BlobField(null=True)
 
     # image_search steps
     parse_image_content_ok = peewee.BooleanField(null=True)
     parse_image_content_failure_reason = peewee.TextField(null=True)
-    create_description_ok = peewee.BooleanField(null=True)
-    create_description_failure_reason = peewee.TextField(null=True)
+    create_description_en_ok = peewee.BooleanField(null=True)
+    create_description_en_failure_reason = peewee.TextField(null=True)
+    create_description_sv_ok = peewee.BooleanField(null=True)
+    create_description_sv_failure_reason = peewee.TextField(null=True)
     create_search_queries_en_ok = peewee.BooleanField(null=True)
     create_search_queries_en_failure_reason = peewee.TextField(null=True)
     create_search_queries_sv_ok = peewee.BooleanField(null=True)
@@ -63,13 +66,16 @@ class ImageUpload(Base):
         update = ImageUpload.get(self.id)
         self.file_format = update.file_format
         self.text_content = update.text_content
-        self.description = update.description
+        self.description_en = update.description_en
+        self.description_sv = update.description_sv
         self.search_queries_en = update.search_queries_en
         self.search_queries_sv = update.search_queries_sv
         self.parse_image_content_ok = update.parse_image_content_ok
         self.parse_image_content_failure_reason = update.parse_image_content_failure_reason
-        self.create_description_ok = update.create_description_ok
-        self.create_description_failure_reason = update.create_description_failure_reason
+        self.create_description_en_ok = update.create_description_en_ok
+        self.create_description_en_failure_reason = update.create_description_en_failure_reason
+        self.create_description_sv_ok = update.create_description_sv_ok
+        self.create_description_sv_failure_reason = update.create_description_sv_failure_reason
         self.create_search_queries_en_ok = update.create_search_queries_en_ok
         self.create_search_queries_en_failure_reason = update.create_search_queries_en_failure_reason
         self.create_search_queries_sv_ok = update.create_search_queries_sv_ok
@@ -101,9 +107,11 @@ class ImageUpload(Base):
             'created_at': created_at.isoformat(),
             'modified_at': modified_at.isoformat(),
             'text_content': self.text_content,
-            'description': self.description,
+            'description_en': self.description_en,
+            'description_sv': self.description_sv,
             'parse_image_content_ok': self.parse_image_content_ok,
-            'create_description_ok': self.create_description_ok,
+            'create_description_en_ok': self.create_description_en_ok,
+            'create_description_sv_ok': self.create_description_sv_ok,
             'create_search_queries_en_ok': self.create_search_queries_en_ok,
             'create_search_queries_sv_ok': self.create_search_queries_sv_ok,
         }

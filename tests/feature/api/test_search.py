@@ -220,13 +220,15 @@ def test_image_search_can_retrieve_image(api_client, image_upload):
 
 def test_image_search_can_retrieve_info(api_client, image_upload):
     image_upload.text_content = 'foo'
-    image_upload.description = 'bar'
+    image_upload.description_en = 'bar'
+    image_upload.description_sv = 'baz'
     image_upload.save()
 
     response = api_client.get(f'/search/image/{image_upload.public_id}')
 
     assert response.json()['text_content'] == 'foo'
-    assert response.json()['description'] == 'bar'
+    assert response.json()['description_en'] == 'bar'
+    assert response.json()['description_sv'] == 'baz'
 
 
 def test_image_upload_schedules_image_search_pipeline(mocker, api_client, img_file):
