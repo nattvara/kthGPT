@@ -1,5 +1,3 @@
-import logging
-
 from tools.img.ocr import get_text_content
 from config.settings import settings
 from db.models import ImageUpload

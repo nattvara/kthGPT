@@ -173,7 +173,7 @@ def search_image(file: UploadFile) -> ImageCreationOutputModel:
     ]
 
     if extension not in allowed_extensions:
-        raise HTTPException(status_code=400, detail='Invalid image format, please provide an image in one of the following formats ' + ', '.join(allowed_extensions))
+        raise HTTPException(status_code=400, detail='Invalid image format, please provide an image in one of the following formats ' + ', '.join(allowed_extensions))  # noqa: E501
 
     sha = get_sha_of_binary_file_descriptor(file.file)
     image = get_image_upload_by_image_sha(sha)
@@ -286,7 +286,7 @@ def create_image_question(
     }
 
 
-@router.get('/search/image/{image_public_id}/questions/{question_public_id}/{lecture_public_id}/{lecture_language}/answer', dependencies=[Depends(get_db)])
+@router.get('/search/image/{image_public_id}/questions/{question_public_id}/{lecture_public_id}/{lecture_language}/answer', dependencies=[Depends(get_db)])  # noqa: E501
 def get_answer_to_question_hit(
     image_public_id: str,
     question_public_id: str,
@@ -331,7 +331,7 @@ def get_answer_to_question_hit(
     }
 
 
-@router.get('/search/image/{image_public_id}/questions/{question_public_id}/{lecture_public_id}/{lecture_language}/relevance', dependencies=[Depends(get_db)])
+@router.get('/search/image/{image_public_id}/questions/{question_public_id}/{lecture_public_id}/{lecture_language}/relevance', dependencies=[Depends(get_db)])  # noqa: E501
 def get_relevance_of_question_hit(
     image_public_id: str,
     question_public_id: str,

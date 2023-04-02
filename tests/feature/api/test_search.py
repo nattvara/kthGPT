@@ -7,7 +7,6 @@ import random
 from db.models import Lecture
 import api.routers.search
 from db.crud import (
-    get_image_question_by_public_id,
     get_image_upload_by_public_id,
 )
 
