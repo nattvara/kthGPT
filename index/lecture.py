@@ -15,6 +15,7 @@ LECTURE_OUTPUT_FIELDS = [
     'words',
     'length',
     'title',
+    'group',
     'title.standard',
     'preview_uri',
     'preview_small_uri',
