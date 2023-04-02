@@ -57,6 +57,7 @@ class LectureOutputModel(BaseModel):
     language: str
     created_at: str
     title: Union[str, None] = None
+    group: Union[str, None] = None
     date: Union[str, None] = None
     approved: Union[bool, None] = None
     source: str
@@ -78,6 +79,7 @@ class LectureSummaryOutputModel(BaseModel):
     source: str
     created_at: Union[str, None] = None
     title: Union[str, None] = None
+    group: Union[str, None] = None
     date: Union[str, None] = None
     state: Union[str, None] = None
     frozen: Union[bool, None] = None
