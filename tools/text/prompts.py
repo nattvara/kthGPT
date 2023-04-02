@@ -139,7 +139,7 @@ Beslut:
 '''.strip()
 
 
-def describe_text_content_in_image(upload: ImageUpload) -> str:
+def describe_text_content_in_image_english(upload: ImageUpload) -> str:
     return f'''
 Consider the content of an assignment captured from an image. Describe the assignment and
 what one needs to know to complete the assignment.
@@ -151,10 +151,24 @@ Description:
 '''.strip()
 
 
+def describe_text_content_in_image_swedish(upload: ImageUpload) -> str:
+    return f'''
+Beskriv följande uppgift och vad man behöver kunna för att lösa uppgiften.
+
+Uppgift:
+{upload.text_content}
+
+Beskrivning:
+'''.strip()
+
+
 def create_search_query_for_upload_english(upload: ImageUpload) -> str:
     return f'''
-Consider the following assignment. To find the answer to this assignment, what would should I search for? Answer
+Consider the following assignment. To find the answer to this assignment, what would should I google for? Try to use keywords specific for the given theory in addition to specifics of the assignment. Answer
 with 5 queries in a list where each entry is separated by a newline without any numbers or bullets.
+
+Description of assignment:
+{upload.description_en}
 
 Assignment:
 {upload.text_content}
@@ -165,34 +179,21 @@ Queries:
 
 def create_search_query_for_upload_swedish(upload: ImageUpload) -> str:
     return f'''
-Consider the following assignments. To find the answer to this assignment, what would should I search for? Answer
-with 5 queries in a list where each entry is separated by a newline without any numbers or bullets. The search
-queries must be in swedish.
+Vad ska jag googla på för att hitta svaret på denna fråga? Försök att använda nyckelord som är specifika för den givna teorin utöver uppgiftsspecifika sökord. Svara med 5 sökfraser i en lista där varje fråga separeras av en ny rad utan några siffror eller punkter i början på varje rad.
 
-Assignment:
+Beskrivning av uppgiften:
+{upload.description_sv}
+
+Uppgift:
 {upload.text_content}
 
-Queries:
-'''.strip()
-
-
-def create_prompt_to_operationalise_question(image: ImageUpload, question: ImageQuestion) -> str:
-    return f'''
-Consider an assignment and a prompt from the user. Given that I have the transcript of a relevant lecture. What should I ask about that transcript to best reply to the prompt? And specifically how it relates to this lecture. Respond with two questions in a bulleted list.
-
-Assignment:
-{image.text_content}
-
-Prompt:
-{question.query_string}
-
-Questions:
+Frågor:
 '''.strip()
 
 
 def create_prompt_to_answer_question_about_hit(lecture: Lecture, image: ImageUpload, question: ImageQuestion) -> str:
     return f'''
-Answer the following question using the specified format, use the html tags. If the lecture answers the question, use references to the transcript. Use no more than 50 words per relevant section.
+Explain where in the lecture transcript the answer to the given question can be found. Respond using the specified format, use only the specified html tags. Use no more than 50 words per relevant section.
 
 Lecture transcript:
 {lecture.summary_text()}
@@ -201,10 +202,10 @@ Assignment:
 {image.text_content}
 
 Questions:
-{question.operationalised_query}
+{question.query_string}
 
 Format to use:
-<strong>xx:xx:xx - xx:xx:xx</strong> [answer] \n
+<strong>xx:xx:xx - xx:xx:xx</strong> xxx \n
 
 Relevant segments and answer to each:
 '''.strip()
@@ -221,7 +222,7 @@ Assignment:
 {image.text_content}
 
 Questions:
-{question.operationalised_query}
+{question.query_string}
 
 Relevance:
 '''.strip()
