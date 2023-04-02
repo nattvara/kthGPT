@@ -21,11 +21,16 @@ def job(lecture_id: str, language: str):
         title = tools.web.crawler.scrape_title_from_page(lecture.content_link())
         logger.info(f'fetching title from {lecture.content_link()}')
         date = tools.web.crawler.scrape_posted_date_from_kthplay(lecture.content_link())
+
+        # Doesn't support groups currently
+        group = None
     elif lecture.source == lecture.Source.YOUTUBE:
         logger.info(f'fetching title from {lecture.content_link()}')
         title = tools.web.crawler.scrape_title_from_page(lecture.content_link())
         logger.info(f'fetching title from {lecture.content_link()}')
         date = tools.youtube.metadata.get_upload_date(lecture.content_link())
+        logger.info(f'fetching channel from {lecture.content_link()}')
+        group = tools.youtube.metadata.get_channel_name(lecture.content_link())
     elif lecture.source == lecture.Source.KTH_RAW:
         logger.warning('kth_raw does not support metadata')
         return
@@ -34,6 +39,7 @@ def job(lecture_id: str, language: str):
 
     lecture.title = title
     lecture.date = date
+    lecture.group = group
     lecture.reindex()
     lecture.save()
 
@@ -42,4 +48,4 @@ def job(lecture_id: str, language: str):
 
 # Test run the job
 if __name__ == '__main__':
-    job('0_bcl3micy', 'en')
+    job('1xrERtqmX3E', 'sv')

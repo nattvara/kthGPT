@@ -209,6 +209,7 @@ class Lecture(Base):
         self.approved = update.approved
         self.words = update.words
         self.title = update.title
+        self.group = update.group
         self.date = update.date
         self.img_preview = update.img_preview
         self.img_preview_small = update.img_preview_small

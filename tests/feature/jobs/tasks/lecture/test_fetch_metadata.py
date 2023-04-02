@@ -53,6 +53,7 @@ def test_kth_video_date_is_fetched(mocker, mp4_file):
 def test_youtube_video_title_is_fetched(mocker, mp4_file):
     mocker.patch('tools.web.crawler.scrape_title_from_page', return_value='some title')
     mocker.patch('tools.youtube.metadata.get_upload_date')
+    mocker.patch('tools.youtube.metadata.get_channel_name')
 
     lecture = Lecture(
         public_id='some_id',
@@ -73,8 +74,9 @@ def test_youtube_video_date_is_fetched(mocker, mp4_file):
     now = datetime.now()
     tz = pytz.timezone('UTC')
 
-    mocker.patch('tools.web.crawler.scrape_title_from_page')
     mocker.patch('tools.youtube.metadata.get_upload_date', return_value=now)
+    mocker.patch('tools.web.crawler.scrape_title_from_page')
+    mocker.patch('tools.youtube.metadata.get_channel_name')
 
     lecture = Lecture(
         public_id='some_id',
@@ -92,6 +94,26 @@ def test_youtube_video_date_is_fetched(mocker, mp4_file):
     mocked_date = tz.localize(now, is_dst=None)
 
     assert lecture_date.isoformat(timespec='seconds') == mocked_date.isoformat(timespec='seconds')
+
+
+def test_youtube_video_group_is_fetched(mocker, mp4_file):
+    mocker.patch('tools.youtube.metadata.get_channel_name', return_value='some_channel')
+    mocker.patch('tools.web.crawler.scrape_title_from_page')
+    mocker.patch('tools.youtube.metadata.get_upload_date')
+
+    lecture = Lecture(
+        public_id='some_id',
+        language=Lecture.Language.SWEDISH,
+        mp4_filepath=mp4_file,
+        approved=True,
+        source=Lecture.Source.YOUTUBE,
+    )
+    lecture.save()
+
+    fetch_metadata.job(lecture.public_id, lecture.language)
+    lecture.refresh()
+
+    assert lecture.group == 'some_channel'
 
 
 def test_kth_raw_video_is_untouched(mp4_file):
