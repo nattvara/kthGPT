@@ -28,6 +28,7 @@ class Lecture(Base):
     length = peewee.IntegerField(null=False, default=0)
     words = peewee.IntegerField(null=False, default=0)
     title = peewee.CharField(null=True)
+    group = peewee.CharField(null=True)  # like a channel name on youtube
     date = peewee.TimestampField(null=True)
     raw_content_link = peewee.CharField(null=True)
     img_preview = peewee.CharField(null=True)
