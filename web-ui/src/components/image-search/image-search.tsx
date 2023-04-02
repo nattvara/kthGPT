@@ -150,7 +150,8 @@ export default function ImageSearch() {
   if (image !== null) {
     if (
       image.parse_image_content_ok &&
-      image.create_description_ok &&
+      image.create_description_en_ok &&
+      image.create_description_sv_ok &&
       image.create_search_queries_sv_ok &&
       image.create_search_queries_en_ok
     ) {
@@ -164,9 +165,14 @@ export default function ImageSearch() {
         value: image.parse_image_content_ok,
       },
       {
-        key: 'create_description_ok',
-        name: 'Creating description',
-        value: image.create_description_ok,
+        key: 'create_description_en_ok',
+        name: 'Creating description (english)',
+        value: image.create_description_en_ok,
+      },
+      {
+        key: 'create_description_sv_ok',
+        name: 'Creating description (swedish)',
+        value: image.create_description_sv_ok,
       },
       {
         key: 'create_search_queries_sv_ok',
@@ -275,7 +281,12 @@ export default function ImageSearch() {
           {image !== null && (
             <Row className={styles.description}>
               <Paragraph>
-                <blockquote>Description: {image.description}</blockquote>
+                <blockquote>
+                  Description (english): {image.description_en}
+                </blockquote>
+                <blockquote>
+                  Description (swedish): {image.description_sv}
+                </blockquote>
               </Paragraph>
             </Row>
           )}
