@@ -163,7 +163,9 @@ def test_lecture_transcript_search(mocker, api_client, analysed_lecture):
     assert response.json()[0]['highlight']['transcript'][0] == '00:00 -> 00:30 foo'
 
 
-def test_image_search_creates_image_upload(api_client, img_file):
+def test_image_search_creates_image_upload(mocker, api_client, img_file):
+    mocker.patch('jobs.schedule_image_search')
+
     response = api_client.post(
         '/search/image',
         files={
@@ -178,7 +180,9 @@ def test_image_search_creates_image_upload(api_client, img_file):
     assert upload is not None
 
 
-def test_image_search_will_not_save_the_same_image_twice(api_client, img_file):
+def test_image_search_will_not_save_the_same_image_twice(mocker, api_client, img_file):
+    mocker.patch('jobs.schedule_image_search')
+
     def func():
         response = api_client.post(
             '/search/image',
@@ -197,7 +201,9 @@ def test_image_search_will_not_save_the_same_image_twice(api_client, img_file):
     assert image_id_1 == image_id_2
 
 
-def test_image_search_saves_png_file_upload(api_client, img_file):
+def test_image_search_saves_png_file_upload(mocker, api_client, img_file):
+    mocker.patch('jobs.schedule_image_search')
+
     response = api_client.post(
         '/search/image',
         files={
