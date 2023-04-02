@@ -3,7 +3,7 @@ import subprocess
 import os
 
 from jobs import get_monitoring_queue
-import jobs.save_queue_info
+import jobs.tasks.save_queue_info
 from config.settings import settings
 from config.logger import log
 from db.models import QueueInfo
@@ -109,7 +109,7 @@ def job():
     log('rq.worker').info('queueing next update in 30 seconds')
 
     queue = next(get_monitoring_queue())
-    queue.enqueue_in(timedelta(seconds=30), jobs.save_queue_info.job)
+    queue.enqueue_in(timedelta(seconds=30), jobs.tasks.save_queue_info.job)
 
     log('rq.worker').info('done.')
 

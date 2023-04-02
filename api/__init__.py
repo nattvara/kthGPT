@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from config.logger import LogConfig, log
 from jobs import get_monitoring_queue
 from config.settings import settings
-import jobs.save_queue_info
+import jobs.tasks.save_queue_info
 from api.routers import (
     index,
     urls,
@@ -46,6 +46,6 @@ def main():
     queue = next(get_monitoring_queue())
     future = datetime.utcnow() + timedelta(days=1)
     queue.scheduled_job_registry.remove_jobs(timestamp=future.timestamp())
-    jobs.save_queue_info.job()
+    jobs.tasks.save_queue_info.job()
 
     return app

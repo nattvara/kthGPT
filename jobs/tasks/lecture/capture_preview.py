@@ -4,7 +4,7 @@ from rq import Queue
 
 from db.crud import get_lecture_by_public_id_and_language
 from db.models import Lecture
-import jobs.capture_preview
+import jobs.tasks.lecture.capture_preview
 import tools.video.img
 
 # 5min timeout
@@ -35,7 +35,7 @@ if __name__ == '__main__':
         password=settings.REDIS_PASSWORD,
     ))
     queue.enqueue(
-        jobs.capture_preview.job,
+        jobs.tasks.lecture.capture_preview.job,
         '0_hdz62g82',
         Lecture.Language.SWEDISH
     )

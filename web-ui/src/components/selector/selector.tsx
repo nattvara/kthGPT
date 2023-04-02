@@ -11,6 +11,7 @@ import apiClient from '@/http';
 import LectureAdder from './lecture-adder';
 import { emitEvent, CATEGORY_SELECTOR, EVENT_ERROR_RESPONSE } from '@/matomo';
 import SearchTool from './search-tool';
+import ImageSearch from '@/components/image-search/image-search';
 
 const { Title } = Typography;
 
@@ -76,7 +77,12 @@ export default function Selector() {
           Search across all courses and lectures
         </Title>
 
-        <SearchTool />
+        <Row className={styles.search_row}>
+          <ImageSearch />
+        </Row>
+        <Row className={styles.search_row}>
+          <SearchTool />
+        </Row>
       </Col>
 
       <Col xs={0} sm={1} className={styles.divider}>

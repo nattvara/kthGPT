@@ -6,8 +6,8 @@ import logging
 from tools.web.downloader import download_mp4_from_m3u8
 from tools.youtube.download import download_mp4
 from db.models import Lecture, Analysis
-import jobs.download_lecture
-import jobs.capture_preview
+import jobs.pipelines.analyse_lecture.download_lecture
+import jobs.tasks.lecture.capture_preview
 import tools.web.crawler as crawler
 from db.crud import (
     get_lecture_by_public_id_and_language,
@@ -104,7 +104,7 @@ if __name__ == '__main__':
         password=settings.REDIS_PASSWORD,
     ))
     queue.enqueue(
-        jobs.download_lecture.job,
+        jobs.pipelines.analyse_lecture.download_lecture.job,
         'mn9LOFQc9IE',
         Lecture.Language.SWEDISH
     )

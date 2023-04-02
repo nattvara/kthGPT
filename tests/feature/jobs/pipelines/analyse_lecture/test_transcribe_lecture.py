@@ -1,9 +1,9 @@
 from typing import Optional
 import os
 
+from jobs.pipelines.analyse_lecture import transcribe_audio
 from db.models import Lecture, Analysis
 from config.settings import settings
-from jobs import transcribe_audio
 
 
 def test_transcription_job_runs_local_transcription_if_device_is_cuda(mocker, mp3_file):

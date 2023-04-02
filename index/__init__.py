@@ -4,11 +4,21 @@ from config.settings import settings
 from typing import List
 
 
-def clean_response(response: dict, fields: List[str]) -> List[dict]:
+def clean_response(
+    response: dict,
+    fields: List[str],
+    include_id=False,
+    include_score=False,
+) -> List[dict]:
     out = []
     hits = response['hits']['hits']
     for hit in hits:
         item = {}
+        if include_id:
+            item['_id'] = hit['_id']
+        if include_score:
+            item['_score'] = hit['_score']
+
         for field in fields:
             if field not in hit['fields']:
                 item[field] = None

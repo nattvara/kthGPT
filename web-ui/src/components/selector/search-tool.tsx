@@ -66,7 +66,7 @@ export default function SearchTool() {
   };
 
   return (
-    <>
+    <div className={styles.search_tool}>
       <Row>
         <Search
           placeholder="Search for anything said in any lecture"
@@ -109,6 +109,6 @@ export default function SearchTool() {
           })}
         </Space>
       </Row>
-    </>
+    </div>
   );
 }

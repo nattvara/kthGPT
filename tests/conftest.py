@@ -7,12 +7,17 @@ import tempfile
 import peewee
 import pytest
 import shutil
+import json
 import os
 
 from config.settings import settings
+from db.models import ImageUpload
 from db.schema import all_models
 import api
 
+TEST_API_ENDPOINT = 'https://example.com'
+TEST_MATHPIX_APP_ID = 'some_id'
+TEST_MATHPIX_APP_KEY = 'some_key'
 
 TEST_DB_FILEPATH = '/tmp/kthgpt.test.db'
 TEST_STORAGE_DIRECTORY = '/tmp/kthgpt-test-filesystem'
@@ -26,11 +31,17 @@ QUEUE_MONITORING = 'fake_monitoring'
 QUEUE_APPROVAL = 'fake_approval'
 QUEUE_GPT = 'fake_gpt'
 QUEUE_METADATA = 'fake_metadata'
+QUEUE_IMAGE = 'fake_image'
+QUEUE_IMAGE_QUESTIONS = 'fake_image_questions'
 
 
 def pytest_configure(config):
     settings.STORAGE_DIRECTORY = TEST_STORAGE_DIRECTORY
     settings.OPENAI_API_KEY = 'sk-xxx...'
+    settings.API_ENDPOINT = TEST_API_ENDPOINT
+
+    settings.MATHPIX_APP_ID = TEST_MATHPIX_APP_ID
+    settings.MATHPIX_APP_KEY = TEST_MATHPIX_APP_KEY
 
     if os.path.exists(TEST_DB_FILEPATH):
         os.unlink(TEST_DB_FILEPATH)
@@ -69,6 +80,8 @@ def run_around_tests(mocker):
     mocker.patch('jobs.get_monitoring_queue', return_value=get_fake_queue(QUEUE_MONITORING))
     mocker.patch('jobs.get_approval_queue', return_value=get_fake_queue(QUEUE_APPROVAL))
     mocker.patch('jobs.get_metadata_queue', return_value=get_fake_queue(QUEUE_METADATA))
+    mocker.patch('jobs.get_image_queue', return_value=get_fake_queue(QUEUE_IMAGE))
+    mocker.patch('jobs.get_image_questions_queue', return_value=get_fake_queue(QUEUE_IMAGE_QUESTIONS))
 
     yield
     teardown(db)
@@ -134,6 +147,25 @@ def save_dummy_transcript_for_lecture(lecture: Lecture):
 
     lecture.transcript_filepath = transcript_dirname
     lecture.save()
+
+
+@pytest.fixture
+def image_upload(img_file):
+    _, extension = os.path.splitext(img_file)
+
+    image = ImageUpload(
+        public_id=ImageUpload.make_public_id(),
+        file_format=extension.replace('.', ''),
+        search_queries_sv=json.dumps(['fråga 1', 'fråga 2']),
+        search_queries_en=json.dumps(['query 1', 'query 2']),
+    )
+    image.save()
+
+    with open(image.get_filename(), 'wb+') as img:
+        with open(img_file, 'rb') as src:
+            img.write(src.read())
+
+    return image
 
 
 @pytest.fixture

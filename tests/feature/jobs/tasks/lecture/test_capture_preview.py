@@ -1,6 +1,6 @@
 import shutil
 
-from jobs import capture_preview
+from jobs.tasks.lecture import capture_preview
 from db.models import Lecture
 
 

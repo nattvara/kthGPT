@@ -43,9 +43,9 @@ export function HighlightText(props: HighlightProps) {
     <>
       <Space direction="vertical" size="large">
         <Paragraph>
-          {transcript.map((highlight) => {
+          {transcript.map((highlight, index) => {
             return (
-              <blockquote className={styles.quote}>
+              <blockquote className={styles.quote} key={index}>
                 <BoldedText text={highlight}></BoldedText>
               </blockquote>
             );

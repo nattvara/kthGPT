@@ -51,10 +51,4 @@ def extract_mp3_from_mp4(src_file: str, lecture: Lecture) -> str:
             analysis.save()
             raise Exception('ffmpeg failed')
 
-    lecture.refresh()
-    lecture.mp3_filepath = output_filename
-    lecture.save()
-
-    analysis = lecture.get_last_analysis()
-    analysis.mp3_progress = 100
-    analysis.save()
+    return output_filename

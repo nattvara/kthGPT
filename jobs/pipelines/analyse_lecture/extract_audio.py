@@ -4,9 +4,9 @@ from rq import Queue
 import logging
 
 from db.crud import get_lecture_by_public_id_and_language, save_message_for_analysis
-from tools.audio.extraction import extract_mp3_from_mp4
 from db.models import Lecture, Analysis
-import jobs.extract_audio
+import tools.audio.extraction
+import jobs.pipelines.analyse_lecture.extract_audio
 
 
 # 20min timeout
@@ -31,11 +31,15 @@ def job(lecture_id: str, language: str):
 
         save_message_for_analysis(analysis, 'Extracting audio...', 'The analyzer only looks at what is being said in the lecture.')  # noqa: E501
         logger.info(f'extracting audio from {lecture.mp4_filepath}')
-        extract_mp3_from_mp4(lecture.mp4_filepath, lecture)
+        mp3 = tools.audio.extraction.extract_mp3_from_mp4(lecture.mp4_filepath, lecture)
 
         lecture.refresh()
+        lecture.mp3_filepath = mp3
+        lecture.save()
+
         analysis = lecture.get_last_analysis()
         analysis.state = Analysis.State.IDLE
+        analysis.mp3_progress = 100
         analysis.save()
         save_message_for_analysis(analysis, 'Extracted', 'The audio has been extracted, waiting for transcription to start.')
 
@@ -58,4 +62,4 @@ if __name__ == '__main__':
         port=settings.REDIS_PORT,
         password=settings.REDIS_PASSWORD,
     ))
-    queue.enqueue(jobs.extract_audio.job, '0_blzql89t', Lecture.Language.ENGLISH)
+    queue.enqueue(jobs.pipelines.analyse_lecture.extract_audio.job, '0_blzql89t', Lecture.Language.ENGLISH)

@@ -13,6 +13,11 @@ def get_lecture_by_public_id_and_language(id: str, language: str):
     return Lecture.filter(Lecture.public_id == id).filter(Lecture.language == language).first()
 
 
+def get_lecture_by_id(id: int):
+    from db.models.lecture import Lecture
+    return Lecture.filter(Lecture.id == id).first()
+
+
 def get_all_lectures():
     from db.models.lecture import Lecture
     query = Lecture.select().order_by(Lecture.created_at.asc())
@@ -233,3 +238,31 @@ def find_relation_between_lecture_and_course_group(lecture_id: int, group_id: in
 def delete_lecture_course_relation(id: int):
     from db.models.course import CourseLectureRelation
     return CourseLectureRelation.delete().where(CourseLectureRelation.id == id).execute()
+
+
+# ImageUpload
+def get_image_upload_by_public_id(id: str):
+    from db.models import ImageUpload
+    return ImageUpload.filter(ImageUpload.public_id == id).first()
+
+
+def get_image_upload_by_image_sha(sha: str):
+    from db.models import ImageUpload
+    return ImageUpload.filter(ImageUpload.image_sha == sha).first()
+
+
+# ImageQuestion
+def get_image_question_by_public_id(id: str):
+    from db.models import ImageQuestion
+    return ImageQuestion.filter(ImageQuestion.public_id == id).first()
+
+
+def get_image_questions_by_image_upload_id(id: int):
+    from db.models import ImageQuestion
+    return ImageQuestion.filter(ImageQuestion.image_upload_id == id)
+
+
+# Mathpix requests
+def get_mathpix_requests_by_image_upload_id(id: int):
+    from db.models import MathpixRequest
+    return MathpixRequest.filter(MathpixRequest.image_upload_id == id)

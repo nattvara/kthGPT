@@ -5,20 +5,29 @@ from db.crud import (
     get_unfinished_lectures,
     save_message_for_analysis,
 )
-from config.settings import settings
 from db.models.analysis import Analysis
-from config.logger import log
-from jobs import (
-    capture_preview,
+from jobs.pipelines.analyse_lecture import (
     download_lecture,
     extract_audio,
-    transcribe_audio,
     summarise_transcript,
+    transcribe_audio,
+)
+from jobs.pipelines.image_search import (
+    parse_image_content,
+    create_description,
+    create_search_queries,
+)
+from config.settings import settings
+from jobs.tasks.lecture import (
+    capture_preview,
     classify_video,
     clean_lecture,
-    fetch_metadata,
-    index_lecture,
+    index_lecture
 )
+from jobs.tasks.lecture import (
+    fetch_metadata,
+)
+from config.logger import log
 
 
 DEFAULT = 'default'
@@ -30,6 +39,8 @@ MONITORING = 'monitoring'
 APPROVAL = 'approval'
 GPT = 'gpt'
 METADATA = 'metadata'
+IMAGE = 'image'
+IMAGE_QUESTIONS = 'image_questions'
 
 
 def get_default_queue() -> Queue:
@@ -104,6 +115,24 @@ def get_metadata_queue() -> Queue:
         queue.connection.close()
 
 
+def get_image_queue() -> Queue:
+    try:
+        conn = get_connection()
+        queue = Queue(IMAGE, connection=conn)
+        yield queue
+    finally:
+        queue.connection.close()
+
+
+def get_image_questions_queue() -> Queue:
+    try:
+        conn = get_connection()
+        queue = Queue(IMAGE_QUESTIONS, connection=conn)
+        yield queue
+    finally:
+        queue.connection.close()
+
+
 def get_connection() -> Queue:
     if settings.REDIS_PASSWORD is not None:
         return Redis(
@@ -157,6 +186,20 @@ def schedule_analysis_of_lecture(
     return analysis
 
 
+def schedule_fetch_of_lecture_metadata(
+    lecture,
+    queue_metadata: Queue = get_metadata_queue,
+):
+    log().info(f'Scheduling fetch of metadata for {lecture.public_id}')
+
+    next(queue_metadata()).enqueue(
+        fetch_metadata.job,
+        lecture.public_id,
+        lecture.language,
+        job_timeout=fetch_metadata.TIMEOUT,
+    )
+
+
 def schedule_approval_of_lecture(
     lecture,
     queue_approval: Queue = get_approval_queue,
@@ -199,3 +242,20 @@ def analysis_queues_restart(
     for lecture in lectures:
         print(f'scheduling re-analysis of lecture {lecture.id}')
         schedule_analysis_of_lecture(lecture)
+
+
+def schedule_image_search(
+    image_upload,
+    queue_default: Queue = get_default_queue,
+    queue_image: Queue = get_image_queue,
+    queue_image_questions: Queue = get_image_questions_queue,
+):
+    img_queue = next(queue_image())
+    img_questions_queue = next(queue_image_questions())
+
+    # analysis sequence
+    text_content = img_queue.enqueue(parse_image_content.job, image_upload.public_id)  # noqa: E501
+    description_en = img_questions_queue.enqueue(create_description.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=text_content)  # noqa: E501
+    description_sv = img_questions_queue.enqueue(create_description.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=text_content)  # noqa: E501
+    search_queries_en = img_questions_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=[text_content, description_en])  # noqa: E501, F841
+    search_queries_sv = img_questions_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=[text_content, description_sv])  # noqa: E501, F841

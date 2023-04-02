@@ -46,6 +46,7 @@ pytest-base-url==2.0.0
 pytest-mock==3.10.0
 pytest-playwright==0.3.0
 python-dotenv==0.21.1
+python-multipart==0.0.6
 python-slugify==8.0.0
 PyYAML==6.0
 redis==4.5.1

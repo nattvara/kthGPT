@@ -51,6 +51,9 @@ class Lecture(Base):
         return super(Lecture, self).save(*args, **kwargs)
 
     def reindex(self):
+        # Doing import here to avoid circular import
+        from jobs.tasks.lecture import index_lecture
+
         if self.id is not None:
             a = self.get_last_analysis()
             if a is not None:
@@ -63,7 +66,7 @@ class Lecture(Base):
                 if a.state == Analysis.State.FAILURE:
                     return
 
-                from jobs import get_metadata_queue, index_lecture
+                from jobs import get_metadata_queue
                 q = next(get_metadata_queue())
                 q.enqueue(index_lecture.job, self.public_id, self.language)
 
@@ -202,6 +205,7 @@ class Lecture(Base):
         self.public_id = update.public_id
         self.language = update.language
         self.length = update.length
+        self.approved = update.approved
         self.words = update.words
         self.title = update.title
         self.date = update.date
