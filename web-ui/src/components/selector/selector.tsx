@@ -1,5 +1,5 @@
 import styles from './selector.less';
-import { Row, Col, Typography, Divider, Statistic, Space } from 'antd';
+import { Row, Col, Typography, Divider, Statistic } from 'antd';
 import { useEffect, useState } from 'react';
 import {
   FileSearchOutlined,

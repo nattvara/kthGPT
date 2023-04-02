@@ -4,7 +4,7 @@ import {
   FileTextOutlined,
 } from '@ant-design/icons';
 import styles from './questions.less';
-import { Row, Col, Space, Button, Skeleton, Result, Modal } from 'antd';
+import { Row, Col, Button, Skeleton, Result, Modal } from 'antd';
 import { notification } from 'antd';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';

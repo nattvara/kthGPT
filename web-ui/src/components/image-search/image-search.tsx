@@ -44,6 +44,12 @@ const UPDATE_INTERVAL = 1000;
 
 const DEFAULT_QUERY_STRING = 'Where can I find the answer to this assignment?';
 
+interface ParsingStateType {
+  key: string;
+  name: string;
+  value: null | boolean;
+}
+
 interface ImageResponse extends ServerResponse {
   data: ImageType;
 }
@@ -68,7 +74,7 @@ export default function ImageSearch() {
     multiple: true,
     action: makeUrl('/search/image'),
     maxCount: 1,
-    onChange(info: UploadChangeParam<UploadFile<T>>) {
+    onChange(info: UploadChangeParam<UploadFile>) {
       const { status } = info.file;
       if (status === 'done') {
         setId(info.file.response.id);
@@ -146,7 +152,7 @@ export default function ImageSearch() {
   };
 
   let canAskQuestion = false;
-  let parsingStates: any[] = [];
+  let parsingStates: ParsingStateType[] = [];
   if (image !== null) {
     if (
       image.parse_image_content_ok &&
