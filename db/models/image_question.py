@@ -9,7 +9,6 @@ class ImageQuestion(Base):
     public_id = peewee.CharField(null=False, unique=True)
     image_upload_id = peewee.ForeignKeyField(ImageUpload, null=False, backref='imageupload', on_delete='cascade')
     query_string = peewee.TextField(null=False)
-    operationalised_query = peewee.TextField(null=True)
 
     @staticmethod
     def make_public_id() -> str:

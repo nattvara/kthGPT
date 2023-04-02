@@ -390,22 +390,6 @@ def test_image_question_aggregates_the_top_hits(mocker, api_client, image_upload
         assert lecture['public_id'] in ['id-1', 'id-2']
 
 
-def test_image_question_operationalises_query(mocker, api_client, image_upload):
-    mocker.patch('index.lecture.search_in_transcripts_and_titles')
-    mocker.patch('tools.text.ai.gpt3', return_value='here is how the questions to ask')
-
-    response = api_client.post(
-        f'/search/image/{image_upload.public_id}/questions',
-        json={
-            'query': 'help me',
-        }
-    )
-
-    question = get_image_question_by_public_id(response.json()['id'])
-
-    assert question.operationalised_query == 'here is how the questions to ask'
-
-
 def test_answer_to_question_hit_can_be_retrieved(
     mocker,
     api_client,

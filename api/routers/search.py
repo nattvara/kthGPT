@@ -243,20 +243,6 @@ def create_image_question(
     )
     question.save()
 
-    prompt = prompts.create_prompt_to_operationalise_question(
-        upload,
-        question,
-    )
-    response = tools.text.ai.gpt3(
-        prompt,
-        time_to_live=60,
-        max_retries=3,
-        retry_interval=[10, 20],
-        upload_id=upload.id,
-    )
-    question.operationalised_query = response
-    question.save()
-
     docs = {}
 
     def add_hits_to_docs(hits: list):
