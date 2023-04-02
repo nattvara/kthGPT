@@ -28,6 +28,7 @@ class Lecture(Base):
     length = peewee.IntegerField(null=False, default=0)
     words = peewee.IntegerField(null=False, default=0)
     title = peewee.CharField(null=True)
+    group = peewee.CharField(null=True)  # like a channel name on youtube
     date = peewee.TimestampField(null=True)
     raw_content_link = peewee.CharField(null=True)
     img_preview = peewee.CharField(null=True)
@@ -208,6 +209,7 @@ class Lecture(Base):
         self.approved = update.approved
         self.words = update.words
         self.title = update.title
+        self.group = update.group
         self.date = update.date
         self.img_preview = update.img_preview
         self.img_preview_small = update.img_preview_small
@@ -231,6 +233,7 @@ class Lecture(Base):
             'date': self.date,
             'length': self.length,
             'title': self.title,
+            'group': self.group,
             'preview_uri': self.preview_uri(),
             'preview_small_uri': self.preview_small_uri(),
             'content_link': self.content_link(),
@@ -265,6 +268,7 @@ class Lecture(Base):
             'source': self.source,
             'created_at': created_at.isoformat(),
             'title': self.title,
+            'group': self.group,
             'date': date,
             'state': state,
             'frozen': frozen,
@@ -297,6 +301,7 @@ class Lecture(Base):
             'words': self.words,
             'length': self.length,
             'title': self.title,
+            'group': self.group,
             'date': date,
             'preview_uri': self.preview_uri(),
             'preview_small_uri': self.preview_small_uri(),
