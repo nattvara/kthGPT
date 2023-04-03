@@ -1,4 +1,4 @@
-import Frame from '@/components/main/frame';
+import Frame from '@/components/page/frame/frame';
 import { registerPageLoad } from '@/matomo';
 import { LeftOutlined } from '@ant-design/icons';
 import { Row, Col, Typography, Button } from 'antd';

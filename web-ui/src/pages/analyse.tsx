@@ -1,5 +1,5 @@
 import Analyser from '@/components/analyser/analyser';
-import Frame from '@/components/main/frame';
+import Frame from '@/components/page/frame/frame';
 import { registerPageLoad } from '@/matomo';
 import { useEffect } from 'react';
 import { useParams } from 'umi';

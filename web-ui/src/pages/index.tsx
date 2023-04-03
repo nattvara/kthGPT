@@ -1,5 +1,5 @@
 import { Lecture } from '@/types/lecture';
-import Frame from '@/components/main/frame';
+import Frame from '@/components/page/frame/frame';
 import SearchHuge from '@/components/searching/search-huge/search-huge';
 import { registerPageLoad } from '@/matomo';
 import { Col, Row } from 'antd';

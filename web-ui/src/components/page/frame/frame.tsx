@@ -1,7 +1,7 @@
 import { FileTextOutlined, GithubOutlined } from '@ant-design/icons';
 import styles from './frame.less';
 import { Space, Row, Col, Layout, Image, Button, Typography } from 'antd';
-import kthLogo from '../../assets/logo.svg';
+import kthLogo from '../../../assets/logo.svg';
 import { history } from 'umi';
 import { buildDate, isProduction } from '@/version';
 

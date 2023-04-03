@@ -1,4 +1,4 @@
-import Frame from '@/components/main/frame';
+import Frame from '@/components/page/frame/frame';
 import DeniedTable from '@/components/tables/denied-table/denied-table';
 import { registerPageLoad } from '@/matomo';
 import { useEffect } from 'react';

@@ -1,4 +1,4 @@
-import Frame from '@/components/main/frame';
+import Frame from '@/components/page/frame/frame';
 import { registerPageLoad } from '@/matomo';
 import { Result, Button, Row, Col } from 'antd';
 import { useEffect } from 'react';

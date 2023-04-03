@@ -1,5 +1,5 @@
 import Questions from '@/components/questions/questions';
-import Frame from '@/components/main/frame';
+import Frame from '@/components/page/frame/frame';
 import { useParams } from 'umi';
 import { useEffect } from 'react';
 import { registerPageLoad } from '@/matomo';
