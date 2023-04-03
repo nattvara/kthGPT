@@ -10,7 +10,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { history } from 'umi';
-import Preview from '@/components/lecture/preview';
+import Preview from '@/components/lecture/preview/preview';
 import { Lecture } from '@/types/lecture';
 import {
   emitEvent,

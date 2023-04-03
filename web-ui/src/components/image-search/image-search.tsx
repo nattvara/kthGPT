@@ -29,10 +29,10 @@ import {
   EVENT_ERROR_RESPONSE,
 } from '@/matomo';
 import { UploadChangeParam, UploadFile } from 'antd/es/upload';
-import { Image as ImageType, Question } from '../search';
+import { Image as ImageType, Question } from '@/types/search';
 import QuestionInput from '../question-input/question-input';
 import { Lecture } from '../../types/lecture';
-import { PreviewCompact } from '@/components/lecture/preview';
+import { PreviewCompact } from '@/components/lecture/preview/preview';
 import { history } from 'umi';
 import { QuestionAnswer } from './question-answer';
 

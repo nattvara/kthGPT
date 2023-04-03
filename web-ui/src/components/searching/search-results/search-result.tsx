@@ -3,7 +3,7 @@ import { Lecture } from '@/types/lecture';
 import { Row, Space, Col } from 'antd';
 import { history } from 'umi';
 import { emitEvent, CATEGORY_SEARCH_TOOL, EVENT_GOTO_LECTURE } from '@/matomo';
-import { PreviewCompact } from '@/components/lecture/preview';
+import { PreviewCompact } from '@/components/lecture/preview/preview';
 import { HighlightText } from '@/components/selector/highlight-text';
 
 interface SearchResultProps {
