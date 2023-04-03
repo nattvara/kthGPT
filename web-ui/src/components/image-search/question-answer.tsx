@@ -1,6 +1,6 @@
 import styles from './question-answer.less';
 import { Row, Skeleton, Typography } from 'antd';
-import { Highlight, Lecture } from '@/components/lecture';
+import { Highlight, Lecture } from '@/types/lecture';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';

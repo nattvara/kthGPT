@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import { notification } from 'antd';
 import { useMutation } from '@tanstack/react-query';
-import { Lecture } from '@/components/lecture';
+import { Lecture } from '@/types/lecture';
 import { useEffect, useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { history } from 'umi';

@@ -1,4 +1,4 @@
-import { Lecture } from '@/components/lecture';
+import { Lecture } from '@/types/lecture';
 import Frame from '@/components/main/frame';
 import SearchHuge from '@/components/searching/search-huge/search-huge';
 import { registerPageLoad } from '@/matomo';

@@ -1,5 +1,5 @@
 import styles from './course-selector.less';
-import { Lecture, Course } from '@/components/lecture';
+import { Lecture, Course } from '@/types/lecture';
 import { Button, Row, Typography, Input, Space, Col, notification } from 'antd';
 import {
   DeleteOutlined,

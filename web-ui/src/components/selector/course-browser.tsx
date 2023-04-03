@@ -1,5 +1,5 @@
 import styles from './course-browser.less';
-import { Course, Lecture } from '@/components/lecture';
+import { Course, Lecture } from '@/types/lecture';
 import { Row, Input, Space, Col, Button, Typography } from 'antd';
 import {
   LeftOutlined,

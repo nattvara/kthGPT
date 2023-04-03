@@ -1,5 +1,5 @@
 import styles from './search-huge.less';
-import { Lecture } from '@/components/lecture';
+import { Lecture } from '@/types/lecture';
 import { Row, Input } from 'antd';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';

@@ -11,7 +11,7 @@ import {
   Button,
   Typography,
 } from 'antd';
-import { Lecture } from '@/components/lecture';
+import { Lecture } from '@/types/lecture';
 
 interface LectureProgressProps {
   lecture: Lecture;

@@ -1,5 +1,5 @@
 import styles from './search-result.less';
-import { Lecture } from '@/components/lecture';
+import { Lecture } from '@/types/lecture';
 import { Row, Space, Col } from 'antd';
 import { history } from 'umi';
 import { emitEvent, CATEGORY_SEARCH_TOOL, EVENT_GOTO_LECTURE } from '@/matomo';

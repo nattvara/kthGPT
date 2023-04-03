@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { history } from 'umi';
 import Preview from '@/components/lecture/preview';
-import { Lecture } from '@/components/lecture';
+import { Lecture } from '@/types/lecture';
 import {
   emitEvent,
   EVENT_ASKED_QUESTION,

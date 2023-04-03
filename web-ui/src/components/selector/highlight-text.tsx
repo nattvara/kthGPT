@@ -1,6 +1,6 @@
 import styles from './highlight-text.less';
 import { Space, Typography } from 'antd';
-import { Highlight } from '@/components/lecture';
+import { Highlight } from '@/types/lecture';
 
 const { Paragraph } = Typography;
 

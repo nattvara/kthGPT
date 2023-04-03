@@ -1,5 +1,5 @@
 import styles from './search-tool.less';
-import { Lecture } from '@/components/lecture';
+import { Lecture } from '@/types/lecture';
 import { Row, Input, Space, Col } from 'antd';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';

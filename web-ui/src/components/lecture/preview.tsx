@@ -1,6 +1,6 @@
 import styles from './preview.less';
 import { Image, Card, Spin, Row, Col, Space } from 'antd';
-import { Lecture } from '@/components/lecture';
+import { Lecture } from '@/types/lecture';
 import { makeUrl } from '@/http';
 import { EVENT_GOTO_CONTENT, CATEGORY_PREVIEW, emitEvent } from '@/matomo';
 import {
