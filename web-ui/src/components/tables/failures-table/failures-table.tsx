@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { Lecture } from '@/types/lecture';
-import styles from './denied-table.less';
+import styles from './failures-table.less';
 import { ColumnsType } from 'antd/es/table';
 import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';

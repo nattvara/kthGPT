@@ -1,5 +1,5 @@
 import Frame from '@/components/main/frame';
-import QueueTable from '@/components/tables/queue-table';
+import QueueTable from '@/components/tables/queue-table/queue-table';
 import { registerPageLoad } from '@/matomo';
 import { useEffect } from 'react';
 import { Typography } from 'antd';

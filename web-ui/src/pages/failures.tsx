@@ -1,5 +1,5 @@
 import Frame from '@/components/main/frame';
-import DeniedTable from '@/components/tables/failures-table';
+import DeniedTable from '@/components/tables/failures-table/failures-table';
 import { registerPageLoad } from '@/matomo';
 import { useEffect } from 'react';
 import { Typography } from 'antd';
