@@ -16,7 +16,7 @@ import { Lecture } from '@/components/lecture';
 import { useEffect, useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { history } from 'umi';
-import Preview from '../preview';
+import Preview from '@/components/lecture/preview';
 import LectureProgress from './lecture-progress';
 import CourseSelector from './course-selector';
 import {
