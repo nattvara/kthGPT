@@ -6,6 +6,8 @@ import { Col, Row } from 'antd';
 import styles from './index.less';
 import { useEffect, useState } from 'react';
 import SearchResult from '@/components/searching/search-results/search-result';
+import HugeButton from '@/components/input/huge-button/huge-button';
+import { VideoCameraAddOutlined } from '@ant-design/icons';
 
 export default function IndexPage() {
   const [lectures, setLectures] = useState<Lecture[]>([]);
@@ -34,6 +36,21 @@ export default function IndexPage() {
           {hasSearched && (
             <Row className={styles.fullwidth}>
               <SearchResult className={styles.maxwidth} lectures={lectures} />
+            </Row>
+          )}
+
+          {!hasSearched && (
+            <Row className={styles.fullwidth}>
+              <Col md={8}>image search</Col>
+              <Col md={8}>browser</Col>
+              <Col md={8}>
+                <HugeButton
+                  icon={<VideoCameraAddOutlined />}
+                  title="Add a new lecture"
+                  subtitle="It usually takes between 5 and 15 minutes"
+                  url="/add"
+                />
+              </Col>
             </Row>
           )}
         </Row>

@@ -3,6 +3,7 @@ import { defineConfig } from 'umi';
 export default defineConfig({
   routes: [
     { path: '/', component: 'index' },
+    { path: '/add', component: 'add' },
     { path: '/analyse/lectures/:id/:language', component: 'analyse' },
     { path: '/questions/lectures/:id/:language', component: 'questions' },
     { path: '/queue', component: 'queue' },

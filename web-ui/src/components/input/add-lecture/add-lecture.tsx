@@ -1,4 +1,4 @@
-import styles from './lecture-adder.less';
+import styles from './add-lecture.less';
 import {
   Row,
   Input,
@@ -244,7 +244,7 @@ interface UrlResponse extends ServerResponse {
   };
 }
 
-export default function LectureAdder() {
+export default function AddLecture() {
   const [sourceOpen, setSourceOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
   const [urlOpen, setUrlOpen] = useState(false);
