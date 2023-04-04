@@ -11,6 +11,7 @@ from api.routers import (
     index,
     urls,
     lectures,
+    courses,
     query,
     search,
     stats,
@@ -29,6 +30,7 @@ def get_app():
     app.include_router(index.router)
     app.include_router(urls.router)
     app.include_router(lectures.router)
+    app.include_router(courses.router)
     app.include_router(query.router)
     app.include_router(search.router)
     app.include_router(stats.router)
