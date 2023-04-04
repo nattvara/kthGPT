@@ -34,6 +34,7 @@ class InputModelSearchCourse(BaseModel):
 class InputModelSearchCourseCode(BaseModel):
     query: str
     source: Optional[str]
+    group: Optional[str]
 
 
 class CourseOutputModel(BaseModel):
@@ -131,6 +132,7 @@ def search_course_lectures(
             no_course=True,
             apply_filter=apply_filter,
             source=input_data.source,
+            group=input_data.group,
         )
         return response
 
@@ -139,6 +141,7 @@ def search_course_lectures(
         course_code,
         apply_filter,
         source=input_data.source,
+        group=input_data.group,
     )
 
     return response

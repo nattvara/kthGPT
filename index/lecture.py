@@ -119,6 +119,7 @@ def search_in_course(
     search_string: str,
     course_code: Optional[str] = None,
     source: Optional[str] = None,
+    group: Optional[str] = None,
     apply_filter: Optional[bool] = True,
     no_course: Optional[bool] = False,
 ):
@@ -156,6 +157,13 @@ def search_in_course(
         query['query']['bool']['must'].append({
             'match_phrase': {
                 'source': source,
+            }
+        })
+
+    if group is not None:
+        query['query']['bool']['must'].append({
+            'match_phrase': {
+                'group': group,
             }
         })
 

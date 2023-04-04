@@ -116,6 +116,7 @@ def test_lecture_search_inside_course(mocker, api_client, analysed_lecture):
         'XX1337',
         True,
         source=None,
+        group=None,
     )
 
 
@@ -137,6 +138,7 @@ def test_lecture_search_inside_no_course(mocker, api_client, analysed_lecture):
         no_course=True,
         apply_filter=True,
         source=None,
+        group=None,
     )
 
 
@@ -160,6 +162,31 @@ def test_lecture_search_inside_course_can_be_restricted_to_source(mocker, api_cl
         'XX1337',
         True,
         source='kth',
+        group=None,
+    )
+
+
+def test_lecture_search_inside_course_can_be_restricted_to_group(mocker, api_client, analysed_lecture):
+    doc = analysed_lecture.to_doc()
+    doc['date'] = doc['date'].isoformat()
+    index = mocker.patch('index.lecture.search_in_course', return_value=[
+        doc,
+        doc,
+    ])
+
+    response = api_client.post('/search/course/XX1337', json={
+        'query': 'some query',
+        'group': 'some_group',
+    })
+
+    assert len(response.json()) == 2
+    assert index.call_count == 1
+    assert index.mock_calls[0] == call(
+        'some query',
+        'XX1337',
+        True,
+        source=None,
+        group='some_group',
     )
 
 
