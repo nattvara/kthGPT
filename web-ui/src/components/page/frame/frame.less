@@ -27,7 +27,8 @@ h1.huge {
 }
 
 .main {
-  margin-top: 50px;
+  margin-top: 10px;
+  margin-bottom: 200px;
 }
 
 .logo_container {
@@ -48,4 +49,16 @@ h1.huge {
   margin-left: 5px;
   margin-right: 5px;
   margin-top: 5px;
+}
+
+.breadcrumbs {
+  display: block;
+
+  * ol {
+    flex-wrap: nowrap;
+  }
+
+  * .ant-breadcrumb-separator {
+    display: block !important;
+  }
 }

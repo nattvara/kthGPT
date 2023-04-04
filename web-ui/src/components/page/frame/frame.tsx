@@ -1,21 +1,39 @@
 import { FileTextOutlined, GithubOutlined } from '@ant-design/icons';
 import styles from './frame.less';
-import { Space, Row, Col, Layout, Image, Button, Typography } from 'antd';
+import {
+  Space,
+  Row,
+  Col,
+  Layout,
+  Image,
+  Button,
+  Typography,
+  Divider,
+  Breadcrumb,
+} from 'antd';
 import kthLogo from '../../../assets/logo.svg';
 import { history } from 'umi';
 import { buildDate, isProduction } from '@/version';
+import BackButton from '../back-button/back-button';
 
 const { Link } = Typography;
 
 const GITHUB_URL = 'https://github.com/nattvara/kthGPT';
 
+export interface BreadcrumbItem {
+  href?: string;
+  title: string;
+}
+
 interface FrameProps {
   showDescription?: boolean;
+  showBack?: boolean;
+  breadcrumbs?: BreadcrumbItem[];
   children: JSX.Element;
 }
 
 function Frame(props: FrameProps) {
-  const { showDescription, children } = props;
+  const { showDescription, showBack, breadcrumbs, children } = props;
 
   const goToGithub = () => {
     window.open(GITHUB_URL, '_blank');
@@ -87,6 +105,32 @@ function Frame(props: FrameProps) {
             )}
           </div>
         </Col>
+      </Row>
+
+      {showBack === true && (
+        <Row>
+          <BackButton></BackButton>
+        </Row>
+      )}
+
+      <Row>
+        <Divider orientation="left">
+          <div className={styles.breadcrumbs}>
+            <Breadcrumb>
+              <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
+              {breadcrumbs &&
+                breadcrumbs.map((b, index) =>
+                  b.href === undefined ? (
+                    <Breadcrumb.Item key={index}>{b.title}</Breadcrumb.Item>
+                  ) : (
+                    <Breadcrumb.Item key={index} href={b.href}>
+                      {b.title}
+                    </Breadcrumb.Item>
+                  )
+                )}
+            </Breadcrumb>
+          </div>
+        </Divider>
       </Row>
 
       <Layout className={styles.main}>
