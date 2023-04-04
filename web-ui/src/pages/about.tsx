@@ -14,17 +14,8 @@ export default function AboutPage() {
 
   return (
     <>
-      <Frame>
+      <Frame showBack={true} breadcrumbs={[{ title: 'About kthGPT' }]}>
         <div className={styles.page}>
-          <Row justify="center">
-            <Col sm={24} md={15}>
-              <Link href="/">
-                <Button type="primary">
-                  <LeftOutlined /> Back
-                </Button>
-              </Link>
-            </Col>
-          </Row>
           <Row justify="center">
             <Col sm={24} md={15}>
               <Title>About kthGPT</Title>
