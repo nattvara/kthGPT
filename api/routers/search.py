@@ -10,6 +10,7 @@ from db.models import ImageUpload, ImageQuestion
 import index.courses as courses_index
 import tools.text.prompts as prompts
 from config.logger import log
+from db.models import Lecture
 import index.lecture
 from db import get_db
 import tools.text.ai
@@ -134,6 +135,16 @@ def search_course_lectures(
             source=input_data.source,
             group=input_data.group,
         )
+        # Include kth_raw in kth searches
+        if input_data.source == Lecture.Source.KTH:
+            kth_raw_response = index.lecture.search_in_course(
+                input_data.query,
+                no_course=True,
+                apply_filter=apply_filter,
+                source=Lecture.Source.KTH_RAW,
+                group=input_data.group,
+            )
+            response = response + kth_raw_response
         return response
 
     response = index.lecture.search_in_course(
@@ -143,6 +154,16 @@ def search_course_lectures(
         source=input_data.source,
         group=input_data.group,
     )
+    # Include kth_raw in kth searches
+    if input_data.source == Lecture.Source.KTH:
+        kth_raw_response = index.lecture.search_in_course(
+            input_data.query,
+            course_code,
+            apply_filter=apply_filter,
+            source=Lecture.Source.KTH_RAW,
+            group=input_data.group,
+        )
+        response = response + kth_raw_response
 
     return response
 

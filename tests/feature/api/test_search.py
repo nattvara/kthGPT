@@ -152,7 +152,7 @@ def test_lecture_search_inside_course_can_be_restricted_to_source(mocker, api_cl
 
     response = api_client.post('/search/course/XX1337', json={
         'query': 'some query',
-        'source': 'kth',
+        'source': 'youtube',
     })
 
     assert len(response.json()) == 2
@@ -161,7 +161,38 @@ def test_lecture_search_inside_course_can_be_restricted_to_source(mocker, api_cl
         'some query',
         'XX1337',
         apply_filter=True,
+        source='youtube',
+        group=None,
+    )
+
+
+def test_lecture_search_inside_course_includes_kth_raw_with_kth_source(mocker, api_client, analysed_lecture):
+    doc = analysed_lecture.to_doc()
+    doc['date'] = doc['date'].isoformat()
+    index = mocker.patch('index.lecture.search_in_course', return_value=[
+        doc,
+        doc,
+    ])
+
+    response = api_client.post('/search/course/XX1337', json={
+        'query': 'some query',
+        'source': 'kth',
+    })
+
+    assert len(response.json()) == 4
+    assert index.call_count == 2
+    assert index.mock_calls[0] == call(
+        'some query',
+        'XX1337',
+        apply_filter=True,
         source='kth',
+        group=None,
+    )
+    assert index.mock_calls[1] == call(
+        'some query',
+        'XX1337',
+        apply_filter=True,
+        source='kth_raw',
         group=None,
     )
 
