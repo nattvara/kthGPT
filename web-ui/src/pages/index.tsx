@@ -7,7 +7,9 @@ import styles from './index.less';
 import { useEffect, useState } from 'react';
 import SearchResult from '@/components/searching/search-results/search-result';
 import HugeButton from '@/components/buttons/huge-button/huge-button';
-import { VideoCameraAddOutlined } from '@ant-design/icons';
+import { FileSearchOutlined, VideoCameraAddOutlined } from '@ant-design/icons';
+import HugePreviewButton from '@/components/buttons/huge-preview-button/huge-preview-button';
+import CourseList from '@/components/course/course-list/course-list';
 
 export default function IndexPage() {
   const [lectures, setLectures] = useState<Lecture[]>([]);
@@ -42,7 +44,17 @@ export default function IndexPage() {
           {!hasSearched && (
             <Row className={styles.fullwidth}>
               <Col md={8}>image search</Col>
-              <Col md={8}>browse</Col>
+              <Col md={8}>
+                <HugePreviewButton
+                  icon={<FileSearchOutlined />}
+                  title="Find a lecture"
+                  subtitle="Find a lecture from the lectures kthGPT has already watched"
+                  url="/courses"
+                  preview={
+                    <CourseList onCourseSelect={() => null} small={true} />
+                  }
+                />
+              </Col>
               <Col md={8}>
                 <HugeButton
                   icon={<VideoCameraAddOutlined />}
