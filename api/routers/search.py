@@ -139,7 +139,7 @@ def search_course_lectures(
     response = index.lecture.search_in_course(
         input_data.query,
         course_code,
-        apply_filter,
+        apply_filter=apply_filter,
         source=input_data.source,
         group=input_data.group,
     )

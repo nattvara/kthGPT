@@ -114,7 +114,7 @@ def test_lecture_search_inside_course(mocker, api_client, analysed_lecture):
     assert index.mock_calls[0] == call(
         'some query',
         'XX1337',
-        True,
+        apply_filter=True,
         source=None,
         group=None,
     )
@@ -160,7 +160,7 @@ def test_lecture_search_inside_course_can_be_restricted_to_source(mocker, api_cl
     assert index.mock_calls[0] == call(
         'some query',
         'XX1337',
-        True,
+        apply_filter=True,
         source='kth',
         group=None,
     )
@@ -184,7 +184,7 @@ def test_lecture_search_inside_course_can_be_restricted_to_group(mocker, api_cli
     assert index.mock_calls[0] == call(
         'some query',
         'XX1337',
-        True,
+        apply_filter=True,
         source=None,
         group='some_group',
     )
