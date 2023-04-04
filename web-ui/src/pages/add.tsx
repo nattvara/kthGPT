@@ -3,7 +3,6 @@ import Frame from '@/components/page/frame/frame';
 import { registerPageLoad } from '@/matomo';
 import { Col, Row } from 'antd';
 import { useEffect, useState } from 'react';
-import BackButton from '@/components/page/back/back';
 import AddLecture from '@/components/input/add-lecture/add-lecture';
 
 export default function IndexPage() {
@@ -13,9 +12,15 @@ export default function IndexPage() {
 
   return (
     <>
-      <Frame>
+      <Frame
+        showBack={true}
+        breadcrumbs={[
+          {
+            title: 'Add New Lecture',
+          },
+        ]}
+      >
         <>
-          <BackButton></BackButton>
           <Row>
             <Col sm={0} md={4}></Col>
             <Col sm={24} md={16}>
