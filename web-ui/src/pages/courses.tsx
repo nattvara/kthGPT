@@ -3,15 +3,38 @@ import Frame, { BreadcrumbItem } from '@/components/page/frame/frame';
 import { registerPageLoad } from '@/matomo';
 import { Col, Row } from 'antd';
 import { useEffect, useState } from 'react';
-import { history, useParams } from 'umi';
+import { useParams } from 'umi';
 import CourseList from '@/components/course/course-list/course-list';
-import { Course } from '@/types/lecture';
 import CourseContent from '@/components/course/course-content/course-content';
+import { Course } from '@/types/lecture';
 
 export default function IndexPage() {
   const { courseCode } = useParams();
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
   const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([]);
+
+  const selectCourse = (course: Course) => {
+    setSelectedCourse(course.course_code);
+
+    setBreadcrumbs([
+      {
+        title: 'Browse Courses',
+        href: '/courses',
+      },
+      {
+        title: course.course_code,
+      },
+    ]);
+
+    // using the regular history API as
+    // the umi router doesn't seem to support
+    // rewriting the url without reloading the page
+    window.history.pushState(
+      {},
+      course.course_code,
+      `/courses/${course.course_code}`
+    );
+  };
 
   useEffect(() => {
     registerPageLoad();
@@ -43,10 +66,7 @@ export default function IndexPage() {
             <Col sm={24} md={8}>
               <CourseList
                 selectedCourse={selectedCourse}
-                onCourseSelect={(course) => {
-                  setSelectedCourse(course.course_code);
-                  history.replace(`/courses/${course.course_code}`);
-                }}
+                onCourseSelect={(course) => selectCourse(course)}
               />
             </Col>
             {selectedCourse !== undefined && (
