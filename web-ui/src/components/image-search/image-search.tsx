@@ -30,7 +30,7 @@ import {
 } from '@/matomo';
 import { UploadChangeParam, UploadFile } from 'antd/es/upload';
 import { Image as ImageType, Question } from '@/types/search';
-import QuestionInput from '../question-input/question-input';
+import QuestionInput from '../input/question-input/question-input';
 import { Lecture } from '../../types/lecture';
 import { PreviewCompact } from '@/components/lecture/preview/preview';
 import { history } from 'umi';
