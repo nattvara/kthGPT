@@ -1,4 +1,4 @@
-import styles from './course-selector.less';
+import styles from './course-tagger.less';
 import { Lecture, Course } from '@/types/lecture';
 import { Button, Row, Typography, Input, Space, Col, notification } from 'antd';
 import {
@@ -224,12 +224,12 @@ function AddedCourse(props: AddedCourseProps) {
   );
 }
 
-interface CourseSelectorProps {
+interface CourseTaggerProps {
   lecture: Lecture;
   onLectureUpdated: (lecture: Lecture) => void;
 }
 
-export default function CourseSelector(props: CourseSelectorProps) {
+export default function CourseTagger(props: CourseTaggerProps) {
   const { lecture, onLectureUpdated } = props;
 
   return (
