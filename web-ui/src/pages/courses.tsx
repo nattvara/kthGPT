@@ -1,15 +1,19 @@
 import styles from './courses.less';
 import Frame, { BreadcrumbItem } from '@/components/page/frame/frame';
 import { registerPageLoad } from '@/matomo';
-import { Col, Row } from 'antd';
+import { Col, Row, Grid } from 'antd';
 import { useEffect, useState } from 'react';
 import { useParams } from 'umi';
 import CourseList from '@/components/course/course-list/course-list';
 import CourseContent from '@/components/course/course-content/course-content';
 import { Course } from '@/types/lecture';
 
+const { useBreakpoint } = Grid;
+
 export default function IndexPage() {
   const { courseCode } = useParams();
+  const screens = useBreakpoint();
+
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
   const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([]);
 
@@ -35,6 +39,13 @@ export default function IndexPage() {
       `/courses/${course.course_code}`
     );
   };
+
+  let shouldShowCourseList = false;
+  if (selectedCourse === null) {
+    shouldShowCourseList = true;
+  } else if (screens.md) {
+    shouldShowCourseList = true;
+  }
 
   useEffect(() => {
     registerPageLoad();
@@ -63,14 +74,17 @@ export default function IndexPage() {
       <Frame showBack={true} breadcrumbs={breadcrumbs}>
         <>
           <Row>
-            <Col sm={24} md={8}>
-              <CourseList
-                selectedCourse={selectedCourse}
-                onCourseSelect={(course) => selectCourse(course)}
-              />
-            </Col>
+            {shouldShowCourseList && (
+              <Col sm={24} md={8}>
+                <CourseList
+                  selectedCourse={selectedCourse}
+                  onCourseSelect={(course) => selectCourse(course)}
+                />
+              </Col>
+            )}
+
             {selectedCourse !== undefined && (
-              <Col sm={24} md={16}>
+              <Col sm={24} md={shouldShowCourseList ? 16 : 24}>
                 <CourseContent courseCode={selectedCourse} />
               </Col>
             )}
