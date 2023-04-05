@@ -21,14 +21,13 @@ const randomInt = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-
 interface LectureResponse extends ServerResponse {
   data: Lecture[];
 }
 
 interface LectureListProps {
   courseCode: string;
-  source: string;
+  source?: string;
 }
 
 export default function LectureList(props: LectureListProps) {
@@ -41,10 +40,20 @@ export default function LectureList(props: LectureListProps) {
   const { isLoading: isSearchingLectures, mutate: doLectureSearch } =
     useMutation(
       async () => {
-        return await apiClient.post(`/search/course/${courseCode}`, {
-          query: lectureQuery,
-          source: source,
-        });
+        let params = {};
+        if (source !== undefined) {
+          params = {
+            query: lectureQuery,
+            source: source,
+          };
+        } else {
+          params = {
+            query: lectureQuery,
+            source: source,
+          };
+        }
+
+        return await apiClient.post(`/search/course/${courseCode}`, params);
       },
       {
         onSuccess: (res: LectureResponse) => {

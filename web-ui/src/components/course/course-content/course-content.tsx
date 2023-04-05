@@ -24,10 +24,6 @@ export default function CourseContent(props: CourseContentProps) {
   const { courseCode } = props;
 
   const [course, setCourse] = useState<Course | null>(null);
-  const [youtubeGroups, setYoutubeGroups] = useState<string[]>([]);
-  const [selectedYoutubeGroup, setSelectedYoutubeGroup] = useState<
-    string | null
-  >(null);
 
   const { isLoading: isLoadingCourseInfo, mutate: fetchCourseInfo } =
     useMutation(
@@ -47,43 +43,11 @@ export default function CourseContent(props: CourseContentProps) {
       }
     );
 
-  const { isLoading: isLoadingYoutubeGroups, mutate: fetchYoutubeGroups } =
-    useMutation(
-      async () => {
-        return await apiClient.post(`/search/course/${course?.course_code}`, {
-          query: '',
-          source: 'youtube',
-        });
-      },
-      {
-        onSuccess: (res: LectureResponse) => {
-          const result = {
-            data: res.data,
-          };
-          const groups = new Set(
-            result.data
-              .map((lecture) => lecture.group)
-              .filter((group) => group !== null)
-          );
-          setYoutubeGroups(Array.from(groups));
-        },
-        onError: (err: ServerErrorResponse) => {
-          console.error(err);
-        },
-      }
-    );
-
   useEffect(() => {
     if (courseCode !== null) {
       fetchCourseInfo();
     }
   }, [courseCode]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (course !== null) {
-      fetchYoutubeGroups();
-    }
-  }, [course]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (course === null) {
     return <></>;
@@ -109,27 +73,23 @@ export default function CourseContent(props: CourseContentProps) {
         </>
       )}
 
+      {/* Separate KTH Play and YouTube videos on desktop */}
       <Row>
-        <Col md={12}>
+        <Col sm={0} md={12}>
           <Divider orientation="left">KTH Play</Divider>
           <LectureList source="kth" courseCode={course.course_code} />
         </Col>
-        <Col md={1}></Col>
-        <Col md={11}>
+        <Col sm={0} md={1}></Col>
+        <Col sm={0} md={11}>
           <Divider orientation="left">Youtube</Divider>
-          {isLoadingYoutubeGroups && <Skeleton active></Skeleton>}
           <LectureList source="youtube" courseCode={course.course_code} />
-          {/* {!isLoadingYoutubeGroups && (
-            <Row>
-              <Space direction="horizontal">
-                {youtubeGroups.map((group) => (
-                  <Col key={group}>
-                    <Button type="primary">{group}</Button>
-                  </Col>
-                ))}
-              </Space>
-            </Row>
-          )} */}
+        </Col>
+      </Row>
+
+      {/* Show all sources in one list on mobile */}
+      <Row>
+        <Col sm={24} md={0}>
+          <LectureList courseCode={course.course_code} />
         </Col>
       </Row>
     </div>
