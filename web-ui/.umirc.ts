@@ -4,8 +4,11 @@ export default defineConfig({
   routes: [
     { path: '/', component: 'index' },
     { path: '/add', component: 'add' },
+
     { path: '/courses', component: 'courses' },
     { path: '/courses/:courseCode', component: 'courses' },
+
+    { path: '/lectures/:id/:language/questions', component: 'questions' },
 
     { path: '/analyse/lectures/:id/:language', component: 'analyse' },
     { path: '/questions/lectures/:id/:language', component: 'questions' },
