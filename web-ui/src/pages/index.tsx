@@ -60,7 +60,7 @@ export default function IndexPage() {
                   icon={<VideoCameraAddOutlined />}
                   title="Add a new lecture"
                   subtitle="It usually takes between 5 and 15 minutes"
-                  url="/add"
+                  url="/lectures/add"
                 />
               </Col>
             </Row>

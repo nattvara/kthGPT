@@ -3,18 +3,18 @@ import { defineConfig } from 'umi';
 export default defineConfig({
   routes: [
     { path: '/', component: 'index' },
-    { path: '/add', component: 'add' },
 
     { path: '/courses', component: 'courses' },
     { path: '/courses/:courseCode', component: 'courses' },
 
-    { path: '/lectures/:id/:language/questions', component: 'questions' },
+    { path: '/lectures/add', component: 'lectures/add' },
+    { path: '/lectures/:id/:language/questions', component: 'lectures/questions' },
+    { path: '/lectures/:id/:language/analyse', component: 'lectures/analyse' },
 
-    { path: '/analyse/lectures/:id/:language', component: 'analyse' },
-    { path: '/questions/lectures/:id/:language', component: 'questions' },
-    { path: '/queue', component: 'queue' },
-    { path: '/denied', component: 'denied' },
-    { path: '/failures', component: 'failures' },
+    { path: '/info/queue', component: 'info/queue' },
+    { path: '/info/denied', component: 'info/denied' },
+    { path: '/info/failures', component: 'info/failures' },
+
     { path: '/about', component: 'about' },
 
     { path: '*', component: '404' },
