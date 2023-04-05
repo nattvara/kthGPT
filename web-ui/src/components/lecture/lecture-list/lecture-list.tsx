@@ -1,6 +1,6 @@
 import styles from './lecture-list.less';
 import { Lecture } from '@/types/lecture';
-import { Row, Input, Space, Col } from 'antd';
+import { Row, Input, Space, Col, Skeleton } from 'antd';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
@@ -17,6 +17,11 @@ const { Search } = Input;
 
 const AUTO_UPDATE_INTERVAL = 10000;
 
+const randomInt = (min: number, max: number) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+
 interface LectureResponse extends ServerResponse {
   data: Lecture[];
 }
@@ -29,6 +34,7 @@ interface LectureListProps {
 export default function LectureList(props: LectureListProps) {
   const { courseCode, source } = props;
 
+  const [firstLoad, setFirstLoad] = useState<boolean>(true);
   const [lectureQuery, setLectureQuery] = useState<string>('');
   const [lectures, setLectures] = useState<Lecture[]>([]);
 
@@ -46,6 +52,7 @@ export default function LectureList(props: LectureListProps) {
             data: res.data,
           };
           setLectures(result.data);
+          setFirstLoad(false);
         },
         onError: (err: ServerErrorResponse) => {
           console.log(err);
@@ -108,6 +115,14 @@ export default function LectureList(props: LectureListProps) {
       </Row>
 
       <Row className={styles.result_container}>
+        {isSearchingLectures && firstLoad && (
+          <>
+            <Skeleton active paragraph={{ rows: randomInt(1, 10) }}></Skeleton>
+            <Skeleton active paragraph={{ rows: randomInt(1, 10) }}></Skeleton>
+            <Skeleton active paragraph={{ rows: randomInt(1, 10) }}></Skeleton>
+            <Skeleton active paragraph={{ rows: randomInt(1, 10) }}></Skeleton>
+          </>
+        )}
         <Space
           direction="vertical"
           size="large"

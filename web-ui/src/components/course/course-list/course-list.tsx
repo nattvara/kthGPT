@@ -1,6 +1,6 @@
 import styles from './course-list.less';
 import { Course } from '@/types/lecture';
-import { Row, Input, Space, Col, Button, Typography } from 'antd';
+import { Row, Input, Space, Col, Button, Typography, Skeleton } from 'antd';
 import { RightOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
@@ -14,6 +14,10 @@ import {
 
 const { Search } = Input;
 const { Link } = Typography;
+
+const randomInt = (min: number, max: number) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 
 const AUTO_UPDATE_INTERVAL = 10000;
 
@@ -30,6 +34,7 @@ interface CourseBrowserProps {
 export default function CourseList(props: CourseBrowserProps) {
   const { onCourseSelect, selectedCourse, small } = props;
 
+  const [firstLoad, setFirstLoad] = useState<boolean>(true);
   const [courseQuery, setCourseQuery] = useState<string>('');
   const [courses, setCourses] = useState<Course[]>([]);
   const [lecturesWithoutCourse, setLecturesWithoutCourse] = useState<number>(0);
@@ -54,6 +59,7 @@ export default function CourseList(props: CourseBrowserProps) {
           lectures: lecturesWithoutCourse,
         });
         setCourses(result.data);
+        setFirstLoad(false);
       },
       onError: (err: ServerErrorResponse) => {
         console.log(err);
@@ -112,6 +118,14 @@ export default function CourseList(props: CourseBrowserProps) {
       )}
 
       <div className={styles.result_container}>
+        {isSearchingCourses && firstLoad && (
+          <>
+            <Skeleton active paragraph={{ rows: randomInt(1, 100) }}></Skeleton>
+            <Skeleton active paragraph={{ rows: randomInt(1, 100) }}></Skeleton>
+            <Skeleton active paragraph={{ rows: randomInt(1, 100) }}></Skeleton>
+            <Skeleton active paragraph={{ rows: randomInt(1, 100) }}></Skeleton>
+          </>
+        )}
         <Space direction="vertical" size="large">
           {courses.map((course) => {
             if (courseQuery !== '' && course.course_code === 'no_course') {
