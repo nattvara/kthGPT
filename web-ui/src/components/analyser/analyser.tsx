@@ -18,7 +18,6 @@ import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { history } from 'umi';
 import Preview from '@/components/lecture/preview/preview';
 import LectureProgress from './lecture-progress';
-import CourseSelector from './course-selector';
 import {
   emitEvent,
   CATEGORY_QUESTIONS,
@@ -26,6 +25,7 @@ import {
   CATEGORY_ANALYSE,
   EVENT_ERROR_RESPONSE,
 } from '@/matomo';
+import CourseTagger from '../course/course-tagger/course-tagger';
 
 const { Paragraph, Link } = Typography;
 
@@ -426,7 +426,7 @@ export default function Analyser(props: AnalyserProps) {
                 <Preview lecture={lecture}></Preview>
               </Col>
               <Col sm={24} md={24} lg={12}>
-                <CourseSelector
+                <CourseTagger
                   lecture={lecture}
                   onLectureUpdated={(lecture) => setLecture(lecture)}
                 />
