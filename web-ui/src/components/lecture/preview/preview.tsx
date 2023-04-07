@@ -158,13 +158,15 @@ export default function Preview(props: PreviewProps) {
       cover={
         <>
           <Spin tip="Loading..." spinning={lecture.preview_uri === null}>
-            <Image
-              preview={false}
-              style={{ minHeight: '100px' }}
-              src={
-                lecture.preview_uri === null ? '' : makeUrl(lecture.preview_uri)
-              }
-            />
+            <div className={styles.img_container}>
+              <Image
+                preview={false}
+                style={{ minHeight: '100px' }}
+                src={
+                  lecture.preview_uri === null ? '' : makeUrl(lecture.preview_uri)
+                }
+              />
+            </div>
           </Spin>
         </>
       }
