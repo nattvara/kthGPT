@@ -53,6 +53,7 @@ class ImageOutputModel(BaseModel):
     created_at: str
     modified_at: str
     text_content: Optional[str]
+    can_ask_question: bool
     description_en: Optional[str]
     description_sv: Optional[str]
     parse_image_content_ok: Optional[bool]

@@ -81,6 +81,18 @@ class ImageUpload(Base):
         self.create_search_queries_sv_ok = update.create_search_queries_sv_ok
         self.create_search_queries_sv_failure_reason = update.create_search_queries_sv_failure_reason
 
+    def can_ask_question(self) -> bool:
+        if not self.parse_image_content_ok:
+            return False
+
+        if not self.create_description_en_ok:
+            return False
+
+        if not self.create_description_sv_ok:
+            return False
+
+        return True
+
     def mathpix_requests(self) -> list:
         return list(get_mathpix_requests_by_image_upload_id(self.id))
 
@@ -107,6 +119,7 @@ class ImageUpload(Base):
             'created_at': created_at.isoformat(),
             'modified_at': modified_at.isoformat(),
             'text_content': self.text_content,
+            'can_ask_question': self.can_ask_question(),
             'description_en': self.description_en,
             'description_sv': self.description_sv,
             'parse_image_content_ok': self.parse_image_content_ok,
