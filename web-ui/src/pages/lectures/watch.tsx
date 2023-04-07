@@ -27,7 +27,7 @@ interface UrlResponse extends ServerResponse {
   };
 }
 
-export default function AnalysePage() {
+export default function WatchPage() {
   const { id, language } = useParams();
 
   const [lecture, setLecture] = useState<Lecture | null>(null);
