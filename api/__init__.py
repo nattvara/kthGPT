@@ -15,6 +15,7 @@ from api.routers import (
     query,
     search,
     stats,
+    assignments,
 )
 
 
@@ -34,6 +35,7 @@ def get_app():
     app.include_router(query.router)
     app.include_router(search.router)
     app.include_router(stats.router)
+    app.include_router(assignments.router)
 
     return app
 
