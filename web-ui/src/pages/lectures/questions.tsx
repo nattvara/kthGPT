@@ -57,7 +57,7 @@ export default function QuestionsPage() {
     });
   } else {
     breadcrumbs.push({
-      title: lecture.title !== null ? lecture.title : '',
+      title: lecture.title !== null ? lecture.title : 'Unknown lecture',
     });
   }
   breadcrumbs.push({
