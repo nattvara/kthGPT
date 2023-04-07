@@ -9,7 +9,7 @@ export default defineConfig({
 
     { path: '/lectures/add', component: 'lectures/add' },
     { path: '/lectures/:id/:language/questions', component: 'lectures/questions' },
-    { path: '/lectures/:id/:language/analyse', component: 'lectures/analyse' },
+    { path: '/lectures/:id/:language/watch', component: 'lectures/watch' },
 
     { path: '/info/queue', component: 'info/queue' },
     { path: '/info/denied', component: 'info/denied' },
