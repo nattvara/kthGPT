@@ -91,6 +91,23 @@ Svar:
 '''.strip()
 
 
+def create_query_text_for_image(query: Query, upload: ImageUpload):
+    return f'''
+Answer the following prompt about an assignment.
+
+Assignment Description:
+{upload.description_en}
+
+Assignment Content:
+{upload.text_content}
+
+Prompt:
+{query.query_string}
+
+Answer:
+'''.strip()
+
+
 def create_text_to_decide_if_video_is_appropriate_english(text):
     categories = [
         'Entertainment',

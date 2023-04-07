@@ -105,7 +105,7 @@ def delete_all_except_last_message_in_analysis(analysis_id: int):
 
 
 # Query
-def get_most_recent_query_by_sha(lecture, sha: str):
+def get_most_recent_lecture_query_by_sha(lecture, sha: str):
     from db.models.query import Query
     return Query.filter(
         Query.lecture_id == lecture.id
@@ -118,9 +118,29 @@ def get_most_recent_query_by_sha(lecture, sha: str):
     ).first()
 
 
-def create_query(lecture, query_string: str):
+def get_most_recent_image_query_by_sha(image, sha: str):
+    from db.models.query import Query
+    return Query.filter(
+        Query.image_upload_id == image.id
+    ).filter(
+        Query.query_hash == sha
+    ).filter(
+        Query.cache_is_valid == True  # noqa: E712
+    ).order_by(
+        Query.modified_at.desc()
+    ).first()
+
+
+def create_lecture_query(lecture, query_string: str):
     from db.models.query import Query
     query = Query(lecture_id=lecture.id, query_string=query_string)
+    query.save()
+    return query
+
+
+def create_image_query(image, query_string: str):
+    from db.models.query import Query
+    query = Query(image_upload_id=image.id, query_string=query_string)
     query.save()
     return query
 
@@ -128,6 +148,11 @@ def create_query(lecture, query_string: str):
 def find_all_queries_for_lecture(lecture):
     from db.models.query import Query
     return Query.select().where(Query.lecture_id == lecture.id)
+
+
+def find_all_queries_for_image(image):
+    from db.models.query import Query
+    return Query.select().where(Query.image_upload_id == image.id)
 
 
 # Message

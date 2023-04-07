@@ -13,6 +13,7 @@ from .base import Base
 from db.crud import (
     get_mathpix_requests_by_image_upload_id,
     get_image_questions_by_image_upload_id,
+    find_all_queries_for_image,
 )
 
 
@@ -98,6 +99,10 @@ class ImageUpload(Base):
 
     def questions(self) -> list:
         return list(get_image_questions_by_image_upload_id(self.id))
+
+    def queries(self) -> list:
+        queries = find_all_queries_for_image(self)
+        return queries
 
     def get_filename(self) -> str:
         return writable_image_upload_filepath(self.public_id, self.file_format)
