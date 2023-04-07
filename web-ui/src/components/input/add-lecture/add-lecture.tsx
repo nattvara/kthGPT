@@ -271,7 +271,7 @@ export default function AddLecture() {
           headers: res.headers,
           data: res.data,
         };
-        history.push('/analyse' + result.data.uri);
+        history.push(`${result.data.uri}/watch`);
       },
       onError: (err: ServerErrorResponse) => {
         setError(err.response.data.detail);
