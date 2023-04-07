@@ -1,9 +1,9 @@
 
 
-def test_query_can_be_made_about_lecture(mocker, api_client, analysed_lecture):
+def test_lecture_query_can_be_made_about_lecture(mocker, api_client, analysed_lecture):
     mocker.patch('tools.text.ai.gpt3', return_value='gpt-3 response')
 
-    response = api_client.post('/query', json={
+    response = api_client.post('/query/lecture', json={
         'lecture_id': analysed_lecture.public_id,
         'language': analysed_lecture.language,
         'query_string': 'some interesting question',
@@ -12,11 +12,11 @@ def test_query_can_be_made_about_lecture(mocker, api_client, analysed_lecture):
     assert response.json()['response'] == 'gpt-3 response'
 
 
-def test_query_response_is_cached(mocker, api_client, analysed_lecture):
+def test_lecture_query_response_is_cached(mocker, api_client, analysed_lecture):
     gpt3 = mocker.patch('tools.text.ai.gpt3', return_value='gpt-3 response')
 
     def request():
-        return api_client.post('/query', json={
+        return api_client.post('/query/lecture', json={
             'lecture_id': analysed_lecture.public_id,
             'language': analysed_lecture.language,
             'query_string': 'some interesting question',
@@ -29,11 +29,11 @@ def test_query_response_is_cached(mocker, api_client, analysed_lecture):
     assert gpt3.call_count == 1
 
 
-def test_query_response_cache_can_be_overridden(mocker, api_client, analysed_lecture):
+def test_lecture_query_response_cache_can_be_overridden(mocker, api_client, analysed_lecture):
     gpt3 = mocker.patch('tools.text.ai.gpt3', return_value='gpt-3 response')
 
     def request():
-        return api_client.post('/query', json={
+        return api_client.post('/query/lecture', json={
             'lecture_id': analysed_lecture.public_id,
             'language': analysed_lecture.language,
             'query_string': 'some interesting question',
@@ -47,7 +47,7 @@ def test_query_response_cache_can_be_overridden(mocker, api_client, analysed_lec
     assert gpt3.call_count == 2
 
 
-def test_query_response_cache_can_be_invalidated(mocker, api_client, analysed_lecture):
+def test_query_response_cache_can_be_invalidated_for_lectures(mocker, api_client, analysed_lecture):
     gpt3 = mocker.patch('tools.text.ai.gpt3', return_value='gpt-3 response')
 
     def make_query(query_string: str):
@@ -121,7 +121,7 @@ def test_image_query_response_cache_can_be_overridden(mocker, api_client, image_
     assert gpt3.call_count == 2
 
 
-def test_query_response_cache_can_be_invalidated(mocker, api_client, image_upload):
+def test_query_response_cache_can_be_invalidated_for_images(mocker, api_client, image_upload):
     gpt3 = mocker.patch('tools.text.ai.gpt3', return_value='gpt-3 response')
 
     def make_query(query_string: str):

@@ -93,7 +93,7 @@ export default function LectureQuestion(props: LectureQuestionProps) {
     async () => {
       setResponse('');
       return await apiClient.post(
-        '/query',
+        '/query/lecture',
         {
           lecture_id: lecture.public_id,
           language: lecture.language,

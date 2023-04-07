@@ -38,7 +38,7 @@ class OutputModel(BaseModel):
     cached: bool
 
 
-@router.post('/query', dependencies=[Depends(get_db)])
+@router.post('/query/lecture', dependencies=[Depends(get_db)])
 def new_lecture_query(input_data: LectureInputModel) -> OutputModel:
     lecture = get_lecture_by_public_id_and_language(
         input_data.lecture_id,
