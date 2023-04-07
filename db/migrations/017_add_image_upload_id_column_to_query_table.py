@@ -19,5 +19,5 @@ def migrate(migrator: Migrator, database: pw.Database, fake=False, **kwargs):
 
 def rollback(migrator: Migrator, database: pw.Database, fake=False, **kwargs):
     """Write your rollback migrations here."""
-    migrator.sql('ALTER TABLE query ALTER COLUMN lecture_id TEXT NOT NULL;')
+    migrator.sql('ALTER TABLE query ALTER COLUMN lecture_id SET NOT NULL;')
     migrator.remove_fields(Query, 'image_upload_id', cascade=True)
