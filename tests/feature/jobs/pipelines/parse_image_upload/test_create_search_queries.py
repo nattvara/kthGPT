@@ -1,7 +1,7 @@
 from typing import Optional
 from rq import Queue
 
-from jobs.pipelines.image_search import (
+from jobs.pipelines.parse_image_upload import (
     create_search_queries
 )
 

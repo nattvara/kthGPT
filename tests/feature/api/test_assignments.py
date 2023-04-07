@@ -9,7 +9,7 @@ from db.crud import (
 
 
 def test_assignment_can_be_created_from_image_upload(mocker, api_client, img_file):
-    mocker.patch('jobs.schedule_image_search')
+    mocker.patch('jobs.schedule_parse_image_upload')
 
     response = api_client.post(
         '/assignments/image',
@@ -26,7 +26,7 @@ def test_assignment_can_be_created_from_image_upload(mocker, api_client, img_fil
 
 
 def test_assignments_will_not_save_the_same_image_twice(mocker, api_client, img_file):
-    mocker.patch('jobs.schedule_image_search')
+    mocker.patch('jobs.schedule_parse_image_upload')
 
     def func():
         response = api_client.post(
@@ -47,7 +47,7 @@ def test_assignments_will_not_save_the_same_image_twice(mocker, api_client, img_
 
 
 def test_assignments_saves_png_file_upload(mocker, api_client, img_file):
-    mocker.patch('jobs.schedule_image_search')
+    mocker.patch('jobs.schedule_parse_image_upload')
 
     response = api_client.post(
         '/assignments/image',
@@ -82,8 +82,8 @@ def test_can_retrieve_info_from_assignments_api(api_client, image_upload):
     assert response.json()['description_sv'] == 'baz'
 
 
-def test_image_upload_schedules_image_search_pipeline(mocker, api_client, img_file):
-    schedule_image_search_mock = mocker.patch('jobs.schedule_image_search')
+def test_image_upload_schedules_parse_image_upload_pipeline(mocker, api_client, img_file):
+    schedule_parse_image_upload_mock = mocker.patch('jobs.schedule_parse_image_upload')
 
     response = api_client.post(
         '/assignments/image',
@@ -95,5 +95,5 @@ def test_image_upload_schedules_image_search_pipeline(mocker, api_client, img_fi
     image_id = response.json()['id']
     image = get_image_upload_by_public_id(image_id)
 
-    assert schedule_image_search_mock.call_count == 1
-    assert schedule_image_search_mock.mock_calls[0] == call(image)
+    assert schedule_parse_image_upload_mock.call_count == 1
+    assert schedule_parse_image_upload_mock.mock_calls[0] == call(image)

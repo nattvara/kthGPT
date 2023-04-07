@@ -26,7 +26,7 @@ class ImageUpload(Base):
     search_queries_en = peewee.BlobField(null=True)
     search_queries_sv = peewee.BlobField(null=True)
 
-    # image_search steps
+    # parse_image_upload steps
     parse_image_content_ok = peewee.BooleanField(null=True)
     parse_image_content_failure_reason = peewee.TextField(null=True)
     create_description_en_ok = peewee.BooleanField(null=True)

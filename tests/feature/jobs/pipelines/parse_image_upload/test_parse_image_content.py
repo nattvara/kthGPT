@@ -2,7 +2,7 @@ from unittest.mock import call
 from decimal import Decimal
 import json
 
-from jobs.pipelines.image_search import (
+from jobs.pipelines.parse_image_upload import (
     parse_image_content
 )
 from tests.conftest import (

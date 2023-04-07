@@ -12,7 +12,7 @@ from jobs.pipelines.analyse_lecture import (
     summarise_transcript,
     transcribe_audio,
 )
-from jobs.pipelines.image_search import (
+from jobs.pipelines.parse_image_upload import (
     parse_image_content,
     create_description,
     create_search_queries,
@@ -244,7 +244,7 @@ def analysis_queues_restart(
         schedule_analysis_of_lecture(lecture)
 
 
-def schedule_image_search(
+def schedule_parse_image_upload(
     image_upload,
     queue_default: Queue = get_default_queue,
     queue_image: Queue = get_image_queue,
