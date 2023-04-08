@@ -155,41 +155,39 @@ export default function SearchByImage(props: SearchByImageProps) {
       </Row>
 
       {!isSearching && (
-        <Row>
-          <Row className={styles.result}>
-            <Space direction="vertical" size="large">
-              {hits.map((hit, index) => {
-                if (index + 1 > limit) {
-                  return <div key={hit.id}></div>;
-                }
+        <Row className={styles.result}>
+          {hits.map((hit, index) => {
+            if (index + 1 > limit) {
+              return <div key={hit.id}></div>;
+            }
 
-                return (
-                  <Row key={hit.id}>
-                    <Col span={2} className={styles.row_number}>
-                      {index + 1}
-                    </Col>
-                    <Col span={22}>
-                      <Row>
-                        <LecturePreviewCompact
-                          lecture={hit.lecture}
-                          onClick={() => goToLecture(hit.lecture)}
-                          onMetaClick={() => goToLecture(hit.lecture, true)}
-                          onCtrlClick={() => goToLecture(hit.lecture, true)}
-                        />
-                      </Row>
-                      <Row>
-                        <ImageQuestionHit
-                          hit={hit}
-                          imageId={image.id}
-                          searchQuestionId={searchQuestionId}
-                        />
-                      </Row>
-                    </Col>
-                  </Row>
-                );
-              })}
-            </Space>
-          </Row>
+            return (
+              <Row key={hit.id}>
+                <Col span={2} className={styles.row_number}>
+                  {index + 1}
+                </Col>
+                <Col span={22}>
+                  <Space direction="vertical" size="middle">
+                    <Row>
+                      <LecturePreviewCompact
+                        lecture={hit.lecture}
+                        onClick={() => goToLecture(hit.lecture)}
+                        onMetaClick={() => goToLecture(hit.lecture, true)}
+                        onCtrlClick={() => goToLecture(hit.lecture, true)}
+                      />
+                    </Row>
+                    <Row>
+                      <ImageQuestionHit
+                        hit={hit}
+                        imageId={image.id}
+                        searchQuestionId={searchQuestionId}
+                      />
+                    </Row>
+                  </Space>
+                </Col>
+              </Row>
+            );
+          })}
         </Row>
       )}
 
