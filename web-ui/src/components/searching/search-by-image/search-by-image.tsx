@@ -32,6 +32,8 @@ interface RelevanceResponse extends ServerResponse {
 const QUESTION =
   'Where in this lecture can I learn how to solve this assignment?';
 
+const HITS_TO_PAGINATE_AFTER = 3;
+
 interface SearchByImageProps {
   image: Image;
 }
@@ -43,23 +45,35 @@ export default function SearchByImage(props: SearchByImageProps) {
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [searchQuestionId, setSearchQuestionId] = useState<string>('');
   const [notReady, setNotReady] = useState<boolean | null>(null);
+  const [limit, setLimit] = useState<number>(HITS_TO_PAGINATE_AFTER);
 
   const { isLoading: isSearching, mutate: doSearch } = useMutation(
     async () => {
-      return await apiClient.post(`/search/image/${image.id}/questions`, {
-        query: QUESTION,
-      });
+      return await apiClient.post(
+        `/search/image/${image.id}/questions`,
+        {
+          query: QUESTION,
+        },
+        {
+          timeout: 1000 * 40, // 40s timeout
+        }
+      );
     },
     {
       onSuccess: (res: QuestionResponse) => {
         const result = {
           data: res.data,
         };
+        setError('');
         setNotReady(false);
         setLectures(result.data.hits);
         setSearchQuestionId(result.data.id);
       },
       onError: (err: ServerErrorResponse) => {
+        if (err.code === 'ECONNABORTED') {
+          setError('Search took to long to response, try again!');
+        }
+
         if (err.response.status === 409) {
           setNotReady(true);
           return;
@@ -87,6 +101,14 @@ export default function SearchByImage(props: SearchByImageProps) {
     } else {
       await history.push(url);
     }
+  };
+
+  const increaseLimit = () => {
+    if (limit + HITS_TO_PAGINATE_AFTER > lectures.length) {
+      setLimit(lectures.length);
+      return;
+    }
+    setLimit(limit + HITS_TO_PAGINATE_AFTER);
   };
 
   useEffect(() => {
@@ -130,6 +152,10 @@ export default function SearchByImage(props: SearchByImageProps) {
           <Row className={styles.result}>
             <Space direction="vertical" size="large">
               {lectures.map((lecture, index) => {
+                if (index + 1 > limit) {
+                  return <div key={index}></div>;
+                }
+
                 return (
                   <Row key={lecture.public_id + lecture.language}>
                     <Col span={2} className={styles.row_number}>
@@ -159,6 +185,24 @@ export default function SearchByImage(props: SearchByImageProps) {
           </Row>
         </Row>
       )}
+
+      <Row justify="center" className={styles.full_width}>
+        <Col>
+          <Button
+            onClick={() => increaseLimit()}
+            type="primary"
+            key="btn"
+            size="large"
+          >
+            Load 3 more hits
+          </Button>
+        </Col>
+      </Row>
+      <Row justify="center" className={styles.full_width}>
+        <Paragraph>
+          Showing {limit} / {lectures.length} hits
+        </Paragraph>
+      </Row>
     </>
   );
 }
