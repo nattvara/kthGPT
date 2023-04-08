@@ -2,8 +2,8 @@ import styles from './add.less';
 import Frame from '@/components/page/frame/frame';
 import { registerPageLoad } from '@/matomo';
 import { Col, Row } from 'antd';
-import { useEffect, useState } from 'react';
-import AddLecture from '@/components/input/add-lecture/add-lecture';
+import { useEffect } from 'react';
+import LectureAddNewForm from '@/components/lecture/lecture-add-new-form/lecture-add-new-form';
 
 export default function IndexPage() {
   useEffect(() => {
@@ -24,7 +24,7 @@ export default function IndexPage() {
           <Row>
             <Col sm={0} md={4}></Col>
             <Col sm={24} md={16}>
-              <AddLecture />
+              <LectureAddNewForm />
             </Col>
           </Row>
         </>

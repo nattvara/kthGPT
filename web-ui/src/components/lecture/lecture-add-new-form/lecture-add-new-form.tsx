@@ -1,4 +1,4 @@
-import styles from './add-lecture.less';
+import styles from './lecture-add-new-form.less';
 import {
   Row,
   Input,
@@ -244,7 +244,7 @@ interface UrlResponse extends ServerResponse {
   };
 }
 
-export default function AddLecture() {
+export default function LectureAddNewForm() {
   const [sourceOpen, setSourceOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
   const [urlOpen, setUrlOpen] = useState(false);
