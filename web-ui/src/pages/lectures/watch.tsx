@@ -175,6 +175,26 @@ export default function WatchPage() {
     );
   }
 
+  if (lecture.approved !== true) {
+    return (
+      <>
+        <Frame showBack={true} breadcrumbs={breadcrumbs}>
+          <Row>
+            <Col span={24}>
+              <LectureWatchResult
+                lecture={lecture}
+                isRestarting={isRestarting}
+                restart={() => {
+                  restart();
+                }}
+              />
+            </Col>
+          </Row>
+        </Frame>
+      </>
+    );
+  }
+
   return (
     <>
       {contextHolder}
