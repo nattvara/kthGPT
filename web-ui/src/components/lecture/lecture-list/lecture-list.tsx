@@ -12,14 +12,11 @@ import {
   EVENT_GOTO_LECTURE,
   EVENT_ERROR_RESPONSE,
 } from '@/matomo';
+import { SearchResultLoading } from '@/components/searching/seach-result-loading/search-result-loading';
 
 const { Search } = Input;
 
 const AUTO_UPDATE_INTERVAL = 10000;
-
-const randomInt = (min: number, max: number) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
 
 interface LectureResponse extends ServerResponse {
   data: Lecture[];
@@ -125,12 +122,7 @@ export default function LectureList(props: LectureListProps) {
 
       <Row className={styles.result_container}>
         {isSearchingLectures && firstLoad && (
-          <>
-            <Skeleton active paragraph={{ rows: randomInt(1, 10) }}></Skeleton>
-            <Skeleton active paragraph={{ rows: randomInt(1, 10) }}></Skeleton>
-            <Skeleton active paragraph={{ rows: randomInt(1, 10) }}></Skeleton>
-            <Skeleton active paragraph={{ rows: randomInt(1, 10) }}></Skeleton>
-          </>
+          <SearchResultLoading size={4} min={1} max={100} />
         )}
         <Space
           direction="vertical"
