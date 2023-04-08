@@ -12,7 +12,8 @@ from db import get_db
 import index.lecture
 import tools.text.ai
 from db.crud import (
-    get_lecture_by_public_id_and_language,
+    get_most_recent_question_hit_by_lecture_and_question,
+    get_most_recent_image_question_by_sha,
     get_image_question_hit_by_public_id,
     get_image_upload_by_public_id,
     get_lecture_by_id,
@@ -175,12 +176,17 @@ def create_image_question(
     if not upload.parse_image_upload_complete():
         raise HTTPException(status_code=409, detail='image has not finished parsing so question cannot be created, try again later.')  # noqa: E501
 
-    question = ImageQuestion(
-        public_id=ImageQuestion.make_public_id(),
-        image_upload_id=upload.id,
-        query_string=input_data.query,
-    )
-    question.save()
+    sha = ImageQuestion.make_sha(input_data.query)
+    question = get_most_recent_image_question_by_sha(upload, sha)
+
+    if question is None:
+        question = ImageQuestion(
+            public_id=ImageQuestion.make_public_id(),
+            image_upload_id=upload.id,
+            query_string=input_data.query,
+            query_hash=sha,
+        )
+        question.save()
 
     docs = {}
 
@@ -215,12 +221,19 @@ def create_image_question(
 
     hits = []
     for lecture in lectures:
-        hit = ImageQuestionHit(
-            public_id=ImageQuestionHit.make_public_id(),
-            image_question_id=question.id,
-            lecture_id=lecture.id,
-        )
+        hit = get_most_recent_question_hit_by_lecture_and_question(lecture, question)
+
+        if hit is None:
+            hit = ImageQuestionHit(
+                public_id=ImageQuestionHit.make_public_id(),
+                image_question_id=question.id,
+                lecture_id=lecture.id,
+            )
+            hit.save()
+
+        hit.count += 1
         hit.save()
+
         hits.append(hit.to_dict())
 
     return {
