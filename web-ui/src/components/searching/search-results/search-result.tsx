@@ -3,7 +3,7 @@ import { Lecture } from '@/types/lecture';
 import { Row, Space, Col } from 'antd';
 import { history } from 'umi';
 import { emitEvent, CATEGORY_SEARCH_TOOL, EVENT_GOTO_LECTURE } from '@/matomo';
-import { PreviewCompact } from '@/components/lecture/preview/preview';
+import { LecturePreviewCompact } from '@/components/lecture/lecture-preview/lecture-preview';
 import { HighlightText } from '@/components/text/highlight-text/highlight-text';
 
 interface SearchResultProps {
@@ -41,7 +41,7 @@ export default function SearchResult(props: SearchResultProps) {
               </Col>
               <Col span={22}>
                 <Row>
-                  <PreviewCompact
+                  <LecturePreviewCompact
                     lecture={lecture}
                     onClick={() => goToLecture(lecture)}
                     onMetaClick={() => goToLecture(lecture, true)}

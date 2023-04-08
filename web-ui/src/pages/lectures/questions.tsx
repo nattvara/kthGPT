@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { history } from 'umi';
-import Preview from '@/components/lecture/preview/preview';
+import LecturePreview from '@/components/lecture/lecture-preview/lecture-preview';
 import { Lecture } from '@/types/lecture';
 import { emitEvent, CATEGORY_QUESTIONS, EVENT_ERROR_RESPONSE } from '@/matomo';
 import Frame from '@/components/page/frame/frame';
@@ -160,7 +160,7 @@ export default function QuestionsPage() {
                 )}
 
                 <Row>
-                  <Preview lecture={lecture}></Preview>
+                  <LecturePreview lecture={lecture}></LecturePreview>
                 </Row>
               </div>
             </Col>

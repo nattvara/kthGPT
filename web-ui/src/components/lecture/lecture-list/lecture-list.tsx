@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { history } from 'umi';
-import { PreviewCompact } from '@/components/lecture/preview/preview';
+import { LecturePreviewCompact } from '@/components/lecture/lecture-preview/lecture-preview';
 import {
   CATEGORY_COURSE_BROWSER,
   emitEvent,
@@ -136,7 +136,7 @@ export default function LectureList(props: LectureListProps) {
                   {index + 1}
                 </Col>
                 <Col span={22}>
-                  <PreviewCompact
+                  <LecturePreviewCompact
                     lecture={lecture}
                     onClick={() => goToLecture(lecture)}
                     onMetaClick={() => goToLecture(lecture, true)}

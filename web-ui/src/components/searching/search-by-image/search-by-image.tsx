@@ -7,7 +7,7 @@ import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { ReloadOutlined } from '@ant-design/icons';
 import { SearchResultLoading } from '@/components/searching/search-result-loading/search-result-loading';
 import { history } from 'umi';
-import { PreviewCompact } from '@/components/lecture/preview/preview';
+import { LecturePreviewCompact } from '@/components/lecture/lecture-preview/lecture-preview';
 import { Highlight, Lecture } from '@/types/lecture';
 import { HighlightText } from '@/components/text/highlight-text/highlight-text';
 
@@ -137,7 +137,7 @@ export default function SearchByImage(props: SearchByImageProps) {
                     </Col>
                     <Col span={22}>
                       <Row>
-                        <PreviewCompact
+                        <LecturePreviewCompact
                           lecture={lecture}
                           onClick={() => goToLecture(lecture)}
                           onMetaClick={() => goToLecture(lecture, true)}

@@ -1,4 +1,4 @@
-import styles from './preview.less';
+import styles from './lecture-preview.less';
 import { Image, Card, Spin, Row, Col, Space } from 'antd';
 import { Lecture } from '@/types/lecture';
 import { makeUrl } from '@/http';
@@ -23,14 +23,14 @@ const prettyLengthString = (seconds: number) => {
   return `${hours}h ${minutes}min`;
 };
 
-interface PreviewCompactProps {
+interface LecturePreviewCompactProps {
   lecture: Lecture;
   onClick: () => void;
   onMetaClick: () => void;
   onCtrlClick: () => void;
 }
 
-export function PreviewCompact(props: PreviewCompactProps) {
+export function LecturePreviewCompact(props: LecturePreviewCompactProps) {
   const { lecture, onClick, onCtrlClick, onMetaClick } = props;
 
   let flagIcon = '';
@@ -117,11 +117,11 @@ export function PreviewCompact(props: PreviewCompactProps) {
   );
 }
 
-interface PreviewProps {
+interface LecturePreviewProps {
   lecture: Lecture;
 }
 
-export default function Preview(props: PreviewProps) {
+export default function LecturePreview(props: LecturePreviewProps) {
   const { lecture } = props;
 
   const openKthPlay = (url: string) => {

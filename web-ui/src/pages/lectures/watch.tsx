@@ -9,7 +9,7 @@ import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { Button, Col, Result, Row, Skeleton, Space, notification } from 'antd';
 import { history } from 'umi';
 import LectureWatchResult from '@/components/lecture/lecture-watch-result/lecture-watch-result';
-import Preview from '@/components/lecture/preview/preview';
+import LecturePreview from '@/components/lecture/lecture-preview/lecture-preview';
 import CourseTagger from '@/components/course/course-tagger/course-tagger';
 import LectureQueueSummary from '@/components/lecture/lecture-queue-summary/lecture-queue-summary';
 import LectureProgress from '@/components/lecture/lecture-progress/lecture-progress';
@@ -209,7 +209,7 @@ export default function WatchPage() {
 
             <Row gutter={[20, 20]} justify="start" align="top">
               <Col sm={24} md={12} lg={11}>
-                <Preview lecture={lecture}></Preview>
+                <LecturePreview lecture={lecture}></LecturePreview>
               </Col>
               <Col md={0} lg={2}></Col>
               <Col sm={24} md={12} lg={11}>
