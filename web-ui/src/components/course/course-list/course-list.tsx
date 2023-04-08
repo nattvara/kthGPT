@@ -11,7 +11,7 @@ import {
   emitEvent,
   EVENT_ERROR_RESPONSE,
 } from '@/matomo';
-import { SearchResultLoading } from '@/components/searching/seach-result-loading/search-result-loading';
+import { SearchResultLoading } from '@/components/searching/search-result-loading/search-result-loading';
 
 const { Search } = Input;
 const { Link } = Typography;

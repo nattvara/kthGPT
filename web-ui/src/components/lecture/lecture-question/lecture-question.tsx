@@ -16,7 +16,7 @@ import {
 } from '@/matomo';
 import QuestionInput from '@/components/input/question-input/question-input';
 import LectureTranscript from '../lecture-transcript-modal/lecture-transcript-modal';
-import { SearchResultLoading } from '@/components/searching/seach-result-loading/search-result-loading';
+import { SearchResultLoading } from '@/components/searching/search-result-loading/search-result-loading';
 
 const examples = [
   {

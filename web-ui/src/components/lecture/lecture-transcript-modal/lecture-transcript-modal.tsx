@@ -6,7 +6,7 @@ import { useState } from 'react';
 import apiClient, { ServerErrorResponse } from '@/http';
 import { Lecture } from '@/types/lecture';
 import { emitEvent, CATEGORY_QUESTIONS, EVENT_ERROR_RESPONSE } from '@/matomo';
-import { SearchResultLoading } from '@/components/searching/seach-result-loading/search-result-loading';
+import { SearchResultLoading } from '@/components/searching/search-result-loading/search-result-loading';
 
 interface TranscriptResponse {
   data: string;

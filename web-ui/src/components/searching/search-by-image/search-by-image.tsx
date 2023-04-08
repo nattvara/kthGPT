@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { ReloadOutlined } from '@ant-design/icons';
-import { SearchResultLoading } from '@/components/searching/seach-result-loading/search-result-loading';
+import { SearchResultLoading } from '@/components/searching/search-result-loading/search-result-loading';
 import { history } from 'umi';
 import { PreviewCompact } from '@/components/lecture/preview/preview';
 import { Highlight, Lecture } from '@/types/lecture';
