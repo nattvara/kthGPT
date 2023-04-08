@@ -12,6 +12,7 @@ from .models import (
     TokenUsage,
     ImageUpload,
     ImageQuestion,
+    ImageQuestionHit,
     MathpixRequest,
 )
 
@@ -29,6 +30,7 @@ all_models = [
     TokenUsage,
     ImageUpload,
     ImageQuestion,
+    ImageQuestionHit,
     MathpixRequest,
 ]
 

@@ -159,6 +159,7 @@ class ImageUpload(Base):
             'can_ask_question': self.can_ask_question(),
             'description_en': self.description_en,
             'description_sv': self.description_sv,
+            'parse_image_upload_complete': self.parse_image_upload_complete(),
             'parse_image_content_ok': self.parse_image_content_ok,
             'create_description_en_ok': self.create_description_en_ok,
             'create_description_sv_ok': self.create_description_sv_ok,

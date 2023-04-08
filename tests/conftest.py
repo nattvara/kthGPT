@@ -10,8 +10,8 @@ import shutil
 import json
 import os
 
+from db.models import ImageUpload, ImageQuestion
 from config.settings import settings
-from db.models import ImageUpload
 from db.schema import all_models
 import api
 
@@ -171,6 +171,18 @@ def image_upload(img_file):
             img.write(src.read())
 
     return image
+
+
+@pytest.fixture
+def image_question(image_upload):
+    question = ImageQuestion(
+        public_id=ImageQuestion.make_public_id(),
+        image_upload_id=image_upload.id,
+        query_string='help me',
+    )
+    question.save()
+
+    return question
 
 
 @pytest.fixture

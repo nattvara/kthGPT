@@ -30,6 +30,7 @@ class ImageOutputModel(BaseModel):
     can_ask_question: bool
     description_en: Optional[str]
     description_sv: Optional[str]
+    parse_image_upload_complete: bool
     parse_image_content_ok: Optional[bool]
     create_description_en_ok: Optional[bool]
     create_description_sv_ok: Optional[bool]

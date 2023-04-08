@@ -379,8 +379,8 @@ def test_image_question_aggregates_the_top_hits(mocker, api_client, image_upload
 
     assert index_mock.call_count == swedish_queries + english_queries
     assert len(response.json()['hits']) == 2
-    for lecture in response.json()['hits']:
-        assert lecture['public_id'] in ['id-1', 'id-2']
+    for hit in response.json()['hits']:
+        assert hit['lecture']['public_id'] in ['id-1', 'id-2']
 
 
 def test_answer_to_question_hit_can_be_retrieved(
@@ -408,7 +408,7 @@ def test_answer_to_question_hit_can_be_retrieved(
     hit = response.json()['hits'][0]
 
     response = api_client.get(
-        f'/search/image/{image_upload.public_id}/questions/{question_id}/{hit["public_id"]}/{hit["language"]}/answer',
+        f'/search/image/{image_upload.public_id}/questions/{question_id}/hits/{hit["id"]}/answer',
     )
 
     assert response.json()['answer'] == 'you can find the answer here'
@@ -439,7 +439,7 @@ def test_relevance_of_hit_can_be_retrieved(
     hit = response.json()['hits'][0]
 
     response = api_client.get(
-        f'/search/image/{image_upload.public_id}/questions/{question_id}/{hit["public_id"]}/{hit["language"]}/relevance',
+        f'/search/image/{image_upload.public_id}/questions/{question_id}/hits/{hit["id"]}/relevance',
     )
 
     assert response.json()['relevance'] == 'this is relevant because'

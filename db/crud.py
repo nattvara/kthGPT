@@ -271,6 +271,11 @@ def get_image_upload_by_public_id(id: str):
     return ImageUpload.filter(ImageUpload.public_id == id).first()
 
 
+def get_image_upload_by_id(id: str):
+    from db.models import ImageUpload
+    return ImageUpload.filter(ImageUpload.id == id).first()
+
+
 def get_image_upload_by_image_sha(sha: str):
     from db.models import ImageUpload
     return ImageUpload.filter(ImageUpload.image_sha == sha).first()
@@ -282,9 +287,49 @@ def get_image_question_by_public_id(id: str):
     return ImageQuestion.filter(ImageQuestion.public_id == id).first()
 
 
+def get_image_question_by_id(id: int):
+    from db.models import ImageQuestion
+    return ImageQuestion.filter(ImageQuestion.id == id).first()
+
+
 def get_image_questions_by_image_upload_id(id: int):
     from db.models import ImageQuestion
     return ImageQuestion.filter(ImageQuestion.image_upload_id == id)
+
+
+def get_most_recent_image_question_by_sha(upload, sha: str):
+    from db.models import ImageQuestion
+    return ImageQuestion.filter(
+        ImageQuestion.image_upload_id == upload.id
+    ).filter(
+        ImageQuestion.query_hash == sha
+    ).order_by(
+        ImageQuestion.modified_at.desc()
+    ).first()
+
+
+# ImageQuestionHit
+def get_image_question_hit_by_public_id(id: str):
+    from db.models import ImageQuestionHit
+    return ImageQuestionHit.filter(ImageQuestionHit.public_id == id).first()
+
+
+def get_most_recent_question_hit_by_lecture_and_question(lecture, image_question):
+    from db.models import ImageQuestionHit
+    return ImageQuestionHit.filter(
+        ImageQuestionHit.lecture_id == lecture.id
+    ).filter(
+        ImageQuestionHit.image_question_id == image_question.id
+    ).filter(
+        ImageQuestionHit.cache_is_valid == True  # noqa: E712
+    ).order_by(
+        ImageQuestionHit.modified_at.desc()
+    ).first()
+
+
+def get_image_question_hits_by_image_question_id(id: int):
+    from db.models import ImageQuestionHit
+    return ImageQuestionHit.filter(ImageQuestionHit.image_question_id == id)
 
 
 # Mathpix requests

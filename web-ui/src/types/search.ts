@@ -8,6 +8,7 @@ export interface Image {
   can_ask_question: boolean;
   description_en: null | string;
   description_sv: null | string;
+  parse_image_upload_complete: boolean;
   create_search_queries_sv_ok: null | boolean;
   create_search_queries_en_ok: null | boolean;
   create_description_en_ok: null | boolean;
@@ -15,7 +16,14 @@ export interface Image {
   parse_image_content_ok: null | boolean;
 }
 
+export interface Hit {
+  id: string;
+  answer: string;
+  relevance: string;
+  lecture: Lecture;
+}
+
 export interface Question {
   id: string;
-  hits: Lecture[];
+  hits: Hit[];
 }

@@ -3,16 +3,18 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 from api.routers.lectures import LectureSummaryOutputModel
+from db.models import ImageQuestion, ImageQuestionHit
 import index.courses as courses_index
 import tools.text.prompts as prompts
-from db.models import ImageQuestion
 from db.models import Lecture
 from config.logger import log
 from db import get_db
 import index.lecture
 import tools.text.ai
 from db.crud import (
-    get_lecture_by_public_id_and_language,
+    get_most_recent_question_hit_by_lecture_and_question,
+    get_most_recent_image_question_by_sha,
+    get_image_question_hit_by_public_id,
     get_image_upload_by_public_id,
     get_lecture_by_id,
 )
@@ -43,9 +45,16 @@ class InputModelImageQuestion(BaseModel):
     query: str
 
 
+class HitOutputModel(BaseModel):
+    id: str
+    answer: Optional[str] = None
+    relevance: Optional[str] = None
+    lecture: Optional[LectureSummaryOutputModel]
+
+
 class ImageQuestionOutputModel(BaseModel):
     id: str
-    hits: List[LectureSummaryOutputModel]
+    hits: List[HitOutputModel]
 
 
 class LectureAnswerOutputModel(BaseModel):
@@ -167,12 +176,17 @@ def create_image_question(
     if not upload.parse_image_upload_complete():
         raise HTTPException(status_code=409, detail='image has not finished parsing so question cannot be created, try again later.')  # noqa: E501
 
-    question = ImageQuestion(
-        public_id=ImageQuestion.make_public_id(),
-        image_upload_id=upload.id,
-        query_string=input_data.query,
-    )
-    question.save()
+    sha = ImageQuestion.make_sha(input_data.query)
+    question = get_most_recent_image_question_by_sha(upload, sha)
+
+    if question is None:
+        question = ImageQuestion(
+            public_id=ImageQuestion.make_public_id(),
+            image_upload_id=upload.id,
+            query_string=input_data.query,
+            query_hash=sha,
+        )
+        question.save()
 
     docs = {}
 
@@ -203,20 +217,36 @@ def create_image_question(
             break
 
         lecture = get_lecture_by_id(id)
-        lectures.append(lecture.to_dict())
+        lectures.append(lecture)
+
+    hits = []
+    for lecture in lectures:
+        hit = get_most_recent_question_hit_by_lecture_and_question(lecture, question)
+
+        if hit is None:
+            hit = ImageQuestionHit(
+                public_id=ImageQuestionHit.make_public_id(),
+                image_question_id=question.id,
+                lecture_id=lecture.id,
+            )
+            hit.save()
+
+        hit.count += 1
+        hit.save()
+
+        hits.append(hit.to_dict())
 
     return {
         'id': question.public_id,
-        'hits': lectures,
+        'hits': hits,
     }
 
 
-@router.get('/search/image/{image_public_id}/questions/{question_public_id}/{lecture_public_id}/{lecture_language}/answer', dependencies=[Depends(get_db)])  # noqa: E501
+@router.get('/search/image/{image_public_id}/questions/{question_public_id}/hits/{question_hit_public_id}/answer', dependencies=[Depends(get_db)])  # noqa: E501
 def get_answer_to_question_hit(
     image_public_id: str,
     question_public_id: str,
-    lecture_public_id: str,
-    lecture_language: str,
+    question_hit_public_id: str,
 ) -> LectureAnswerOutputModel:
     upload = get_image_upload_by_public_id(image_public_id)
 
@@ -231,37 +261,23 @@ def get_answer_to_question_hit(
     if question is None:
         raise HTTPException(status_code=404)
 
-    lecture = get_lecture_by_public_id_and_language(
-        lecture_public_id,
-        lecture_language,
-    )
-    if lecture is None:
+    hit = get_image_question_hit_by_public_id(question_hit_public_id)
+    if hit is None:
         raise HTTPException(status_code=404)
 
-    prompt = prompts.create_prompt_to_answer_question_about_hit(
-        lecture,
-        upload,
-        question,
-    )
-    response = tools.text.ai.gpt3(
-        prompt,
-        time_to_live=60,
-        max_retries=2,
-        retry_interval=[10, 20],
-        upload_id=upload.id,
-    )
+    hit.create_answer(tools.text.ai, prompts)
+    hit.save()
 
     return {
-        'answer': response,
+        'answer': hit.answer,
     }
 
 
-@router.get('/search/image/{image_public_id}/questions/{question_public_id}/{lecture_public_id}/{lecture_language}/relevance', dependencies=[Depends(get_db)])  # noqa: E501
+@router.get('/search/image/{image_public_id}/questions/{question_public_id}/hits/{question_hit_public_id}/relevance', dependencies=[Depends(get_db)])  # noqa: E501
 def get_relevance_of_question_hit(
     image_public_id: str,
     question_public_id: str,
-    lecture_public_id: str,
-    lecture_language: str,
+    question_hit_public_id: str,
 ) -> LectureRelevanceOutputModel:
     upload = get_image_upload_by_public_id(image_public_id)
 
@@ -276,26 +292,13 @@ def get_relevance_of_question_hit(
     if question is None:
         raise HTTPException(status_code=404)
 
-    lecture = get_lecture_by_public_id_and_language(
-        lecture_public_id,
-        lecture_language,
-    )
-    if lecture is None:
+    hit = get_image_question_hit_by_public_id(question_hit_public_id)
+    if hit is None:
         raise HTTPException(status_code=404)
 
-    prompt = prompts.create_prompt_to_explain_hit_relevance(
-        lecture,
-        upload,
-        question,
-    )
-    response = tools.text.ai.gpt3(
-        prompt,
-        time_to_live=60,
-        max_retries=2,
-        retry_interval=[10, 20],
-        upload_id=upload.id,
-    )
+    hit.create_relevance(tools.text.ai, prompts)
+    hit.save()
 
     return {
-        'relevance': response,
+        'relevance': hit.relevance,
     }
