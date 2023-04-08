@@ -271,6 +271,11 @@ def get_image_upload_by_public_id(id: str):
     return ImageUpload.filter(ImageUpload.public_id == id).first()
 
 
+def get_image_upload_by_id(id: str):
+    from db.models import ImageUpload
+    return ImageUpload.filter(ImageUpload.id == id).first()
+
+
 def get_image_upload_by_image_sha(sha: str):
     from db.models import ImageUpload
     return ImageUpload.filter(ImageUpload.image_sha == sha).first()
@@ -280,6 +285,11 @@ def get_image_upload_by_image_sha(sha: str):
 def get_image_question_by_public_id(id: str):
     from db.models import ImageQuestion
     return ImageQuestion.filter(ImageQuestion.public_id == id).first()
+
+
+def get_image_question_by_id(id: int):
+    from db.models import ImageQuestion
+    return ImageQuestion.filter(ImageQuestion.id == id).first()
 
 
 def get_image_questions_by_image_upload_id(id: int):
