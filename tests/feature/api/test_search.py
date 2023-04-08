@@ -309,7 +309,7 @@ def test_image_question_aggregates_the_top_hits(mocker, api_client, image_upload
         },
         {
             '_id': lecture1.id,
-            '_score': 5.51,
+            '_score': 15.51,
         },
         {
             '_id': 102,
@@ -321,7 +321,7 @@ def test_image_question_aggregates_the_top_hits(mocker, api_client, image_upload
         },
         {
             '_id': lecture2.id,
-            '_score': 1.1253,
+            '_score': 10.1253,
         },
         {
             '_id': 104,
@@ -339,7 +339,7 @@ def test_image_question_aggregates_the_top_hits(mocker, api_client, image_upload
         },
         {
             '_id': lecture1.id,
-            '_score': 7.92344,
+            '_score': 27.92344,
         },
         {
             '_id': 102,
@@ -351,7 +351,7 @@ def test_image_question_aggregates_the_top_hits(mocker, api_client, image_upload
         },
         {
             '_id': lecture2.id,
-            '_score': 5.177423,
+            '_score': 20.177423,
         },
         {
             '_id': 104,
