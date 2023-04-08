@@ -88,7 +88,7 @@ export default function ImageQuestion(props: ImageQuestionProps) {
       <Row>
         <QuestionInput
           language={'en'}
-          placeholder={'Enter a question about this image...'}
+          placeholder={'Enter a question about this assignment...'}
           disabled={!image.can_ask_question}
           isAsking={false}
           examples={[
