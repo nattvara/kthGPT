@@ -45,10 +45,7 @@ const columns: ColumnsType<Lecture> = [
     dataIndex: 'combined_public_id_and_lang',
     render: (combined_public_id_and_lang: string) => (
       <>
-        <Link
-          href={`/analyse/lectures/${combined_public_id_and_lang}`}
-          type="dashed"
-        >
+        <Link href={`/lectures/${combined_public_id_and_lang}/watch`}>
           View Progress
         </Link>
       </>
