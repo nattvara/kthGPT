@@ -2,7 +2,7 @@
 import peewee as pw
 from peewee_migrate import Migrator
 
-from db.models import Query, Lecture, ImageUpload
+from db.models import Query, ImageUpload
 
 
 def migrate(migrator: Migrator, database: pw.Database, fake=False, **kwargs):
