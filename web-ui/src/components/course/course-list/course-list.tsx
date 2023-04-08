@@ -11,13 +11,10 @@ import {
   emitEvent,
   EVENT_ERROR_RESPONSE,
 } from '@/matomo';
+import { SearchResultLoading } from '@/components/searching/seach-result-loading/search-result-loading';
 
 const { Search } = Input;
 const { Link } = Typography;
-
-const randomInt = (min: number, max: number) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
 
 const AUTO_UPDATE_INTERVAL = 10000;
 
@@ -120,10 +117,7 @@ export default function CourseList(props: CourseBrowserProps) {
       <div className={styles.result_container}>
         {isSearchingCourses && firstLoad && (
           <>
-            <Skeleton active paragraph={{ rows: randomInt(1, 100) }}></Skeleton>
-            <Skeleton active paragraph={{ rows: randomInt(1, 100) }}></Skeleton>
-            <Skeleton active paragraph={{ rows: randomInt(1, 100) }}></Skeleton>
-            <Skeleton active paragraph={{ rows: randomInt(1, 100) }}></Skeleton>
+            <SearchResultLoading size={4} min={1} max={100} />
           </>
         )}
         <Space direction="vertical" size="large">
