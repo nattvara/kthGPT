@@ -16,6 +16,7 @@ import {
 } from '@/matomo';
 import QuestionInput from '@/components/input/question-input/question-input';
 import LectureTranscript from '../lecture-transcript-modal/lecture-transcript-modal';
+import { SearchResultLoading } from '@/components/searching/seach-result-loading/search-result-loading';
 
 const examples = [
   {
@@ -61,14 +62,6 @@ const examples = [
   },
 ];
 
-const randomInt = (min: number, max: number) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
-interface LectureResponse extends ServerResponse {
-  data: Lecture;
-}
-
 interface QueryResponse extends ServerResponse {
   data: {
     response: string;
@@ -82,8 +75,8 @@ interface LectureQuestionProps {
 
 export default function LectureQuestion(props: LectureQuestionProps) {
   const { lecture } = props;
-  const [queryString, setQueryString] = useState('');
 
+  const [queryString, setQueryString] = useState('');
   const [response, setResponse] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [overrideCache, setOverrideCache] = useState<boolean>(false);
@@ -202,12 +195,7 @@ export default function LectureQuestion(props: LectureQuestionProps) {
       {isMakingQuery && (
         <Row>
           <Col span={24}>
-            <>
-              <Skeleton active paragraph={{ rows: randomInt(1, 8) }} />
-              <Skeleton active paragraph={{ rows: randomInt(6, 10) }} />
-              <Skeleton active paragraph={{ rows: randomInt(1, 4) }} />
-              <Skeleton active paragraph={{ rows: randomInt(2, 8) }} />
-            </>
+            <SearchResultLoading size={4} min={1} max={10} />
           </Col>
         </Row>
       )}
