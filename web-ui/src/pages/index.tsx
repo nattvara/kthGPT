@@ -10,6 +10,9 @@ import HugeButton from '@/components/buttons/huge-button/huge-button';
 import { FileSearchOutlined, VideoCameraAddOutlined } from '@ant-design/icons';
 import HugePreviewButton from '@/components/buttons/huge-preview-button/huge-preview-button';
 import CourseList from '@/components/course/course-list/course-list';
+import ImageUpload from '@/components/image/image-upload/image-upload';
+import { Image } from '@/types/search';
+import { history } from 'umi';
 
 export default function IndexPage() {
   const [lectures, setLectures] = useState<Lecture[]>([]);
@@ -17,6 +20,10 @@ export default function IndexPage() {
 
   const foundLectures = (lectures: Lecture[]) => {
     setLectures(lectures);
+  };
+
+  const onImageUploadComplete = (image: Image) => {
+    history.push(`/assignments/${image.id}`);
   };
 
   useEffect(() => {
@@ -43,8 +50,12 @@ export default function IndexPage() {
 
           {!hasSearched && (
             <Row className={styles.fullwidth}>
-              <Col md={8}>image search</Col>
-              <Col md={8}>
+              <Col sm={24} md={8}>
+                <ImageUpload
+                  onUploadComplete={(image) => onImageUploadComplete(image)}
+                />
+              </Col>
+              <Col sm={24} md={8}>
                 <HugePreviewButton
                   icon={<FileSearchOutlined />}
                   title="Find a lecture"
@@ -55,7 +66,7 @@ export default function IndexPage() {
                   }
                 />
               </Col>
-              <Col md={8}>
+              <Col sm={24} md={8}>
                 <HugeButton
                   icon={<VideoCameraAddOutlined />}
                   title="Add a new lecture"
