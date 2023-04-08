@@ -1,7 +1,7 @@
 import { SendOutlined } from '@ant-design/icons';
 import styles from './question-input.less';
 import { Row, Col, Button, Space, Input } from 'antd';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const { TextArea } = Input;
 
@@ -19,7 +19,6 @@ interface QuestionInputProps {
   huge: boolean;
   examples: Example[];
   onAsk: (queryString: string) => void;
-  defaultQueryString?: string;
   extraButtons?: JSX.Element[];
   disabled: boolean;
 }
@@ -33,14 +32,9 @@ export default function QuestionInput(props: QuestionInputProps) {
     language,
     extraButtons,
     huge,
-    defaultQueryString,
     disabled,
   } = props;
   const [queryString, setQueryString] = useState('');
-
-  useEffect(() => {
-    if (defaultQueryString) setQueryString(defaultQueryString);
-  }, [defaultQueryString, setQueryString]);
 
   return (
     <>
