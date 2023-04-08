@@ -298,6 +298,11 @@ def get_image_questions_by_image_upload_id(id: int):
 
 
 # ImageQuestionHit
+def get_image_question_hit_by_public_id(id: str):
+    from db.models import ImageQuestionHit
+    return ImageQuestionHit.filter(ImageQuestionHit.public_id == id).first()
+
+
 def get_image_question_hits_by_image_question_id(id: int):
     from db.models import ImageQuestionHit
     return ImageQuestionHit.filter(ImageQuestionHit.image_question_id == id)

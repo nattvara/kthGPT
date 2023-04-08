@@ -42,6 +42,16 @@ class ImageQuestionHit(Base):
     def make_public_id() -> str:
         return str(uuid.uuid4())
 
+    def refresh(self):
+        update = ImageQuestionHit.get(self.id)
+        self.public_id = update.public_id
+        self.image_question_id = update.image_question_id
+        self.lecture_id = update.lecture_id
+        self.answer = update.answer
+        self.relevance = update.relevance
+        self.cache_is_valid = update.cache_is_valid
+        self.count = update.count
+
     def create_answer(self, ai, prompts):
         if self.answer is not None and self.cache_is_valid:
             return
@@ -72,6 +82,7 @@ class ImageQuestionHit(Base):
             upload_id=upload.id,
         )
 
+        self.refresh()
         self.answer = response
         self.cache_is_valid = True
 
@@ -105,5 +116,19 @@ class ImageQuestionHit(Base):
             upload_id=upload.id,
         )
 
+        self.refresh()
         self.relevance = response
         self.cache_is_valid = True
+
+    def to_dict(self) -> dict:
+        lecture = get_lecture_by_id(self.lecture_id)
+        lecture_dict = None
+        if lecture is not None:
+            lecture_dict = lecture.to_summary_dict()
+
+        return {
+            'id': self.public_id,
+            'lecture': lecture_dict,
+            'answer': self.answer,
+            'relevance': self.relevance,
+        }
