@@ -109,6 +109,39 @@ def get_image_info(public_id: str) -> ImageOutputModel:
     return upload.to_dict()
 
 
+@router.post('/assignments/image/{public_id}', dependencies=[Depends(get_db)])
+def update_image_upload(
+    public_id: str,
+    restart: Optional[bool] = None,
+) -> ImageOutputModel:
+    upload = get_image_upload_by_public_id(public_id)
+
+    if upload is None:
+        raise HTTPException(status_code=404)
+
+    should_start_parse_image_upload_pipeline = False
+    if restart:
+        if not upload.parse_image_content_ok:
+            should_start_parse_image_upload_pipeline = True
+
+        if not upload.create_description_en_ok:
+            should_start_parse_image_upload_pipeline = True
+
+        if not upload.create_description_sv_ok:
+            should_start_parse_image_upload_pipeline = True
+
+        if not upload.create_search_queries_en_ok:
+            should_start_parse_image_upload_pipeline = True
+
+        if not upload.create_search_queries_sv_ok:
+            should_start_parse_image_upload_pipeline = True
+
+    if should_start_parse_image_upload_pipeline:
+        jobs.schedule_parse_image_upload(upload)
+
+    return upload.to_dict()
+
+
 @router.get('/assignments/image/{public_id}/img', dependencies=[Depends(get_db)])
 def get_image_data(public_id: str) -> FileResponse:
     upload = get_image_upload_by_public_id(public_id)

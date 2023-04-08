@@ -97,3 +97,17 @@ def test_image_upload_schedules_parse_image_upload_pipeline(mocker, api_client, 
 
     assert schedule_parse_image_upload_mock.call_count == 1
     assert schedule_parse_image_upload_mock.mock_calls[0] == call(image)
+
+
+def test_image_upload_can_be_restarted(mocker, api_client, image_upload):
+    schedule_parse_image_upload_mock = mocker.patch('jobs.schedule_parse_image_upload')
+
+    response = api_client.post(
+        f'/assignments/image/{image_upload.public_id}?restart=true',
+    )
+
+    image_id = response.json()['id']
+    image = get_image_upload_by_public_id(image_id)
+
+    assert schedule_parse_image_upload_mock.call_count == 1
+    assert schedule_parse_image_upload_mock.mock_calls[0] == call(image)
