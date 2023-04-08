@@ -15,7 +15,14 @@ export interface Image {
   parse_image_content_ok: null | boolean;
 }
 
+export interface Hit {
+  id: string;
+  answer: string;
+  relevance: string;
+  lecture: Lecture;
+}
+
 export interface Question {
   id: string;
-  hits: Lecture[];
+  hits: Hit[];
 }

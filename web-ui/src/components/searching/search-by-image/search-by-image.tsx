@@ -1,6 +1,6 @@
 import { Button, Col, Result, Row, Space, Typography } from 'antd';
 import styles from './search-by-image.less';
-import { Image, Question } from '@/types/search';
+import { Hit, Image, Question } from '@/types/search';
 import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
@@ -42,7 +42,7 @@ export default function SearchByImage(props: SearchByImageProps) {
   const { image } = props;
 
   const [error, setError] = useState<string>('');
-  const [lectures, setLectures] = useState<Lecture[]>([]);
+  const [hits, setHits] = useState<Hit[]>([]);
   const [searchQuestionId, setSearchQuestionId] = useState<string>('');
   const [notReady, setNotReady] = useState<boolean | null>(null);
   const [limit, setLimit] = useState<number>(HITS_TO_PAGINATE_AFTER);
@@ -66,7 +66,7 @@ export default function SearchByImage(props: SearchByImageProps) {
         };
         setError('');
         setNotReady(false);
-        setLectures(result.data.hits);
+        setHits(result.data.hits);
         setSearchQuestionId(result.data.id);
       },
       onError: (err: ServerErrorResponse) => {
@@ -104,8 +104,8 @@ export default function SearchByImage(props: SearchByImageProps) {
   };
 
   const increaseLimit = () => {
-    if (limit + HITS_TO_PAGINATE_AFTER > lectures.length) {
-      setLimit(lectures.length);
+    if (limit + HITS_TO_PAGINATE_AFTER > hits.length) {
+      setLimit(hits.length);
       return;
     }
     setLimit(limit + HITS_TO_PAGINATE_AFTER);
@@ -151,28 +151,28 @@ export default function SearchByImage(props: SearchByImageProps) {
         <Row>
           <Row className={styles.result}>
             <Space direction="vertical" size="large">
-              {lectures.map((lecture, index) => {
+              {hits.map((hit, index) => {
                 if (index + 1 > limit) {
-                  return <div key={index}></div>;
+                  return <div key={hit.id}></div>;
                 }
 
                 return (
-                  <Row key={lecture.public_id + lecture.language}>
+                  <Row key={hit.id}>
                     <Col span={2} className={styles.row_number}>
                       {index + 1}
                     </Col>
                     <Col span={22}>
                       <Row>
                         <LecturePreviewCompact
-                          lecture={lecture}
-                          onClick={() => goToLecture(lecture)}
-                          onMetaClick={() => goToLecture(lecture, true)}
-                          onCtrlClick={() => goToLecture(lecture, true)}
+                          lecture={hit.lecture}
+                          onClick={() => goToLecture(hit.lecture)}
+                          onMetaClick={() => goToLecture(hit.lecture, true)}
+                          onCtrlClick={() => goToLecture(hit.lecture, true)}
                         />
                       </Row>
                       <Row>
-                        <QuestionAnswer
-                          lecture={lecture}
+                        <ImageQuestionHit
+                          hit={hit}
                           imageId={image.id}
                           searchQuestionId={searchQuestionId}
                         />
@@ -200,21 +200,21 @@ export default function SearchByImage(props: SearchByImageProps) {
       </Row>
       <Row justify="center" className={styles.full_width}>
         <Paragraph>
-          Showing {limit} / {lectures.length} hits
+          Showing {limit} / {hits.length} hits
         </Paragraph>
       </Row>
     </>
   );
 }
 
-interface QuestionAnswerProps {
+interface ImageQuestionHitProps {
   imageId: string;
   searchQuestionId: string;
-  lecture: Lecture;
+  hit: Hit;
 }
 
-export function QuestionAnswer(props: QuestionAnswerProps) {
-  const { imageId, searchQuestionId, lecture } = props;
+export function ImageQuestionHit(props: ImageQuestionHitProps) {
+  const { imageId, searchQuestionId, hit } = props;
 
   const [answer, setAnswer] = useState<Highlight>();
   const [relevance, setRelevance] = useState<string>('');
@@ -222,7 +222,7 @@ export function QuestionAnswer(props: QuestionAnswerProps) {
   const { isLoading: isLoadingRelevance, mutate: fetchRelevance } = useMutation(
     async () => {
       return await apiClient.get(
-        `/search/image/${imageId}/questions/${searchQuestionId}/${lecture.public_id}/${lecture.language}/relevance`
+        `/search/image/${imageId}/questions/${searchQuestionId}/hits/${hit.id}/relevance`
       );
     },
     {
@@ -241,7 +241,7 @@ export function QuestionAnswer(props: QuestionAnswerProps) {
   const { isLoading: isLoadingAnswer, mutate: fetchAnswer } = useMutation(
     async () => {
       return await apiClient.get(
-        `/search/image/${imageId}/questions/${searchQuestionId}/${lecture.public_id}/${lecture.language}/answer`
+        `/search/image/${imageId}/questions/${searchQuestionId}/hits/${hit.id}/answer`
       );
     },
     {
