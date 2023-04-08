@@ -1,4 +1,3 @@
-import styles from './lecture-queue-summary.less';
 import { Lecture } from '@/types/lecture';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';

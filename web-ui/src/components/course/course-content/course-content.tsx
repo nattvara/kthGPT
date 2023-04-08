@@ -1,8 +1,8 @@
 import styles from './course-content.less';
-import { Course, Lecture } from '@/types/lecture';
+import { Course } from '@/types/lecture';
 import { Col, Divider, Row, Skeleton, Typography } from 'antd';
 import { useEffect, useState } from 'react';
-import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
+import apiClient, { ServerErrorResponse } from '@/http';
 import LectureList from '@/components/lecture/lecture-list/lecture-list';
 import { useMutation } from '@tanstack/react-query';
 
@@ -14,10 +14,6 @@ interface CourseResponse {
 
 interface CourseContentProps {
   courseCode: string | null;
-}
-
-interface LectureResponse extends ServerResponse {
-  data: Lecture[];
 }
 
 export default function CourseContent(props: CourseContentProps) {

@@ -1,6 +1,6 @@
 import styles from './course-list.less';
 import { Course } from '@/types/lecture';
-import { Row, Input, Space, Col, Button, Typography, Skeleton } from 'antd';
+import { Row, Input, Space, Col, Button, Typography } from 'antd';
 import { RightOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';

@@ -1,6 +1,6 @@
 import { ReloadOutlined } from '@ant-design/icons';
 import styles from './lecture-question.less';
-import { Row, Col, Button, Skeleton, Result } from 'antd';
+import { Row, Col, Button, Result } from 'antd';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';

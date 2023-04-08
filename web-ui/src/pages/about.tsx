@@ -1,7 +1,6 @@
 import Frame from '@/components/page/frame/frame';
 import { registerPageLoad } from '@/matomo';
-import { LeftOutlined } from '@ant-design/icons';
-import { Row, Col, Typography, Button } from 'antd';
+import { Row, Col, Typography } from 'antd';
 import { useEffect } from 'react';
 import styles from './about.less';
 

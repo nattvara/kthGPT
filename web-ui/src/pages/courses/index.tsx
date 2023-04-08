@@ -1,4 +1,3 @@
-import styles from './courses.less';
 import Frame, { BreadcrumbItem } from '@/components/page/frame/frame';
 import { registerPageLoad } from '@/matomo';
 import { Col, Row, Grid } from 'antd';

@@ -1,4 +1,3 @@
-import styles from './add.less';
 import Frame from '@/components/page/frame/frame';
 import { registerPageLoad } from '@/matomo';
 import { Col, Row } from 'antd';

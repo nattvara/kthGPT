@@ -1,4 +1,3 @@
-import styles from './image-parse-failure.less';
 import { FileImageOutlined } from '@ant-design/icons';
 import { Button, Row, Typography, notification, Col } from 'antd';
 import { Image } from '@/types/search';

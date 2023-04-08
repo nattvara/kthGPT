@@ -1,6 +1,6 @@
 import { FileTextOutlined } from '@ant-design/icons';
 import styles from './lecture-transcript-modal.less';
-import { Button, Skeleton, Modal } from 'antd';
+import { Button, Modal } from 'antd';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import apiClient, { ServerErrorResponse } from '@/http';

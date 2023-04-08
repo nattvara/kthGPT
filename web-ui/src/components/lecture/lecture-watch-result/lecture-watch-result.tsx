@@ -5,7 +5,7 @@ import { history } from 'umi';
 
 const { Paragraph } = Typography;
 
-interface LectureWatchResult {
+interface LectureWatchResultProps {
   lecture: Lecture;
   restart: () => void;
   isRestarting: boolean;
@@ -15,7 +15,7 @@ const openGithubIssues = () => {
   window.open('https://github.com/nattvara/kthGPT/issues', '_blank');
 };
 
-export default function LectureWatchResult(props: LectureWatchResult) {
+export default function LectureWatchResult(props: LectureWatchResultProps) {
   const { lecture, restart, isRestarting } = props;
 
   const goToQuestions = async () => {

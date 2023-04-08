@@ -1,6 +1,6 @@
 import styles from './lecture-list.less';
 import { Lecture } from '@/types/lecture';
-import { Row, Input, Space, Col, Skeleton } from 'antd';
+import { Row, Input, Space, Col } from 'antd';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
