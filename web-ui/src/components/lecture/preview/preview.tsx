@@ -163,7 +163,9 @@ export default function Preview(props: PreviewProps) {
                 preview={false}
                 style={{ minHeight: '100px' }}
                 src={
-                  lecture.preview_uri === null ? '' : makeUrl(lecture.preview_uri)
+                  lecture.preview_uri === null
+                    ? ''
+                    : makeUrl(lecture.preview_uri)
                 }
               />
             </div>
