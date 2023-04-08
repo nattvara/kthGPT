@@ -6,6 +6,7 @@ import { useState } from 'react';
 import apiClient, { ServerErrorResponse } from '@/http';
 import { Lecture } from '@/types/lecture';
 import { emitEvent, CATEGORY_QUESTIONS, EVENT_ERROR_RESPONSE } from '@/matomo';
+import { SearchResultLoading } from '@/components/searching/seach-result-loading/search-result-loading';
 
 interface TranscriptResponse {
   data: string;
@@ -13,10 +14,6 @@ interface TranscriptResponse {
   status: number;
   statusText: string;
 }
-
-const randomInt = (min: number, max: number) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
 
 interface LectureTranscriptProps {
   lecture: Lecture;
@@ -79,11 +76,7 @@ export default function LectureTranscript(props: LectureTranscriptProps) {
       >
         <div className={styles.transcript}>
           {isFetchingTranscript && (
-            <>
-              <Skeleton active paragraph={{ rows: randomInt(1, 8) }} />
-              <Skeleton active paragraph={{ rows: randomInt(6, 10) }} />
-              <Skeleton active paragraph={{ rows: randomInt(1, 4) }} />
-            </>
+            <SearchResultLoading size={4} min={1} max={100} />
           )}
           {!isFetchingTranscript && (
             <>
