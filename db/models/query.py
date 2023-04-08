@@ -3,10 +3,12 @@ import peewee
 
 from .base import Base
 from .lecture import Lecture
+from .image_upload import ImageUpload
 
 
 class Query(Base):
-    lecture_id = peewee.ForeignKeyField(Lecture, backref='lecture')
+    lecture_id = peewee.ForeignKeyField(Lecture, null=True, backref='lecture')
+    image_upload_id = peewee.ForeignKeyField(ImageUpload, null=True, backref='imageupload', on_delete='cascade')
     query_hash = peewee.CharField(index=True, null=False)
     query_string = peewee.TextField(null=False)
     count = peewee.IntegerField(null=False, default=0)

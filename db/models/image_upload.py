@@ -13,6 +13,7 @@ from .base import Base
 from db.crud import (
     get_mathpix_requests_by_image_upload_id,
     get_image_questions_by_image_upload_id,
+    find_all_queries_for_image,
 )
 
 
@@ -26,7 +27,7 @@ class ImageUpload(Base):
     search_queries_en = peewee.BlobField(null=True)
     search_queries_sv = peewee.BlobField(null=True)
 
-    # image_search steps
+    # parse_image_upload steps
     parse_image_content_ok = peewee.BooleanField(null=True)
     parse_image_content_failure_reason = peewee.TextField(null=True)
     create_description_en_ok = peewee.BooleanField(null=True)
@@ -48,6 +49,10 @@ class ImageUpload(Base):
 
     def get_search_queries_en(self) -> Optional[List[str]]:
         val = self.search_queries_en
+
+        if val is None:
+            return None
+
         if isinstance(val, str):
             return json.loads(val)
         if not isinstance(val, bytes):
@@ -56,6 +61,10 @@ class ImageUpload(Base):
 
     def get_search_queries_sv(self) -> Optional[List[str]]:
         val = self.search_queries_sv
+
+        if val is None:
+            return None
+
         if isinstance(val, str):
             return json.loads(val)
         if not isinstance(val, bytes):
@@ -81,11 +90,51 @@ class ImageUpload(Base):
         self.create_search_queries_sv_ok = update.create_search_queries_sv_ok
         self.create_search_queries_sv_failure_reason = update.create_search_queries_sv_failure_reason
 
+    def can_ask_question(self) -> bool:
+        if not self.parse_image_content_ok:
+            return False
+
+        if not self.create_description_en_ok:
+            return False
+
+        if not self.create_description_sv_ok:
+            return False
+
+        return True
+
+    def clear_parse_results(self):
+        self.parse_image_content_ok = None
+        self.create_description_en_ok = None
+        self.create_description_sv_ok = None
+        self.create_search_queries_en_ok = None
+        self.create_search_queries_sv_ok = None
+
+    def parse_image_upload_complete(self) -> bool:
+        job_results = [
+            self.parse_image_content_ok,
+            self.create_description_en_ok,
+            self.create_description_sv_ok,
+            self.create_search_queries_en_ok,
+            self.create_search_queries_sv_ok,
+        ]
+
+        if None in job_results:
+            return False
+
+        if False in job_results:
+            return False
+
+        return True
+
     def mathpix_requests(self) -> list:
         return list(get_mathpix_requests_by_image_upload_id(self.id))
 
     def questions(self) -> list:
         return list(get_image_questions_by_image_upload_id(self.id))
+
+    def queries(self) -> list:
+        queries = find_all_queries_for_image(self)
+        return queries
 
     def get_filename(self) -> str:
         return writable_image_upload_filepath(self.public_id, self.file_format)
@@ -107,6 +156,7 @@ class ImageUpload(Base):
             'created_at': created_at.isoformat(),
             'modified_at': modified_at.isoformat(),
             'text_content': self.text_content,
+            'can_ask_question': self.can_ask_question(),
             'description_en': self.description_en,
             'description_sv': self.description_sv,
             'parse_image_content_ok': self.parse_image_content_ok,

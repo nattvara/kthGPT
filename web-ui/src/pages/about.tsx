@@ -1,7 +1,6 @@
-import Frame from '@/components/main/frame';
+import Frame from '@/components/page/frame/frame';
 import { registerPageLoad } from '@/matomo';
-import { LeftOutlined } from '@ant-design/icons';
-import { Row, Col, Typography, Button } from 'antd';
+import { Row, Col, Typography } from 'antd';
 import { useEffect } from 'react';
 import styles from './about.less';
 
@@ -14,17 +13,8 @@ export default function AboutPage() {
 
   return (
     <>
-      <Frame>
+      <Frame showBack={true} breadcrumbs={[{ title: 'About kthGPT' }]}>
         <div className={styles.page}>
-          <Row justify="center">
-            <Col sm={24} md={15}>
-              <Link href="/">
-                <Button type="primary">
-                  <LeftOutlined /> Back
-                </Button>
-              </Link>
-            </Col>
-          </Row>
           <Row justify="center">
             <Col sm={24} md={15}>
               <Title>About kthGPT</Title>

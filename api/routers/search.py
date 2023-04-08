@@ -1,25 +1,21 @@
-from fastapi import Depends, APIRouter, HTTPException, UploadFile
-from fastapi.responses import FileResponse
+from fastapi import Depends, APIRouter, HTTPException
 from typing import List, Optional
 from pydantic import BaseModel
-import os
 
-from tools.files.paths import get_sha_of_binary_file_descriptor
 from api.routers.lectures import LectureSummaryOutputModel
-from db.models import ImageUpload, ImageQuestion
 import index.courses as courses_index
 import tools.text.prompts as prompts
+from db.models import ImageQuestion
+from db.models import Lecture
 from config.logger import log
-import index.lecture
 from db import get_db
+import index.lecture
 import tools.text.ai
 from db.crud import (
     get_lecture_by_public_id_and_language,
-    get_image_upload_by_image_sha,
     get_image_upload_by_public_id,
     get_lecture_by_id,
 )
-import jobs
 
 MAX_NUMBER_IMAGE_HITS = 10
 
@@ -33,30 +29,14 @@ class InputModelSearchCourse(BaseModel):
 
 class InputModelSearchCourseCode(BaseModel):
     query: str
+    source: Optional[str]
+    group: Optional[str]
 
 
 class CourseOutputModel(BaseModel):
     course_code: str
     display_name: str
     lectures: Optional[int] = None
-
-
-class ImageCreationOutputModel(BaseModel):
-    id: str
-
-
-class ImageOutputModel(BaseModel):
-    id: str
-    created_at: str
-    modified_at: str
-    text_content: Optional[str]
-    description_en: Optional[str]
-    description_sv: Optional[str]
-    parse_image_content_ok: Optional[bool]
-    create_description_en_ok: Optional[bool]
-    create_description_sv_ok: Optional[bool]
-    create_search_queries_en_ok: Optional[bool]
-    create_search_queries_sv_ok: Optional[bool]
 
 
 class InputModelImageQuestion(BaseModel):
@@ -129,14 +109,38 @@ def search_course_lectures(
             input_data.query,
             no_course=True,
             apply_filter=apply_filter,
+            source=input_data.source,
+            group=input_data.group,
         )
+        # Include kth_raw in kth searches
+        if input_data.source == Lecture.Source.KTH:
+            kth_raw_response = index.lecture.search_in_course(
+                input_data.query,
+                no_course=True,
+                apply_filter=apply_filter,
+                source=Lecture.Source.KTH_RAW,
+                group=input_data.group,
+            )
+            response = response + kth_raw_response
         return response
 
     response = index.lecture.search_in_course(
         input_data.query,
         course_code,
-        apply_filter,
+        apply_filter=apply_filter,
+        source=input_data.source,
+        group=input_data.group,
     )
+    # Include kth_raw in kth searches
+    if input_data.source == Lecture.Source.KTH:
+        kth_raw_response = index.lecture.search_in_course(
+            input_data.query,
+            course_code,
+            apply_filter=apply_filter,
+            source=Lecture.Source.KTH_RAW,
+            group=input_data.group,
+        )
+        response = response + kth_raw_response
 
     return response
 
@@ -150,88 +154,6 @@ def search_lecture(input_data: InputModelSearchCourseCode) -> List[LectureSummar
     return response
 
 
-@router.post('/search/image', dependencies=[Depends(get_db)])
-def search_image(file: UploadFile) -> ImageCreationOutputModel:
-    _, extension = os.path.splitext(file.filename)
-    extension = extension.replace('.', '')
-    extension = extension.lower()
-
-    allowed_extensions = [
-        'jpg',
-        'jpeg',
-        'jji',
-        'jpe',
-        'jif',
-        'jfif',
-        'heif',
-        'heic',
-        'png',
-        'gif',
-        'webp',
-        'tiff',
-        'tif',
-    ]
-
-    if extension not in allowed_extensions:
-        raise HTTPException(status_code=400, detail='Invalid image format, please provide an image in one of the following formats ' + ', '.join(allowed_extensions))  # noqa: E501
-
-    sha = get_sha_of_binary_file_descriptor(file.file)
-    image = get_image_upload_by_image_sha(sha)
-    should_start_image_search_pipeline = False
-
-    if image is None:
-        should_start_image_search_pipeline = True
-        image = ImageUpload(
-            public_id=ImageUpload.make_public_id(),
-            file_format=extension,
-        )
-        image.save()
-
-        image.save_image_data(file)
-
-    if not image.parse_image_content_ok:
-        should_start_image_search_pipeline = True
-
-    if not image.create_description_en_ok:
-        should_start_image_search_pipeline = True
-
-    if not image.create_description_sv_ok:
-        should_start_image_search_pipeline = True
-
-    if not image.create_search_queries_en_ok:
-        should_start_image_search_pipeline = True
-
-    if not image.create_search_queries_sv_ok:
-        should_start_image_search_pipeline = True
-
-    if should_start_image_search_pipeline:
-        jobs.schedule_image_search(image)
-
-    return {
-        'id': image.public_id,
-    }
-
-
-@router.get('/search/image/{public_id}', dependencies=[Depends(get_db)])
-def get_image_info(public_id: str) -> ImageOutputModel:
-    upload = get_image_upload_by_public_id(public_id)
-
-    if upload is None:
-        raise HTTPException(status_code=404)
-
-    return upload.to_dict()
-
-
-@router.get('/search/image/{public_id}/img', dependencies=[Depends(get_db)])
-def get_image_data(public_id: str) -> FileResponse:
-    upload = get_image_upload_by_public_id(public_id)
-
-    if upload is None:
-        raise HTTPException(status_code=404)
-
-    return FileResponse(upload.get_filename())
-
-
 @router.post('/search/image/{image_public_id}/questions', dependencies=[Depends(get_db)])
 def create_image_question(
     image_public_id: str,
@@ -241,6 +163,9 @@ def create_image_question(
 
     if upload is None:
         raise HTTPException(status_code=404)
+
+    if not upload.parse_image_upload_complete():
+        raise HTTPException(status_code=409, detail='image has not finished parsing so question cannot be created, try again later.')  # noqa: E501
 
     question = ImageQuestion(
         public_id=ImageQuestion.make_public_id(),

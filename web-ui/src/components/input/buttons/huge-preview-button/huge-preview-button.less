@@ -1,0 +1,86 @@
+
+.container {
+  margin: 20px;
+  padding: 48px 32px;
+  height: 300px;
+
+  margin-inline-end: 8px;
+  margin-bottom: 8px;
+  text-align: center;
+  vertical-align: top;
+  background-color: rgba(0, 0, 0, .02);
+  border: 2px dashed #d9d9d9;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color .3s;
+  transition: background-color .3s;
+  z-index: 2;
+  position: relative;
+  overflow: hidden;
+
+  * {
+    width: 100% !important;
+  }
+}
+
+.container:hover {
+  border: 2px dashed #1677ff;
+  background-color: rgba(22, 119, 255, .1);
+}
+
+.icon {
+  z-index: 2;
+  position: relative;
+  text-align: center;
+  font-size: 70px;
+  margin-bottom: 24px;
+  text-align: center;
+  color: #000;
+  transition: color .1s;
+}
+
+.icon.hovering {
+  color: #1677ff;
+}
+
+.title {
+  z-index: 2;
+  position: relative;
+  * {
+    transition: color .1s;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.title.hovering {
+  * {
+    color: #1677ff;
+  }
+}
+
+.subtitle {
+  z-index: 2;
+  position: relative;
+  * {
+    transition: color .1s;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.subtitle.hovering {
+  * {
+    color: #1677ff;
+  }
+}
+
+.background {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  z-index: 0;
+  filter: blur(3px);
+  opacity: .8;
+  pointer-events: none;
+}

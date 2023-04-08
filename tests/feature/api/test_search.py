@@ -1,14 +1,8 @@
 from unittest.mock import call
-from io import BytesIO
-from PIL import Image
-import filecmp
 import random
 
 from db.models import Lecture
 import api.routers.search
-from db.crud import (
-    get_image_upload_by_public_id,
-)
 
 
 def test_api_can_search_courses(mocker, api_client):
@@ -114,7 +108,9 @@ def test_lecture_search_inside_course(mocker, api_client, analysed_lecture):
     assert index.mock_calls[0] == call(
         'some query',
         'XX1337',
-        True,
+        apply_filter=True,
+        source=None,
+        group=None,
     )
 
 
@@ -134,7 +130,88 @@ def test_lecture_search_inside_no_course(mocker, api_client, analysed_lecture):
     assert index.mock_calls[0] == call(
         'some query',
         no_course=True,
-        apply_filter=True
+        apply_filter=True,
+        source=None,
+        group=None,
+    )
+
+
+def test_lecture_search_inside_course_can_be_restricted_to_source(mocker, api_client, analysed_lecture):
+    doc = analysed_lecture.to_doc()
+    doc['date'] = doc['date'].isoformat()
+    index = mocker.patch('index.lecture.search_in_course', return_value=[
+        doc,
+        doc,
+    ])
+
+    response = api_client.post('/search/course/XX1337', json={
+        'query': 'some query',
+        'source': 'youtube',
+    })
+
+    assert len(response.json()) == 2
+    assert index.call_count == 1
+    assert index.mock_calls[0] == call(
+        'some query',
+        'XX1337',
+        apply_filter=True,
+        source='youtube',
+        group=None,
+    )
+
+
+def test_lecture_search_inside_course_includes_kth_raw_with_kth_source(mocker, api_client, analysed_lecture):
+    doc = analysed_lecture.to_doc()
+    doc['date'] = doc['date'].isoformat()
+    index = mocker.patch('index.lecture.search_in_course', return_value=[
+        doc,
+        doc,
+    ])
+
+    response = api_client.post('/search/course/XX1337', json={
+        'query': 'some query',
+        'source': 'kth',
+    })
+
+    assert len(response.json()) == 4
+    assert index.call_count == 2
+    assert index.mock_calls[0] == call(
+        'some query',
+        'XX1337',
+        apply_filter=True,
+        source='kth',
+        group=None,
+    )
+    assert index.mock_calls[1] == call(
+        'some query',
+        'XX1337',
+        apply_filter=True,
+        source='kth_raw',
+        group=None,
+    )
+
+
+def test_lecture_search_inside_course_can_be_restricted_to_group(mocker, api_client, analysed_lecture):
+    doc = analysed_lecture.to_doc()
+    doc['date'] = doc['date'].isoformat()
+    index = mocker.patch('index.lecture.search_in_course', return_value=[
+        doc,
+        doc,
+    ])
+
+    response = api_client.post('/search/course/XX1337', json={
+        'query': 'some query',
+        'group': 'some_group',
+    })
+
+    assert len(response.json()) == 2
+    assert index.call_count == 1
+    assert index.mock_calls[0] == call(
+        'some query',
+        'XX1337',
+        apply_filter=True,
+        source=None,
+        group='some_group',
     )
 
 
@@ -160,97 +237,6 @@ def test_lecture_transcript_search(mocker, api_client, analysed_lecture):
     assert len(response.json()) == 1
     assert index.call_count == 1
     assert response.json()[0]['highlight']['transcript'][0] == '00:00 -> 00:30 foo'
-
-
-def test_image_search_creates_image_upload(mocker, api_client, img_file):
-    mocker.patch('jobs.schedule_image_search')
-
-    response = api_client.post(
-        '/search/image',
-        files={
-            'file': ('a_file_name.png', open(img_file, 'rb'), 'image/png')
-        }
-    )
-
-    image_id = response.json()['id']
-
-    upload = get_image_upload_by_public_id(image_id)
-
-    assert upload is not None
-
-
-def test_image_search_will_not_save_the_same_image_twice(mocker, api_client, img_file):
-    mocker.patch('jobs.schedule_image_search')
-
-    def func():
-        response = api_client.post(
-            '/search/image',
-            files={
-                'file': ('a_file_name.png', open(img_file, 'rb'), 'image/png')
-            }
-        )
-        return response
-
-    response = func()
-    image_id_1 = response.json()['id']
-
-    response = func()
-    image_id_2 = response.json()['id']
-
-    assert image_id_1 == image_id_2
-
-
-def test_image_search_saves_png_file_upload(mocker, api_client, img_file):
-    mocker.patch('jobs.schedule_image_search')
-
-    response = api_client.post(
-        '/search/image',
-        files={
-            'file': ('a_file_name.png', open(img_file, 'rb'), 'image/png')
-        }
-    )
-
-    image_id = response.json()['id']
-
-    upload = get_image_upload_by_public_id(image_id)
-    assert filecmp.cmp(img_file, upload.get_filename())
-
-
-def test_image_search_can_retrieve_image(api_client, image_upload):
-    response = api_client.get(f'/search/image/{image_upload.public_id}/img')
-
-    image = Image.open(BytesIO(response.content))
-    assert image.format == 'PNG'
-
-
-def test_image_search_can_retrieve_info(api_client, image_upload):
-    image_upload.text_content = 'foo'
-    image_upload.description_en = 'bar'
-    image_upload.description_sv = 'baz'
-    image_upload.save()
-
-    response = api_client.get(f'/search/image/{image_upload.public_id}')
-
-    assert response.json()['text_content'] == 'foo'
-    assert response.json()['description_en'] == 'bar'
-    assert response.json()['description_sv'] == 'baz'
-
-
-def test_image_upload_schedules_image_search_pipeline(mocker, api_client, img_file):
-    schedule_image_search_mock = mocker.patch('jobs.schedule_image_search')
-
-    response = api_client.post(
-        '/search/image',
-        files={
-            'file': ('a_file_name.png', open(img_file, 'rb'), 'image/png')
-        }
-    )
-
-    image_id = response.json()['id']
-    image = get_image_upload_by_public_id(image_id)
-
-    assert schedule_image_search_mock.call_count == 1
-    assert schedule_image_search_mock.mock_calls[0] == call(image)
 
 
 def test_image_question_can_be_created_for_uploaded_image(mocker, api_client, image_upload):
@@ -323,7 +309,7 @@ def test_image_question_aggregates_the_top_hits(mocker, api_client, image_upload
         },
         {
             '_id': lecture1.id,
-            '_score': 5.51,
+            '_score': 15.51,
         },
         {
             '_id': 102,
@@ -335,7 +321,7 @@ def test_image_question_aggregates_the_top_hits(mocker, api_client, image_upload
         },
         {
             '_id': lecture2.id,
-            '_score': 1.1253,
+            '_score': 10.1253,
         },
         {
             '_id': 104,
@@ -353,7 +339,7 @@ def test_image_question_aggregates_the_top_hits(mocker, api_client, image_upload
         },
         {
             '_id': lecture1.id,
-            '_score': 7.92344,
+            '_score': 27.92344,
         },
         {
             '_id': 102,
@@ -365,7 +351,7 @@ def test_image_question_aggregates_the_top_hits(mocker, api_client, image_upload
         },
         {
             '_id': lecture2.id,
-            '_score': 5.177423,
+            '_score': 20.177423,
         },
         {
             '_id': 104,
