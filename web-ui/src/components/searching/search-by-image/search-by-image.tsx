@@ -4,7 +4,7 @@ import { Hit, Image, Question } from '@/types/search';
 import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
-import { ReloadOutlined } from '@ant-design/icons';
+import { LoadingOutlined, ReloadOutlined } from '@ant-design/icons';
 import { SearchResultLoading } from '@/components/searching/search-result-loading/search-result-loading';
 import { history } from 'umi';
 import { LecturePreviewCompact } from '@/components/lecture/lecture-preview/lecture-preview';
@@ -49,6 +49,7 @@ export default function SearchByImage(props: SearchByImageProps) {
 
   const { isLoading: isSearching, mutate: doSearch } = useMutation(
     async () => {
+      setNotReady(false);
       return await apiClient.post(
         `/search/image/${image.id}/questions`,
         {
@@ -65,7 +66,6 @@ export default function SearchByImage(props: SearchByImageProps) {
           data: res.data,
         };
         setError('');
-        setNotReady(false);
         setHits(result.data.hits);
         setSearchQuestionId(result.data.id);
       },
@@ -142,9 +142,16 @@ export default function SearchByImage(props: SearchByImageProps) {
       )}
 
       <Row className={styles.full_width}>
-        {(isSearching || notReady) && (
-          <SearchResultLoading size={6} min={3} max={6} />
+        {notReady && (
+          <Result
+            icon={<LoadingOutlined />}
+            title="Once kthGPT has understood the assignment, it will try to find the relevant lectures and display them here"
+          />
         )}
+      </Row>
+
+      <Row className={styles.full_width}>
+        {isSearching && <SearchResultLoading size={6} min={3} max={6} />}
       </Row>
 
       {!isSearching && (
@@ -186,23 +193,27 @@ export default function SearchByImage(props: SearchByImageProps) {
         </Row>
       )}
 
-      <Row justify="center" className={styles.full_width}>
-        <Col>
-          <Button
-            onClick={() => increaseLimit()}
-            type="primary"
-            key="btn"
-            size="large"
-          >
-            Load 3 more hits
-          </Button>
-        </Col>
-      </Row>
-      <Row justify="center" className={styles.full_width}>
-        <Paragraph>
-          Showing {limit} / {hits.length} hits
-        </Paragraph>
-      </Row>
+      {!isSearching && !notReady && (
+        <>
+          <Row justify="center" className={styles.full_width}>
+            <Col>
+              <Button
+                onClick={() => increaseLimit()}
+                type="primary"
+                key="btn"
+                size="large"
+              >
+                Load 3 more hits
+              </Button>
+            </Col>
+          </Row>
+          <Row justify="center" className={styles.full_width}>
+            <Paragraph>
+              Showing {limit} / {hits.length} hits
+            </Paragraph>
+          </Row>
+        </>
+      )}
     </>
   );
 }
