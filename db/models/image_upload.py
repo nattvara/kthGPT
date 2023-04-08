@@ -49,6 +49,10 @@ class ImageUpload(Base):
 
     def get_search_queries_en(self) -> Optional[List[str]]:
         val = self.search_queries_en
+
+        if val is None:
+            return None
+
         if isinstance(val, str):
             return json.loads(val)
         if not isinstance(val, bytes):
@@ -57,6 +61,10 @@ class ImageUpload(Base):
 
     def get_search_queries_sv(self) -> Optional[List[str]]:
         val = self.search_queries_sv
+
+        if val is None:
+            return None
+
         if isinstance(val, str):
             return json.loads(val)
         if not isinstance(val, bytes):
