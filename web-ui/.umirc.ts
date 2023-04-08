@@ -11,6 +11,8 @@ export default defineConfig({
     { path: '/lectures/:id/:language/questions', component: 'lectures/questions' },
     { path: '/lectures/:id/:language/watch', component: 'lectures/watch' },
 
+    { path: '/assignments/:id', component: 'assignments/index' },
+
     { path: '/info/queue', component: 'info/queue' },
     { path: '/info/denied', component: 'info/denied' },
     { path: '/info/failures', component: 'info/failures' },
