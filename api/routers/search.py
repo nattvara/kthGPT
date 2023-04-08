@@ -165,7 +165,7 @@ def create_image_question(
         raise HTTPException(status_code=404)
 
     if not upload.parse_image_upload_complete():
-        raise HTTPException(status_code=409, detail='image has not finished parsing so question cannot be created, try again later.')
+        raise HTTPException(status_code=409, detail='image has not finished parsing so question cannot be created, try again later.')  # noqa: E501
 
     question = ImageQuestion(
         public_id=ImageQuestion.make_public_id(),
