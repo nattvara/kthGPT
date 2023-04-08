@@ -190,7 +190,7 @@ export default function AssignmentsIndexPage() {
           <Col sm={24} md={8} className={styles.padding_left_right}>
             <Row>
               <Title level={2} className={styles.section_title}>
-                Where can I learn how to solve this assignment?
+                🧑‍🏫 Where can I learn how to solve this assignment?
               </Title>
               <Paragraph>
                 kthGPT is trying to find which lectures and where you can learn
