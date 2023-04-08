@@ -5,6 +5,7 @@ export interface Image {
   created_at: Date;
   modified_at: Date;
   text_content: null | string;
+  can_ask_question: boolean;
   description_en: null | string;
   description_sv: null | string;
   create_search_queries_sv_ok: null | boolean;
