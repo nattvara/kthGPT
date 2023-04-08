@@ -164,6 +164,9 @@ def create_image_question(
     if upload is None:
         raise HTTPException(status_code=404)
 
+    if not upload.parse_image_upload_complete():
+        raise HTTPException(status_code=409, detail='image has not finished parsing so question cannot be created, try again later.')
+
     question = ImageQuestion(
         public_id=ImageQuestion.make_public_id(),
         image_upload_id=upload.id,

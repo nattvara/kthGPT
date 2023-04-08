@@ -102,6 +102,30 @@ class ImageUpload(Base):
 
         return True
 
+    def clear_parse_results(self):
+        self.parse_image_content_ok = None
+        self.create_description_en_ok = None
+        self.create_description_sv_ok = None
+        self.create_search_queries_en_ok = None
+        self.create_search_queries_sv_ok = None
+
+    def parse_image_upload_complete(self) -> bool:
+        job_results = [
+            self.parse_image_content_ok,
+            self.create_description_en_ok,
+            self.create_description_sv_ok,
+            self.create_search_queries_en_ok,
+            self.create_search_queries_sv_ok,
+        ]
+
+        if None in job_results:
+            return False
+
+        if False in job_results:
+            return False
+
+        return True
+
     def mathpix_requests(self) -> list:
         return list(get_mathpix_requests_by_image_upload_id(self.id))
 

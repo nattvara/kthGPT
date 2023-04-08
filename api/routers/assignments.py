@@ -119,24 +119,9 @@ def update_image_upload(
     if upload is None:
         raise HTTPException(status_code=404)
 
-    should_start_parse_image_upload_pipeline = False
-    if restart:
-        if not upload.parse_image_content_ok:
-            should_start_parse_image_upload_pipeline = True
-
-        if not upload.create_description_en_ok:
-            should_start_parse_image_upload_pipeline = True
-
-        if not upload.create_description_sv_ok:
-            should_start_parse_image_upload_pipeline = True
-
-        if not upload.create_search_queries_en_ok:
-            should_start_parse_image_upload_pipeline = True
-
-        if not upload.create_search_queries_sv_ok:
-            should_start_parse_image_upload_pipeline = True
-
-    if should_start_parse_image_upload_pipeline:
+    if restart and not upload.parse_image_upload_complete():
+        upload.clear_parse_results()
+        upload.save()
         jobs.schedule_parse_image_upload(upload)
 
     return upload.to_dict()

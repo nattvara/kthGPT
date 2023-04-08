@@ -158,6 +158,11 @@ def image_upload(img_file):
         file_format=extension.replace('.', ''),
         search_queries_sv=json.dumps(['fråga 1', 'fråga 2']),
         search_queries_en=json.dumps(['query 1', 'query 2']),
+        parse_image_content_ok=True,
+        create_description_en_ok=True,
+        create_description_sv_ok=True,
+        create_search_queries_en_ok=True,
+        create_search_queries_sv_ok=True,
     )
     image.save()
 

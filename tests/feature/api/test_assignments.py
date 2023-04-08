@@ -106,6 +106,15 @@ def test_image_upload_can_be_restarted(mocker, api_client, image_upload):
         f'/assignments/image/{image_upload.public_id}?restart=true',
     )
 
+    # only schedules pipeline if not successful
+    assert schedule_parse_image_upload_mock.call_count == 0
+    image_upload.create_description_sv_ok = False
+    image_upload.save()
+
+    response = api_client.post(
+        f'/assignments/image/{image_upload.public_id}?restart=true',
+    )
+
     image_id = response.json()['id']
     image = get_image_upload_by_public_id(image_id)
 
