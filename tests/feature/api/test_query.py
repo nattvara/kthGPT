@@ -51,7 +51,7 @@ def test_query_response_cache_can_be_invalidated_for_lectures(mocker, api_client
     gpt3 = mocker.patch('tools.text.ai.gpt3', return_value='gpt-3 response')
 
     def make_query(query_string: str):
-        return api_client.post('/query', json={
+        return api_client.post('/query/lecture', json={
             'lecture_id': analysed_lecture.public_id,
             'language': analysed_lecture.language,
             'query_string': query_string,
