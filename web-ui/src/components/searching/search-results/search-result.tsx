@@ -4,7 +4,7 @@ import { Row, Space, Col } from 'antd';
 import { history } from 'umi';
 import { emitEvent, CATEGORY_SEARCH_TOOL, EVENT_GOTO_LECTURE } from '@/matomo';
 import { PreviewCompact } from '@/components/lecture/preview/preview';
-import { HighlightText } from '@/components/selector/highlight-text';
+import { HighlightText } from '@/components/text/highlight-text/highlight-text';
 
 interface SearchResultProps {
   lectures: Lecture[];
