@@ -43,7 +43,7 @@ def test_parse_image_job_sends_request_to_mathpix(mocker, image_upload):
     # Request should include reachable link to the image
     assert requests_mock.call_count == 1
     mathpix_data = MATHPIX_PARAMS
-    mathpix_data['src'] = f'{TEST_API_ENDPOINT}search/image/{image_upload.public_id}/img'
+    mathpix_data['src'] = f'{TEST_API_ENDPOINT}assignments/image/{image_upload.public_id}/img'
     assert requests_mock.mock_calls[0] == call(
         url='https://api.mathpix.com/v3/text',
         headers={
