@@ -287,6 +287,12 @@ def get_image_questions_by_image_upload_id(id: int):
     return ImageQuestion.filter(ImageQuestion.image_upload_id == id)
 
 
+# ImageQuestionHit
+def get_image_question_hits_by_image_question_id(id: int):
+    from db.models import ImageQuestionHit
+    return ImageQuestionHit.filter(ImageQuestionHit.image_question_id == id)
+
+
 # Mathpix requests
 def get_mathpix_requests_by_image_upload_id(id: int):
     from db.models import MathpixRequest
