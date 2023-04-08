@@ -113,7 +113,7 @@ export default function SearchByImage(props: SearchByImageProps) {
 
   useEffect(() => {
     search();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [image.parse_image_upload_complete]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
