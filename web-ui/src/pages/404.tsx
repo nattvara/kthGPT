@@ -7,6 +7,7 @@ import styles from './404.less';
 
 export default function NotFoundPage() {
   useEffect(() => {
+    document.title = 'kthGPT - Not Found';
     registerPageLoad();
   }, []);
 

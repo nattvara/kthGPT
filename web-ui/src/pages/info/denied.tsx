@@ -8,6 +8,7 @@ const { Title } = Typography;
 
 export default function DeniedPage() {
   useEffect(() => {
+    document.title = 'kthGPT - Denied';
     registerPageLoad();
   }, []);
 

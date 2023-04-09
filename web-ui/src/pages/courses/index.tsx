@@ -37,6 +37,8 @@ export default function IndexPage() {
       course.course_code,
       `/courses/${course.course_code}`
     );
+
+    document.title = `kthGPT - ${course.course_code}`;
   };
 
   let shouldShowCourseList = false;
@@ -49,6 +51,7 @@ export default function IndexPage() {
   useEffect(() => {
     registerPageLoad();
     if (courseCode !== undefined) {
+      document.title = `kthGPT - ${courseCode}`;
       setSelectedCourse(courseCode);
       setBreadcrumbs([
         {
@@ -60,6 +63,7 @@ export default function IndexPage() {
         },
       ]);
     } else {
+      document.title = 'kthGPT - Courses';
       setBreadcrumbs([
         {
           title: 'Browse Courses',
