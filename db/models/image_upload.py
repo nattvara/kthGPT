@@ -22,6 +22,7 @@ class ImageUpload(Base):
     image_sha = peewee.CharField(null=True, unique=True)
     file_format = peewee.CharField(null=False)
     text_content = peewee.TextField(null=True)
+    title = peewee.CharField(null=True)
     description_en = peewee.TextField(null=True)
     description_sv = peewee.TextField(null=True)
     search_queries_en = peewee.BlobField(null=True)
@@ -30,6 +31,8 @@ class ImageUpload(Base):
     # parse_image_upload steps
     parse_image_content_ok = peewee.BooleanField(null=True)
     parse_image_content_failure_reason = peewee.TextField(null=True)
+    create_title_ok = peewee.BooleanField(null=True)
+    create_title_failure_reason = peewee.TextField(null=True)
     create_description_en_ok = peewee.BooleanField(null=True)
     create_description_en_failure_reason = peewee.TextField(null=True)
     create_description_sv_ok = peewee.BooleanField(null=True)
@@ -75,10 +78,15 @@ class ImageUpload(Base):
         update = ImageUpload.get(self.id)
         self.file_format = update.file_format
         self.text_content = update.text_content
+        self.title = update.title
         self.description_en = update.description_en
         self.description_sv = update.description_sv
         self.search_queries_en = update.search_queries_en
         self.search_queries_sv = update.search_queries_sv
+
+        # parse_image_upload steps
+        self.create_title_ok = update.create_title_ok
+        self.create_title_failure_reason = update.create_title_failure_reason
         self.parse_image_content_ok = update.parse_image_content_ok
         self.parse_image_content_failure_reason = update.parse_image_content_failure_reason
         self.create_description_en_ok = update.create_description_en_ok
