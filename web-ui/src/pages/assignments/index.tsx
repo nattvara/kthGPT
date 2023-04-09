@@ -23,6 +23,7 @@ import ImageDescription from '@/components/image/image-description/image-descrip
 import ImageQuestion from '@/components/image/image-question/image-question';
 import ImageParseFailure from '@/components/image/image-parse-failure/image-parse-failure';
 import SearchByImage from '@/components/searching/search-by-image/search-by-image';
+import ImageSubjects from '@/components/image/image-subjects/image-subjects';
 
 const { Title, Paragraph } = Typography;
 
@@ -181,6 +182,9 @@ export default function AssignmentsIndexPage() {
                   image={image}
                   onUpdate={(result) => setParseFailed(result.failed)}
                 />
+              </Row>
+              <Row>
+                <ImageSubjects image={image} />
               </Row>
               <Row>
                 <ImageDescription image={image} />
