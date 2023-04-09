@@ -2,20 +2,21 @@ from redis import Redis
 from rq import Queue
 
 from db.crud import (
-    get_unfinished_lectures,
     save_message_for_analysis,
+    get_unfinished_lectures,
 )
 from db.models.analysis import Analysis
 from jobs.pipelines.analyse_lecture import (
-    download_lecture,
-    extract_audio,
     summarise_transcript,
     transcribe_audio,
+    download_lecture,
+    extract_audio,
 )
 from jobs.pipelines.parse_image_upload import (
+    create_search_queries,
     parse_image_content,
     create_description,
-    create_search_queries,
+    create_title,
 )
 from config.settings import settings
 from jobs.tasks.lecture import (
@@ -255,6 +256,7 @@ def schedule_parse_image_upload(
 
     # analysis sequence
     text_content = img_queue.enqueue(parse_image_content.job, image_upload.public_id)  # noqa: E501
+    title = img_queue.enqueue(create_title.job, image_upload.public_id)  # noqa: F841
     description_en = img_questions_queue.enqueue(create_description.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=text_content)  # noqa: E501
     description_sv = img_questions_queue.enqueue(create_description.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=text_content)  # noqa: E501
     search_queries_en = img_questions_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=[text_content, description_en])  # noqa: E501, F841
