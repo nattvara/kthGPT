@@ -33,6 +33,11 @@ export default function ImageProgress(props: ImageProgressProps) {
       value: image.create_description_en_ok,
     },
     {
+      key: 'create_title_ok',
+      name: 'Creating title',
+      value: image.create_title_ok,
+    },
+    {
       key: 'create_description_sv_ok',
       name: 'Creating description (Swedish)',
       value: image.create_description_sv_ok,
@@ -61,7 +66,7 @@ export default function ImageProgress(props: ImageProgressProps) {
       notDone++;
     }
   }
-  const percent = (done / (done + notDone)) * 100;
+  const percent = Math.round((done / (done + notDone)) * 100);
 
   let progressStatus: ProgressStatus = 'active';
   if (failed !== 0) {

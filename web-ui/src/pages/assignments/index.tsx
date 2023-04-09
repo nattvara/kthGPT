@@ -46,6 +46,11 @@ export default function AssignmentsIndexPage() {
       title: 'Assignments',
     },
   ];
+  if (image && image.title !== null) {
+    breadcrumbs.push({
+      title: image.title,
+    });
+  }
 
   const { mutate: fetchImage } = useMutation(
     async () => {
