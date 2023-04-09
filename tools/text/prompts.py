@@ -179,6 +179,17 @@ Beskrivning:
 '''.strip()
 
 
+def describe_text_content_briefly(upload: ImageUpload) -> str:
+    return f'''
+Consider the content of an assignment captured from an image. Create a title for the assignment, use no more than 10 words.
+
+Assignment:
+{upload.text_content}
+
+Title:
+'''.strip()
+
+
 def create_search_query_for_upload_english(upload: ImageUpload) -> str:
     return f'''
 Consider the following assignment. To find the answer to this assignment, what would should I google for?
