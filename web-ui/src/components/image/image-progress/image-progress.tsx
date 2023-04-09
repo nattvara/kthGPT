@@ -52,6 +52,11 @@ export default function ImageProgress(props: ImageProgressProps) {
       name: 'Creating search terms (English)',
       value: image.create_search_queries_en_ok,
     },
+    {
+      key: 'classify_subjects_ok',
+      name: 'Identifying subjects',
+      value: image.classify_subjects_ok,
+    },
   ];
 
   let done = 0;
