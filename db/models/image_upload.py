@@ -43,6 +43,8 @@ class ImageUpload(Base):
     create_search_queries_en_failure_reason = peewee.TextField(null=True)
     create_search_queries_sv_ok = peewee.BooleanField(null=True)
     create_search_queries_sv_failure_reason = peewee.TextField(null=True)
+    classify_subjects_ok = peewee.BooleanField(null=True)
+    classify_subjects_failure_reason = peewee.TextField(null=True)
 
     class Language:
         ENGLISH = 'en'
@@ -114,6 +116,8 @@ class ImageUpload(Base):
         self.create_search_queries_en_failure_reason = update.create_search_queries_en_failure_reason
         self.create_search_queries_sv_ok = update.create_search_queries_sv_ok
         self.create_search_queries_sv_failure_reason = update.create_search_queries_sv_failure_reason
+        self.classify_subjects_ok = update.classify_subjects_ok
+        self.classify_subjects_failure_reason = update.classify_subjects_failure_reason
 
     def can_ask_question(self) -> bool:
         if not self.parse_image_content_ok:
