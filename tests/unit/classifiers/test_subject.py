@@ -211,3 +211,20 @@ def test_classification_can_have_analysis_attached(mocker, analysed_lecture):
         upload_id=None,
         analysis_id=analysis.id,
     )
+
+
+def test_classifier_does_not_include_a_label_twice(mocker):
+    gpt_response = '''
+Computer Science
+Software Engineering and Security
+Computer Science
+Theoretical Computer Science
+'''
+
+    mocker.patch('tools.text.ai.gpt3', return_value=gpt_response)
+
+    classifier = SubjectClassifier.create_classifier_for('lecture')
+
+    result = classifier.classify(TEXT_STRING)
+
+    assert result == ['Computer Science', 'Software Engineering and Security', 'Theoretical Computer Science']

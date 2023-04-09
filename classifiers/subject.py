@@ -138,7 +138,9 @@ class SubjectClassifier:
             for label in self.lowercase_labels:
                 if label in line.lower():
                     original_case_label = LABELS[self.lowercase_labels[label]]
-                    out.append(original_case_label)
+
+                    if original_case_label not in out:
+                        out.append(original_case_label)
 
         return out
 
