@@ -179,9 +179,9 @@ Beskrivning:
 '''.strip()
 
 
-def describe_text_content_briefly(upload: ImageUpload) -> str:
+def create_title_from_assignment(upload: ImageUpload) -> str:
     return f'''
-Consider the content of an assignment captured from an image. Create a title for the assignment, use no more than 10 words.
+Consider the content of an assignment captured from an image. Create a title for the assignment.
 
 Assignment:
 {upload.text_content}

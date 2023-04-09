@@ -11,7 +11,7 @@ def job(image_id: str):
     if upload is None:
         raise ValueError(f'image {image_id} was not found')
 
-    prompt = tools.text.prompts.describe_text_content_briefly(upload)
+    prompt = tools.text.prompts.create_title_from_assignment(upload)
 
     try:
         response = tools.text.ai.gpt3(
