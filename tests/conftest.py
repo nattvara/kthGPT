@@ -164,6 +164,7 @@ def image_upload(img_file):
         create_description_sv_ok=True,
         create_search_queries_en_ok=True,
         create_search_queries_sv_ok=True,
+        classify_subjects_ok=True,
     )
     image.save()
 

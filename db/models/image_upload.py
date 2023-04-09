@@ -138,6 +138,7 @@ class ImageUpload(Base):
         self.create_description_sv_ok = None
         self.create_search_queries_en_ok = None
         self.create_search_queries_sv_ok = None
+        self.classify_subjects_ok = None
 
     def parse_image_upload_complete(self) -> bool:
         job_results = [
@@ -147,6 +148,7 @@ class ImageUpload(Base):
             self.create_description_sv_ok,
             self.create_search_queries_en_ok,
             self.create_search_queries_sv_ok,
+            self.classify_subjects_ok,
         ]
 
         if None in job_results:

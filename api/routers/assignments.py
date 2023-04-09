@@ -99,6 +99,9 @@ def search_image(file: UploadFile) -> ImageCreationOutputModel:
     if not image.create_search_queries_sv_ok:
         should_start_parse_image_upload_pipeline = True
 
+    if not image.classify_subjects_ok:
+        should_start_parse_image_upload_pipeline = True
+
     if should_start_parse_image_upload_pipeline:
         jobs.schedule_parse_image_upload(image)
 
