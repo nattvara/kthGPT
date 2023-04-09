@@ -1,4 +1,3 @@
-from db.models import ImageUpload
 import tools.text.prompts
 from db.crud import (
     get_image_upload_by_public_id
