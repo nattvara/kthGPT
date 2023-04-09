@@ -16,6 +16,7 @@ from jobs.pipelines.parse_image_upload import (
     create_search_queries,
     parse_image_content,
     create_description,
+    classify_subjects,
     create_title,
 )
 from config.settings import settings
@@ -261,3 +262,4 @@ def schedule_parse_image_upload(
     description_sv = img_questions_queue.enqueue(create_description.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=text_content)  # noqa: E501
     search_queries_en = img_questions_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=[text_content, description_en])  # noqa: E501, F841
     search_queries_sv = img_questions_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=[text_content, description_sv])  # noqa: E501, F841
+    subjects = img_questions_queue.enqueue(classify_subjects.job, image_upload.public_id, depends_on=[description_en])  # noqa: E501, F841
