@@ -190,6 +190,7 @@ class ImageUpload(Base):
             'title': self.title,
             'description_en': self.description_en,
             'description_sv': self.description_sv,
+            'subjects': self.subjects_list(),
             'can_ask_question': self.can_ask_question(),
             'parse_image_upload_complete': self.parse_image_upload_complete(),
             'create_title_ok': self.create_title_ok,
@@ -198,6 +199,7 @@ class ImageUpload(Base):
             'create_description_sv_ok': self.create_description_sv_ok,
             'create_search_queries_en_ok': self.create_search_queries_en_ok,
             'create_search_queries_sv_ok': self.create_search_queries_sv_ok,
+            'classify_subjects_ok': self.classify_subjects_ok,
         }
 
 
