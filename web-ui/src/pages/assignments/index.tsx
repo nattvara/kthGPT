@@ -110,6 +110,12 @@ export default function AssignmentsIndexPage() {
     return () => clearInterval(interval);
   }, [uploadId, fetchImage]);
 
+  useEffect(() => {
+    if (image && image.title) {
+      document.title = `kthGPT - ${image.title}`;
+    }
+  }, [image]);
+
   if (notFound) {
     return (
       <>
