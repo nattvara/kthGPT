@@ -112,6 +112,7 @@ class ImageUpload(Base):
 
     def clear_parse_results(self):
         self.parse_image_content_ok = None
+        self.create_title_ok = None
         self.create_description_en_ok = None
         self.create_description_sv_ok = None
         self.create_search_queries_en_ok = None
@@ -120,6 +121,7 @@ class ImageUpload(Base):
     def parse_image_upload_complete(self) -> bool:
         job_results = [
             self.parse_image_content_ok,
+            self.create_title_ok,
             self.create_description_en_ok,
             self.create_description_sv_ok,
             self.create_search_queries_en_ok,
@@ -164,10 +166,12 @@ class ImageUpload(Base):
             'created_at': created_at.isoformat(),
             'modified_at': modified_at.isoformat(),
             'text_content': self.text_content,
-            'can_ask_question': self.can_ask_question(),
+            'title': self.title,
             'description_en': self.description_en,
             'description_sv': self.description_sv,
+            'can_ask_question': self.can_ask_question(),
             'parse_image_upload_complete': self.parse_image_upload_complete(),
+            'create_title_ok': self.create_title_ok,
             'parse_image_content_ok': self.parse_image_content_ok,
             'create_description_en_ok': self.create_description_en_ok,
             'create_description_sv_ok': self.create_description_sv_ok,

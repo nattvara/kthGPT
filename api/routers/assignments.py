@@ -27,11 +27,13 @@ class ImageOutputModel(BaseModel):
     created_at: str
     modified_at: str
     text_content: Optional[str]
-    can_ask_question: bool
+    title: Optional[str]
     description_en: Optional[str]
     description_sv: Optional[str]
+    can_ask_question: bool
     parse_image_upload_complete: bool
     parse_image_content_ok: Optional[bool]
+    create_title_ok: Optional[bool]
     create_description_en_ok: Optional[bool]
     create_description_sv_ok: Optional[bool]
     create_search_queries_en_ok: Optional[bool]
@@ -81,6 +83,9 @@ def search_image(file: UploadFile) -> ImageCreationOutputModel:
         should_start_parse_image_upload_pipeline = True
 
     if not image.create_description_en_ok:
+        should_start_parse_image_upload_pipeline = True
+
+    if not image.create_title_ok:
         should_start_parse_image_upload_pipeline = True
 
     if not image.create_description_sv_ok:
