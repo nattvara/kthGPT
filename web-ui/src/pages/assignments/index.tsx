@@ -23,6 +23,7 @@ import ImageDescription from '@/components/image/image-description/image-descrip
 import ImageQuestion from '@/components/image/image-question/image-question';
 import ImageParseFailure from '@/components/image/image-parse-failure/image-parse-failure';
 import SearchByImage from '@/components/searching/search-by-image/search-by-image';
+import ImageSubjects from '@/components/image/image-subjects/image-subjects';
 
 const { Title, Paragraph } = Typography;
 
@@ -46,6 +47,11 @@ export default function AssignmentsIndexPage() {
       title: 'Assignments',
     },
   ];
+  if (image && image.title !== null) {
+    breadcrumbs.push({
+      title: image.title,
+    });
+  }
 
   const { mutate: fetchImage } = useMutation(
     async () => {
@@ -103,6 +109,12 @@ export default function AssignmentsIndexPage() {
 
     return () => clearInterval(interval);
   }, [uploadId, fetchImage]);
+
+  useEffect(() => {
+    if (image && image.title) {
+      document.title = `kthGPT - ${image.title}`;
+    }
+  }, [image]);
 
   if (notFound) {
     return (
@@ -176,6 +188,9 @@ export default function AssignmentsIndexPage() {
                   image={image}
                   onUpdate={(result) => setParseFailed(result.failed)}
                 />
+              </Row>
+              <Row>
+                <ImageSubjects image={image} />
               </Row>
               <Row>
                 <ImageDescription image={image} />

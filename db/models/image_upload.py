@@ -11,6 +11,8 @@ from tools.files.paths import (
 )
 from .base import Base
 from db.crud import (
+    add_subject_with_name_and_reference_to_image_upload,
+    get_image_upload_subjects_by_image_upload_id,
     get_mathpix_requests_by_image_upload_id,
     get_image_questions_by_image_upload_id,
     find_all_queries_for_image,
@@ -22,6 +24,7 @@ class ImageUpload(Base):
     image_sha = peewee.CharField(null=True, unique=True)
     file_format = peewee.CharField(null=False)
     text_content = peewee.TextField(null=True)
+    title = peewee.CharField(null=True)
     description_en = peewee.TextField(null=True)
     description_sv = peewee.TextField(null=True)
     search_queries_en = peewee.BlobField(null=True)
@@ -30,6 +33,8 @@ class ImageUpload(Base):
     # parse_image_upload steps
     parse_image_content_ok = peewee.BooleanField(null=True)
     parse_image_content_failure_reason = peewee.TextField(null=True)
+    create_title_ok = peewee.BooleanField(null=True)
+    create_title_failure_reason = peewee.TextField(null=True)
     create_description_en_ok = peewee.BooleanField(null=True)
     create_description_en_failure_reason = peewee.TextField(null=True)
     create_description_sv_ok = peewee.BooleanField(null=True)
@@ -38,6 +43,8 @@ class ImageUpload(Base):
     create_search_queries_en_failure_reason = peewee.TextField(null=True)
     create_search_queries_sv_ok = peewee.BooleanField(null=True)
     create_search_queries_sv_failure_reason = peewee.TextField(null=True)
+    classify_subjects_ok = peewee.BooleanField(null=True)
+    classify_subjects_failure_reason = peewee.TextField(null=True)
 
     class Language:
         ENGLISH = 'en'
@@ -71,14 +78,34 @@ class ImageUpload(Base):
             val = val.tobytes()
         return json.loads(val)
 
+    def add_subject(self, subject_name: str):
+        return add_subject_with_name_and_reference_to_image_upload(
+            subject_name,
+            self.id
+        )
+
+    def subjects_list(self) -> list:
+        out = []
+        subjects = get_image_upload_subjects_by_image_upload_id(self.id)
+
+        for subject in subjects:
+            out.append(subject.name)
+
+        return out
+
     def refresh(self):
         update = ImageUpload.get(self.id)
         self.file_format = update.file_format
         self.text_content = update.text_content
+        self.title = update.title
         self.description_en = update.description_en
         self.description_sv = update.description_sv
         self.search_queries_en = update.search_queries_en
         self.search_queries_sv = update.search_queries_sv
+
+        # parse_image_upload steps
+        self.create_title_ok = update.create_title_ok
+        self.create_title_failure_reason = update.create_title_failure_reason
         self.parse_image_content_ok = update.parse_image_content_ok
         self.parse_image_content_failure_reason = update.parse_image_content_failure_reason
         self.create_description_en_ok = update.create_description_en_ok
@@ -89,6 +116,8 @@ class ImageUpload(Base):
         self.create_search_queries_en_failure_reason = update.create_search_queries_en_failure_reason
         self.create_search_queries_sv_ok = update.create_search_queries_sv_ok
         self.create_search_queries_sv_failure_reason = update.create_search_queries_sv_failure_reason
+        self.classify_subjects_ok = update.classify_subjects_ok
+        self.classify_subjects_failure_reason = update.classify_subjects_failure_reason
 
     def can_ask_question(self) -> bool:
         if not self.parse_image_content_ok:
@@ -104,18 +133,22 @@ class ImageUpload(Base):
 
     def clear_parse_results(self):
         self.parse_image_content_ok = None
+        self.create_title_ok = None
         self.create_description_en_ok = None
         self.create_description_sv_ok = None
         self.create_search_queries_en_ok = None
         self.create_search_queries_sv_ok = None
+        self.classify_subjects_ok = None
 
     def parse_image_upload_complete(self) -> bool:
         job_results = [
             self.parse_image_content_ok,
+            self.create_title_ok,
             self.create_description_en_ok,
             self.create_description_sv_ok,
             self.create_search_queries_en_ok,
             self.create_search_queries_sv_ok,
+            self.classify_subjects_ok,
         ]
 
         if None in job_results:
@@ -156,13 +189,22 @@ class ImageUpload(Base):
             'created_at': created_at.isoformat(),
             'modified_at': modified_at.isoformat(),
             'text_content': self.text_content,
-            'can_ask_question': self.can_ask_question(),
+            'title': self.title,
             'description_en': self.description_en,
             'description_sv': self.description_sv,
+            'subjects': self.subjects_list(),
+            'can_ask_question': self.can_ask_question(),
             'parse_image_upload_complete': self.parse_image_upload_complete(),
+            'create_title_ok': self.create_title_ok,
             'parse_image_content_ok': self.parse_image_content_ok,
             'create_description_en_ok': self.create_description_en_ok,
             'create_description_sv_ok': self.create_description_sv_ok,
             'create_search_queries_en_ok': self.create_search_queries_en_ok,
             'create_search_queries_sv_ok': self.create_search_queries_sv_ok,
+            'classify_subjects_ok': self.classify_subjects_ok,
         }
+
+
+class ImageUploadSubject(Base):
+    image_upload_id = peewee.ForeignKeyField(ImageUpload, null=False, backref='imageupload', on_delete='cascade')
+    name = peewee.CharField(null=False, index=True)

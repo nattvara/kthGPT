@@ -1,7 +1,7 @@
 from fastapi import Depends, APIRouter, HTTPException, UploadFile
 from fastapi.responses import FileResponse
+from typing import List, Optional
 from pydantic import BaseModel
-from typing import Optional
 import os
 
 from tools.files.paths import get_sha_of_binary_file_descriptor
@@ -27,15 +27,19 @@ class ImageOutputModel(BaseModel):
     created_at: str
     modified_at: str
     text_content: Optional[str]
-    can_ask_question: bool
+    title: Optional[str]
     description_en: Optional[str]
     description_sv: Optional[str]
+    subjects: List[str]
+    can_ask_question: bool
     parse_image_upload_complete: bool
     parse_image_content_ok: Optional[bool]
+    create_title_ok: Optional[bool]
     create_description_en_ok: Optional[bool]
     create_description_sv_ok: Optional[bool]
     create_search_queries_en_ok: Optional[bool]
     create_search_queries_sv_ok: Optional[bool]
+    classify_subjects_ok: Optional[bool]
 
 
 @router.post('/assignments/image', dependencies=[Depends(get_db)])
@@ -83,6 +87,9 @@ def search_image(file: UploadFile) -> ImageCreationOutputModel:
     if not image.create_description_en_ok:
         should_start_parse_image_upload_pipeline = True
 
+    if not image.create_title_ok:
+        should_start_parse_image_upload_pipeline = True
+
     if not image.create_description_sv_ok:
         should_start_parse_image_upload_pipeline = True
 
@@ -90,6 +97,9 @@ def search_image(file: UploadFile) -> ImageCreationOutputModel:
         should_start_parse_image_upload_pipeline = True
 
     if not image.create_search_queries_sv_ok:
+        should_start_parse_image_upload_pipeline = True
+
+    if not image.classify_subjects_ok:
         should_start_parse_image_upload_pipeline = True
 
     if should_start_parse_image_upload_pipeline:
