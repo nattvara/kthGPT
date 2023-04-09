@@ -12,6 +12,6 @@ from .course import (
     CourseWrapper,
     CourseLectureRelation,
 )
-from .image_upload import ImageUpload
+from .image_upload import ImageUpload, ImageUploadSubject
 from .image_question import ImageQuestion, ImageQuestionHit
 from .mathpix_request import MathpixRequest

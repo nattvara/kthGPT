@@ -281,6 +281,22 @@ def get_image_upload_by_image_sha(sha: str):
     return ImageUpload.filter(ImageUpload.image_sha == sha).first()
 
 
+# ImageUploadSubjects
+def add_subject_with_name_and_reference_to_image_upload(name: str, upload_id: int):
+    from db.models import ImageUploadSubject
+    subject = ImageUploadSubject(
+        name=name,
+        image_upload_id=upload_id,
+    )
+    subject.save()
+    return subject
+
+
+def get_image_upload_subjects_by_image_upload_id(id: int):
+    from db.models import ImageUploadSubject
+    return ImageUploadSubject.filter(ImageUploadSubject.image_upload_id == id)
+
+
 # ImageQuestion
 def get_image_question_by_public_id(id: str):
     from db.models import ImageQuestion

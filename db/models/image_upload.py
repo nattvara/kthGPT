@@ -11,6 +11,8 @@ from tools.files.paths import (
 )
 from .base import Base
 from db.crud import (
+    add_subject_with_name_and_reference_to_image_upload,
+    get_image_upload_subjects_by_image_upload_id,
     get_mathpix_requests_by_image_upload_id,
     get_image_questions_by_image_upload_id,
     find_all_queries_for_image,
@@ -73,6 +75,21 @@ class ImageUpload(Base):
         if not isinstance(val, bytes):
             val = val.tobytes()
         return json.loads(val)
+
+    def add_subject(self, subject_name: str):
+        return add_subject_with_name_and_reference_to_image_upload(
+            subject_name,
+            self.id
+        )
+
+    def subjects_list(self) -> list:
+        out = []
+        subjects = get_image_upload_subjects_by_image_upload_id(self.id)
+
+        for subject in subjects:
+            out.append(subject.name)
+
+        return out
 
     def refresh(self):
         update = ImageUpload.get(self.id)
@@ -178,3 +195,8 @@ class ImageUpload(Base):
             'create_search_queries_en_ok': self.create_search_queries_en_ok,
             'create_search_queries_sv_ok': self.create_search_queries_sv_ok,
         }
+
+
+class ImageUploadSubject(Base):
+    image_upload_id = peewee.ForeignKeyField(ImageUpload, null=False, backref='imageupload', on_delete='cascade')
+    name = peewee.CharField(null=False, index=True)
