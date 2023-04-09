@@ -1,5 +1,5 @@
 import styles from './image-description.less';
-import { Typography } from 'antd';
+import { Skeleton, Typography } from 'antd';
 import { Image } from '@/types/search';
 
 interface ImageDescriptionProps {
@@ -16,6 +16,7 @@ export default function ImageDescription(props: ImageDescriptionProps) {
       <Title level={5} className={styles.title}>
         Description
       </Title>
+      {image.create_description_en_ok === null && <Skeleton active></Skeleton>}
       <Paragraph>{image.description_en}</Paragraph>
     </>
   );
