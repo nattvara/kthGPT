@@ -21,7 +21,7 @@ export default function ImageSubjects(props: ImageSubjectsProps) {
           <Skeleton active paragraph={{ rows: 1 }}></Skeleton>
         )}
       </Row>
-      <Row>
+      <Row className={styles.full_width}>
         {image.subjects.map((subject, index) => (
           <Col key={index}>
             <Tag color="magenta">{subject}</Tag>
