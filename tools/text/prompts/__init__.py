@@ -1,3 +1,4 @@
+# flake8: noqa
 from .classify_video import *
 from .classify_subject import *
 from .lecture_summary import *

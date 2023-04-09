@@ -18,9 +18,8 @@ export default function ImageSubjects(props: ImageSubjectsProps) {
       </Title>
       <Row>
         {image.subjects.map((subject, index) => (
-          <Col key={index}><Tag color="magenta">
-            {subject}
-          </Tag>
+          <Col key={index}>
+            <Tag color="magenta">{subject}</Tag>
           </Col>
         ))}
       </Row>

@@ -22,4 +22,3 @@ def rollback(migrator: Migrator, database: pw.Database, fake=False, **kwargs):
     """Write your rollback migrations here."""
     migrator.remove_fields(ImageUpload, 'classify_subjects_ok', cascade=True)
     migrator.remove_fields(ImageUpload, 'classify_subjects_failure_reason', cascade=True)
-
