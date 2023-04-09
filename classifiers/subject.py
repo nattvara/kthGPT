@@ -125,6 +125,7 @@ class SubjectClassifier:
             self.what,
             NUMBER_OF_LABELS_TO_APPLY,
             LABELS,
+            text,
         )
 
     def parse_response(self, gpt_response: str) -> list:
