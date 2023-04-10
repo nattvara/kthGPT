@@ -43,7 +43,7 @@ APPROVAL = 'approval'
 GPT = 'gpt'
 METADATA = 'metadata'
 IMAGE = 'image'
-IMAGE_QUESTIONS = 'image_questions'
+IMAGE_METADATA = 'image_metadata'
 CLASSIFICATIONS = 'classifications'
 
 
@@ -128,10 +128,10 @@ def get_image_queue() -> Queue:
         queue.connection.close()
 
 
-def get_image_questions_queue() -> Queue:
+def get_image_metadata_queue() -> Queue:
     try:
         conn = get_connection()
-        queue = Queue(IMAGE_QUESTIONS, connection=conn)
+        queue = Queue(IMAGE_METADATA, connection=conn)
         yield queue
     finally:
         queue.connection.close()
@@ -261,20 +261,20 @@ def schedule_parse_image_upload(
     image_upload,
     queue_default: Queue = get_default_queue,
     queue_image: Queue = get_image_queue,
-    queue_image_questions: Queue = get_image_questions_queue,
+    queue_image_metadata: Queue = get_image_metadata_queue,
     queue_classifications: Queue = get_classifications_queue,
 ):
     img_queue = next(queue_image())
-    img_questions_queue = next(queue_image_questions())
+    img_metadata_queue = next(queue_image_metadata())
     classifications_queue = next(queue_classifications())
 
     # analysis sequence
     text_content = img_queue.enqueue(parse_image_content.job, image_upload.public_id)  # noqa: E501
-    title = img_queue.enqueue(create_title.job, image_upload.public_id)  # noqa: F841
-    description_en = img_questions_queue.enqueue(create_description.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=text_content)  # noqa: E501
-    description_sv = img_questions_queue.enqueue(create_description.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=text_content)  # noqa: E501
-    search_queries_en = img_questions_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=[text_content, description_en])  # noqa: E501, F841
-    search_queries_sv = img_questions_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=[text_content, description_sv])  # noqa: E501, F841
+    title = img_metadata_queue.enqueue(create_title.job, image_upload.public_id)  # noqa: F841
+    description_en = img_metadata_queue.enqueue(create_description.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=text_content)  # noqa: E501
+    description_sv = img_metadata_queue.enqueue(create_description.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=text_content)  # noqa: E501
+    search_queries_en = img_metadata_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=[text_content, description_en])  # noqa: E501, F841
+    search_queries_sv = img_metadata_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=[text_content, description_sv])  # noqa: E501, F841
     subjects = classifications_queue.enqueue(classify_subjects.job, image_upload.public_id, depends_on=[description_en])  # noqa: E501, F841
 
 
