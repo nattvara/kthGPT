@@ -1,5 +1,5 @@
 import { Lecture } from '@/types/lecture';
-import Frame from '@/components/page/frame/frame';
+import PageFrame from '@/components/page/page-frame/page-frame';
 import SearchHuge from '@/components/search/search-huge/search-huge';
 import { registerPageLoad } from '@/matomo';
 import { Col, Row } from 'antd';
@@ -33,7 +33,7 @@ export default function IndexPage() {
 
   return (
     <>
-      <Frame>
+      <PageFrame>
         <Row>
           <Row className={styles.fullwidth}>
             <SearchHuge
@@ -78,7 +78,7 @@ export default function IndexPage() {
             </Row>
           )}
         </Row>
-      </Frame>
+      </PageFrame>
     </>
   );
 }

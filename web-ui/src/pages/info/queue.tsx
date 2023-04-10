@@ -1,4 +1,4 @@
-import Frame from '@/components/page/frame/frame';
+import PageFrame from '@/components/page/page-frame/page-frame';
 import { registerPageLoad } from '@/matomo';
 import { useEffect } from 'react';
 import { Typography } from 'antd';
@@ -14,12 +14,12 @@ export default function QueuePage() {
 
   return (
     <>
-      <Frame>
+      <PageFrame>
         <>
           <Title level={3}>Current queue of videos for kthGPT to watch</Title>
           <TableQueue />
         </>
-      </Frame>
+      </PageFrame>
     </>
   );
 }

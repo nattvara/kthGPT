@@ -1,5 +1,5 @@
 import styles from './watch.less';
-import Frame from '@/components/page/frame/frame';
+import PageFrame from '@/components/page/page-frame/page-frame';
 import { registerPageLoad } from '@/matomo';
 import { Lecture } from '@/types/lecture';
 import { useMutation } from '@tanstack/react-query';
@@ -144,7 +144,7 @@ export default function WatchPage() {
   if (notFound) {
     return (
       <>
-        <Frame showBack={true} breadcrumbs={breadcrumbs}>
+        <PageFrame showBack={true} breadcrumbs={breadcrumbs}>
           <Result
             status="404"
             title="Could not find lecture"
@@ -159,7 +159,7 @@ export default function WatchPage() {
               </Button>,
             ]}
           />
-        </Frame>
+        </PageFrame>
       </>
     );
   }
@@ -168,9 +168,9 @@ export default function WatchPage() {
   if (lecture === null) {
     return (
       <>
-        <Frame showBack={true} breadcrumbs={breadcrumbs}>
+        <PageFrame showBack={true} breadcrumbs={breadcrumbs}>
           <Skeleton active paragraph={{ rows: 4 }} />
-        </Frame>
+        </PageFrame>
       </>
     );
   }
@@ -178,7 +178,7 @@ export default function WatchPage() {
   if (lecture.approved !== true) {
     return (
       <>
-        <Frame showBack={true} breadcrumbs={breadcrumbs}>
+        <PageFrame showBack={true} breadcrumbs={breadcrumbs}>
           <Row>
             <Col span={24}>
               <LectureWatchResult
@@ -190,7 +190,7 @@ export default function WatchPage() {
               />
             </Col>
           </Row>
-        </Frame>
+        </PageFrame>
       </>
     );
   }
@@ -198,7 +198,7 @@ export default function WatchPage() {
   return (
     <>
       {contextHolder}
-      <Frame showBack={true} breadcrumbs={breadcrumbs}>
+      <PageFrame showBack={true} breadcrumbs={breadcrumbs}>
         <>
           <Row>
             <Col span={24}>
@@ -251,7 +251,7 @@ export default function WatchPage() {
             </Row>
           </Space>
         </>
-      </Frame>
+      </PageFrame>
     </>
   );
 }

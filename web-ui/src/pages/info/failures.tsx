@@ -1,4 +1,4 @@
-import Frame from '@/components/page/frame/frame';
+import PageFrame from '@/components/page/page-frame/page-frame';
 import { registerPageLoad } from '@/matomo';
 import { useEffect } from 'react';
 import { Typography } from 'antd';
@@ -14,12 +14,12 @@ export default function FailuresPage() {
 
   return (
     <>
-      <Frame>
+      <PageFrame>
         <>
           <Title level={3}>Lectures that has failed</Title>
           <TableFailures />
         </>
-      </Frame>
+      </PageFrame>
     </>
   );
 }

@@ -1,11 +1,11 @@
-import styles from './back-button.less';
+import styles from './page-back.less';
 import { LeftOutlined } from '@ant-design/icons';
 import { Button, Col, Row, Typography } from 'antd';
 import { history } from 'umi';
 
 const { Link } = Typography;
 
-export default function BackButton() {
+export default function PageBack() {
   return (
     <>
       <Row justify="start" className={styles.container}>

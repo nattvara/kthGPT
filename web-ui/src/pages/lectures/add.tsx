@@ -1,4 +1,4 @@
-import Frame from '@/components/page/frame/frame';
+import PageFrame from '@/components/page/page-frame/page-frame';
 import { registerPageLoad } from '@/matomo';
 import { Col, Row } from 'antd';
 import { useEffect } from 'react';
@@ -12,7 +12,7 @@ export default function IndexPage() {
 
   return (
     <>
-      <Frame
+      <PageFrame
         showBack={true}
         breadcrumbs={[
           {
@@ -28,7 +28,7 @@ export default function IndexPage() {
             </Col>
           </Row>
         </>
-      </Frame>
+      </PageFrame>
     </>
   );
 }
