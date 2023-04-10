@@ -324,6 +324,7 @@ class Lecture(Base):
             'group': self.group,
             'date': date,
             'description': self.description,
+            'subjects': self.subjects_list(),
             'preview_uri': self.preview_uri(),
             'preview_small_uri': self.preview_small_uri(),
             'transcript_uri': self.transcript_uri(),
