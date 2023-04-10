@@ -1,11 +1,11 @@
-import styles from './huge-preview-button.less';
+import styles from './button-huge-with-preview.less';
 import { Row, Typography } from 'antd';
 import { useState } from 'react';
 import { history } from 'umi';
 
 const { Title } = Typography;
 
-interface HugePreviewButtonProps {
+interface ButtonHugeWithPreviewProps {
   icon: JSX.Element;
   title: string;
   subtitle: string;
@@ -13,7 +13,9 @@ interface HugePreviewButtonProps {
   preview: JSX.Element;
 }
 
-export default function HugePreviewButton(props: HugePreviewButtonProps) {
+export default function ButtonHugeWithPreview(
+  props: ButtonHugeWithPreviewProps
+) {
   const [hovering, setHovering] = useState<boolean>(false);
 
   const goToUrl = async (url: string, newTab = false) => {
