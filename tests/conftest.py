@@ -245,3 +245,20 @@ def mp3_file():
 @pytest.fixture
 def img_file():
     return os.path.join(os.path.dirname(__file__), 'files') + '/example.png'
+
+
+@pytest.fixture
+def make_mocked_classifier():
+    def helper_func(labels, err=None):
+        class ClassifierMock:
+            def __init__(self) -> None:
+                pass
+
+            def classify(self, text: str) -> list:
+                if err:
+                    raise err
+                return labels
+
+        return ClassifierMock()
+
+    return helper_func
