@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { ReloadOutlined } from '@ant-design/icons';
-import { SearchResultLoading } from '@/components/searching/search-result-loading/search-result-loading';
+import { SearchResultLoading } from '@/components/search/search-result-loading/search-result-loading';
 import { TextMath } from '@/components/text/text-math/text-math';
 
 interface QueryResponse extends ServerResponse {

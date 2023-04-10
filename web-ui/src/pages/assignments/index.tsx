@@ -22,7 +22,7 @@ import { history } from 'umi';
 import ImageDescription from '@/components/image/image-description/image-description';
 import ImageQuestion from '@/components/image/image-question/image-question';
 import ImageParseFailure from '@/components/image/image-parse-failure/image-parse-failure';
-import SearchByImage from '@/components/searching/search-by-image/search-by-image';
+import SearchByImage from '@/components/search/search-by-image/search-by-image';
 import ImageSubjects from '@/components/image/image-subjects/image-subjects';
 
 const { Title, Paragraph } = Typography;

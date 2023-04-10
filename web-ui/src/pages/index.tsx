@@ -1,11 +1,11 @@
 import { Lecture } from '@/types/lecture';
 import Frame from '@/components/page/frame/frame';
-import SearchHuge from '@/components/searching/search-huge/search-huge';
+import SearchHuge from '@/components/search/search-huge/search-huge';
 import { registerPageLoad } from '@/matomo';
 import { Col, Row } from 'antd';
 import styles from './index.less';
 import { useEffect, useState } from 'react';
-import SearchResult from '@/components/searching/search-results/search-result';
+import SearchResult from '@/components/search/search-results/search-result';
 import HugeButton from '@/components/input/buttons/huge-button/huge-button';
 import { FileSearchOutlined, VideoCameraAddOutlined } from '@ant-design/icons';
 import HugePreviewButton from '@/components/input/buttons/huge-preview-button/huge-preview-button';
