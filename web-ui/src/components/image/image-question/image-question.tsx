@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { ReloadOutlined } from '@ant-design/icons';
 import { SearchResultLoading } from '@/components/searching/search-result-loading/search-result-loading';
+import { TextMath } from '@/components/text/text-math/text-math';
 
 interface QueryResponse extends ServerResponse {
   data: {
@@ -90,7 +91,7 @@ export default function ImageQuestion(props: ImageQuestionProps) {
           language={'en'}
           placeholder={'Enter a question about this assignment...'}
           disabled={!image.can_ask_question}
-          isAsking={false}
+          isAsking={isMakingQuery}
           examples={[
             {
               titleEn: 'Explain this assignment',
@@ -163,7 +164,9 @@ export default function ImageQuestion(props: ImageQuestionProps) {
             <>
               <Row gutter={[20, 20]}>
                 <Col span={24}>
-                  <pre className={styles.response}>{response}</pre>
+                  <div className={styles.response}>
+                    <TextMath text={response} />
+                  </div>
                 </Col>
               </Row>
 
