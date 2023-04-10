@@ -236,6 +236,7 @@ class Lecture(Base):
             'length': self.length,
             'title': self.title,
             'group': self.group,
+            'description': self.description,
             'preview_uri': self.preview_uri(),
             'preview_small_uri': self.preview_small_uri(),
             'content_link': self.content_link(),
