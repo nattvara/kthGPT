@@ -30,6 +30,7 @@ class Lecture(Base):
     title = peewee.CharField(null=True)
     group = peewee.CharField(null=True)  # like a channel name on youtube
     date = peewee.TimestampField(null=True)
+    description = peewee.TextField(null=True)
     raw_content_link = peewee.CharField(null=True)
     img_preview = peewee.CharField(null=True)
     img_preview_small = peewee.CharField(null=True)
@@ -211,6 +212,7 @@ class Lecture(Base):
         self.title = update.title
         self.group = update.group
         self.date = update.date
+        self.description = update.description
         self.img_preview = update.img_preview
         self.img_preview_small = update.img_preview_small
         self.mp4_filepath = update.mp4_filepath
