@@ -1,3 +1,4 @@
+from db.models import Lecture
 
 
 def create_text_to_summarise_chunk_english(summary, chunk, include_summary: bool):
@@ -56,4 +57,17 @@ Föreläsningen handlar om:
 {summary.current_summary()}
 
 Sammanfattning:
+'''.strip()
+
+
+def create_description_prompt(lecture: Lecture):
+    # The word 'summary' seems to have a better effect than 'description'
+    return f'''
+Summarize the contents of this lecture into no more than 400 words. The must
+be in english. The summary should include important keywords.
+
+The lecture is about:
+{lecture.summary_text()}
+
+Summary:
 '''.strip()
