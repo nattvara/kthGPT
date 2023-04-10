@@ -110,6 +110,7 @@ def analysed_lecture():
         language='sv',
         approved=True,
         title='A lecture',
+        description='some description',
     )
     lecture.save()
 
