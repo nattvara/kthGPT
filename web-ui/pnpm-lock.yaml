@@ -13,6 +13,7 @@ specifiers:
   eslint-config-prettier: ^8.6.0
   eslint-config-react-app: ^7.0.1
   eslint-plugin-prettier: ^4.2.1
+  katex: ^0.16.4
   prettier: ^2.8.4
   typescript: ^4.1.2
   umi: ^4.0.51
@@ -33,6 +34,7 @@ devDependencies:
   eslint-config-prettier: 8.6.0_eslint@8.35.0
   eslint-config-react-app: 7.0.1_ycpbpc6yetojsgtrx3mwntkhsu
   eslint-plugin-prettier: 4.2.1_u2zha4kiojzs42thzpgwygphmy
+  katex: 0.16.4
   prettier: 2.8.4
   typescript: 4.9.5
 
@@ -4612,7 +4614,6 @@ packages:
   /commander/8.3.0:
     resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
     engines: {node: '>= 12'}
-    dev: false
 
   /common-path-prefix/3.0.0:
     resolution: {integrity: sha512-QE33hToZseCH3jS0qN96O/bSh3kaw/h+Tq7ngyY9eWDUnTlTNUyqfqvCXioLe5Na5jFsL78ra/wuBU4iuEgd4w==}
@@ -6963,6 +6964,13 @@ packages:
     dependencies:
       array-includes: 3.1.6
       object.assign: 4.1.4
+
+  /katex/0.16.4:
+    resolution: {integrity: sha512-WudRKUj8yyBeVDI4aYMNxhx5Vhh2PjpzQw1GRu/LVGqL4m1AxwD1GcUp0IMbdJaf5zsjtj8ghP0DOQRYhroNkw==}
+    hasBin: true
+    dependencies:
+      commander: 8.3.0
+    dev: true
 
   /kolorist/1.7.0:
     resolution: {integrity: sha512-ymToLHqL02udwVdbkowNpzjFd6UzozMtshPQKVi5k1EjKRqKqBrOnE9QbLEb0/pV76SAiIT13hdL8R6suc+f3g==}
