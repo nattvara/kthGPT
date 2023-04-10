@@ -2,6 +2,7 @@ from .database import db
 from .models import (
     URL,
     Lecture,
+    LectureSubject,
     Query,
     Analysis,
     Message,
@@ -21,6 +22,7 @@ from .models import (
 all_models = [
     URL,
     Lecture,
+    LectureSubject,
     Query,
     Analysis,
     Message,

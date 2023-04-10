@@ -14,7 +14,9 @@ from tools.files.paths import (
 )
 from .base import Base
 from db.crud import (
+    add_subject_with_name_and_reference_to_lecture,
     find_all_courses_relations_for_lecture_id,
+    get_lecture_subjects_by_lecture_id,
     find_all_courses_for_lecture_id,
     find_all_queries_for_lecture,
 )
@@ -202,6 +204,21 @@ class Lecture(Base):
         expires_at = self.created_at + timedelta(days=1)
         return now < expires_at
 
+    def add_subject(self, subject_name: str):
+        return add_subject_with_name_and_reference_to_lecture(
+            subject_name,
+            self.id
+        )
+
+    def subjects_list(self) -> list:
+        out = []
+        subjects = get_lecture_subjects_by_lecture_id(self.id)
+
+        for subject in subjects:
+            out.append(subject.name)
+
+        return out
+
     def refresh(self):
         update = Lecture.get(self.id)
         self.public_id = update.public_id
@@ -316,3 +333,8 @@ class Lecture(Base):
             'courses': self.courses(),
             'courses_can_change': self.courses_can_be_changed(),
         }
+
+
+class LectureSubject(Base):
+    lecture_id = peewee.ForeignKeyField(Lecture, null=False, backref='lecture', on_delete='cascade')
+    name = peewee.CharField(null=False, index=True)
