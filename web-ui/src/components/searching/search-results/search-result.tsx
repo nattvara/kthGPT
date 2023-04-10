@@ -4,7 +4,7 @@ import { Row, Space, Col } from 'antd';
 import { history } from 'umi';
 import { emitEvent, CATEGORY_SEARCH_TOOL, EVENT_GOTO_LECTURE } from '@/matomo';
 import { LecturePreviewCompact } from '@/components/lecture/lecture-preview/lecture-preview';
-import { HighlightText } from '@/components/text/highlight-text/highlight-text';
+import { TextHighlight } from '@/components/text/text-highlight/text-highlight';
 
 interface SearchResultProps {
   lectures: Lecture[];
@@ -50,9 +50,9 @@ export default function SearchResult(props: SearchResultProps) {
                 </Row>
                 <Row>
                   {lecture.highlight !== null && (
-                    <HighlightText
+                    <TextHighlight
                       highlight={lecture.highlight}
-                    ></HighlightText>
+                    ></TextHighlight>
                   )}
                 </Row>
               </Col>

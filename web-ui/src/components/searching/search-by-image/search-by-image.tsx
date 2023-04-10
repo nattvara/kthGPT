@@ -9,7 +9,7 @@ import { SearchResultLoading } from '@/components/searching/search-result-loadin
 import { history } from 'umi';
 import { LecturePreviewCompact } from '@/components/lecture/lecture-preview/lecture-preview';
 import { Highlight, Lecture } from '@/types/lecture';
-import { HighlightText } from '@/components/text/highlight-text/highlight-text';
+import { TextHighlight } from '@/components/text/text-highlight/text-highlight';
 
 const { Paragraph } = Typography;
 
@@ -286,7 +286,7 @@ export function ImageQuestionHit(props: ImageQuestionHitProps) {
         {!isLoadingAnswer && (
           <Paragraph>
             {answer !== undefined && (
-              <HighlightText highlight={answer}></HighlightText>
+              <TextHighlight highlight={answer}></TextHighlight>
             )}
           </Paragraph>
         )}
