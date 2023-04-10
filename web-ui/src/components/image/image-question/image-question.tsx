@@ -1,7 +1,7 @@
 import { Button, Col, Result, Row } from 'antd';
 import styles from './image-question.less';
 import { Image } from '@/types/search';
-import QuestionInput from '@/components/input/question-input/question-input';
+import InputQuestion from '@/components/input/input-question/input-question';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
@@ -87,7 +87,7 @@ export default function ImageQuestion(props: ImageQuestionProps) {
   return (
     <div className={styles.container}>
       <Row>
-        <QuestionInput
+        <InputQuestion
           language={'en'}
           placeholder={'Enter a question about this assignment...'}
           disabled={!image.can_ask_question}
