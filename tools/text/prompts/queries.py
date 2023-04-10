@@ -31,7 +31,8 @@ Svar:
 
 def create_query_text_for_image(query: Query, upload: ImageUpload):
     return f'''
-Answer the following prompt about an assignment.
+Answer the following prompt about an assignment. If the answer contains math,
+wrap all equations and expressions in latex.
 
 Assignment Description:
 {upload.description_en}
