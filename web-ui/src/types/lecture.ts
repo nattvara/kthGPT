@@ -41,6 +41,7 @@ export interface Lecture {
   title: string | null;
   group: string | null;
   description: string | null;
+  subjects: string[];
   date: Date | null;
   courses: Course[];
   courses_can_change: boolean;
