@@ -45,7 +45,7 @@ jobs:
 
     - name: Run flake8
       run: |
-        flake8 . --count --max-complexity=20 --max-line-length=127 --statistics --exclude "venv*,web-ui*"
+        flake8 . --count --max-complexity=20 --max-line-length=127 --statistics --exclude venv
 
   lint_ts:
     name: Lint Typescript files
