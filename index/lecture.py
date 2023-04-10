@@ -22,6 +22,7 @@ LECTURE_OUTPUT_FIELDS = [
     'content_link',
 ]
 
+
 def clean():
     client.indices.delete(
         index=INDEX_NAME,
