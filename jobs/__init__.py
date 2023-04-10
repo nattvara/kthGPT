@@ -169,6 +169,7 @@ def schedule_analysis_of_lecture(
     queue_transcribe: Queue = get_transcribe_queue,
     queue_summarise: Queue = get_summarise_queue,
     queue_metadata: Queue = get_metadata_queue,
+    queue_classifications: Queue = get_classifications_queue,
 ):
     if lecture.approved is False:
         log().warning(f'Lecture is not approved, canceling analysis {lecture.public_id}')
@@ -195,6 +196,8 @@ def schedule_analysis_of_lecture(
     metadata = next(get_metadata_queue()).enqueue(fetch_metadata.job, lecture.public_id, lecture.language, job_timeout=fetch_metadata.TIMEOUT)  # noqa: F841, E501
     preview = next(queue_metadata()).enqueue(capture_preview.job, lecture.public_id, lecture.language, job_timeout=capture_preview.TIMEOUT, depends_on=download)  # noqa: F841, E501
     clean = next(queue_metadata()).enqueue(clean_lecture.job, lecture.public_id, lecture.language, depends_on=summarise)  # noqa: F841, E501
+    description = next(queue_metadata()).enqueue(create_description_lecture.job, lecture.public_id, lecture.language, depends_on=summarise)  # noqa: E501
+    subjects = next(queue_classifications()).enqueue(classify_subjects_lecture.job, lecture.public_id, lecture.language, depends_on=description)  # noqa: F841, E501
     index = next(queue_metadata()).enqueue(index_lecture.job, lecture.public_id, lecture.language, depends_on=summarise)  # noqa: F841, E501
 
     return analysis
