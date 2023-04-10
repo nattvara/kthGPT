@@ -262,9 +262,11 @@ def schedule_parse_image_upload(
     queue_default: Queue = get_default_queue,
     queue_image: Queue = get_image_queue,
     queue_image_questions: Queue = get_image_questions_queue,
+    queue_classifications: Queue = get_classifications_queue,
 ):
     img_queue = next(queue_image())
     img_questions_queue = next(queue_image_questions())
+    classifications_queue = next(queue_classifications())
 
     # analysis sequence
     text_content = img_queue.enqueue(parse_image_content.job, image_upload.public_id)  # noqa: E501
@@ -273,7 +275,7 @@ def schedule_parse_image_upload(
     description_sv = img_questions_queue.enqueue(create_description.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=text_content)  # noqa: E501
     search_queries_en = img_questions_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=[text_content, description_en])  # noqa: E501, F841
     search_queries_sv = img_questions_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=[text_content, description_sv])  # noqa: E501, F841
-    subjects = img_questions_queue.enqueue(classify_subjects.job, image_upload.public_id, depends_on=[description_en])  # noqa: E501, F841
+    subjects = classifications_queue.enqueue(classify_subjects.job, image_upload.public_id, depends_on=[description_en])  # noqa: E501, F841
 
 
 def schedule_classification_of_lecture(
