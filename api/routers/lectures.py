@@ -63,6 +63,8 @@ class LectureOutputModel(BaseModel):
     source: str
     words: int
     length: int
+    description: Union[str, None] = None
+    subjects: List[str]
     preview_uri: Union[str, None] = None
     preview_small_uri: Union[str, None] = None
     transcript_uri: Union[str, None] = None

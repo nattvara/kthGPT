@@ -8,6 +8,7 @@ const { Title } = Typography;
 
 export default function FailuresPage() {
   useEffect(() => {
+    document.title = 'kthGPT - Failures';
     registerPageLoad();
   }, []);
 

@@ -14,7 +14,9 @@ from tools.files.paths import (
 )
 from .base import Base
 from db.crud import (
+    add_subject_with_name_and_reference_to_lecture,
     find_all_courses_relations_for_lecture_id,
+    get_lecture_subjects_by_lecture_id,
     find_all_courses_for_lecture_id,
     find_all_queries_for_lecture,
 )
@@ -30,6 +32,7 @@ class Lecture(Base):
     title = peewee.CharField(null=True)
     group = peewee.CharField(null=True)  # like a channel name on youtube
     date = peewee.TimestampField(null=True)
+    description = peewee.TextField(null=True)
     raw_content_link = peewee.CharField(null=True)
     img_preview = peewee.CharField(null=True)
     img_preview_small = peewee.CharField(null=True)
@@ -201,6 +204,24 @@ class Lecture(Base):
         expires_at = self.created_at + timedelta(days=1)
         return now < expires_at
 
+    def add_subject(self, subject_name: str):
+        if subject_name in self.subjects_list():
+            return
+
+        return add_subject_with_name_and_reference_to_lecture(
+            subject_name,
+            self.id
+        )
+
+    def subjects_list(self) -> list:
+        out = []
+        subjects = get_lecture_subjects_by_lecture_id(self.id)
+
+        for subject in subjects:
+            out.append(subject.name)
+
+        return out
+
     def refresh(self):
         update = Lecture.get(self.id)
         self.public_id = update.public_id
@@ -211,6 +232,7 @@ class Lecture(Base):
         self.title = update.title
         self.group = update.group
         self.date = update.date
+        self.description = update.description
         self.img_preview = update.img_preview
         self.img_preview_small = update.img_preview_small
         self.mp4_filepath = update.mp4_filepath
@@ -221,8 +243,10 @@ class Lecture(Base):
 
     def to_doc(self):
         course_codes = []
+        course_names = []
         for course in self.courses():
             course_codes.append(course['course_code'])
+            course_names.append(course['display_name'])
 
         return {
             'public_id': self.public_id,
@@ -234,10 +258,13 @@ class Lecture(Base):
             'length': self.length,
             'title': self.title,
             'group': self.group,
+            'description': self.description,
             'preview_uri': self.preview_uri(),
             'preview_small_uri': self.preview_small_uri(),
             'content_link': self.content_link(),
             'courses': course_codes,
+            'courses_names': course_names,
+            'subjects': self.subjects_list(),
             'no_course': len(course_codes) == 0,
             'transcript': self.transcript_text(),
         }
@@ -303,6 +330,8 @@ class Lecture(Base):
             'title': self.title,
             'group': self.group,
             'date': date,
+            'description': self.description,
+            'subjects': self.subjects_list(),
             'preview_uri': self.preview_uri(),
             'preview_small_uri': self.preview_small_uri(),
             'transcript_uri': self.transcript_uri(),
@@ -312,3 +341,8 @@ class Lecture(Base):
             'courses': self.courses(),
             'courses_can_change': self.courses_can_be_changed(),
         }
+
+
+class LectureSubject(Base):
+    lecture_id = peewee.ForeignKeyField(Lecture, null=False, backref='lecture', on_delete='cascade')
+    name = peewee.CharField(null=False, index=True)

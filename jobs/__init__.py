@@ -13,18 +13,20 @@ from jobs.pipelines.analyse_lecture import (
     extract_audio,
 )
 from jobs.pipelines.parse_image_upload import (
+    create_description as create_description_image_upload,
+    classify_subjects as classify_subjects_image_upload,
     create_search_queries,
     parse_image_content,
-    create_description,
-    classify_subjects,
     create_title,
 )
 from config.settings import settings
 from jobs.tasks.lecture import (
+    create_description as create_description_lecture,
+    classify_subjects as classify_subjects_lecture,
     capture_preview,
     classify_video,
     clean_lecture,
-    index_lecture
+    index_lecture,
 )
 from jobs.tasks.lecture import (
     fetch_metadata,
@@ -42,7 +44,8 @@ APPROVAL = 'approval'
 GPT = 'gpt'
 METADATA = 'metadata'
 IMAGE = 'image'
-IMAGE_QUESTIONS = 'image_questions'
+IMAGE_METADATA = 'image_metadata'
+CLASSIFICATIONS = 'classifications'
 
 
 def get_default_queue() -> Queue:
@@ -126,10 +129,19 @@ def get_image_queue() -> Queue:
         queue.connection.close()
 
 
-def get_image_questions_queue() -> Queue:
+def get_image_metadata_queue() -> Queue:
     try:
         conn = get_connection()
-        queue = Queue(IMAGE_QUESTIONS, connection=conn)
+        queue = Queue(IMAGE_METADATA, connection=conn)
+        yield queue
+    finally:
+        queue.connection.close()
+
+
+def get_classifications_queue() -> Queue:
+    try:
+        conn = get_connection()
+        queue = Queue(CLASSIFICATIONS, connection=conn)
         yield queue
     finally:
         queue.connection.close()
@@ -157,6 +169,7 @@ def schedule_analysis_of_lecture(
     queue_transcribe: Queue = get_transcribe_queue,
     queue_summarise: Queue = get_summarise_queue,
     queue_metadata: Queue = get_metadata_queue,
+    queue_classifications: Queue = get_classifications_queue,
 ):
     if lecture.approved is False:
         log().warning(f'Lecture is not approved, canceling analysis {lecture.public_id}')
@@ -183,6 +196,8 @@ def schedule_analysis_of_lecture(
     metadata = next(get_metadata_queue()).enqueue(fetch_metadata.job, lecture.public_id, lecture.language, job_timeout=fetch_metadata.TIMEOUT)  # noqa: F841, E501
     preview = next(queue_metadata()).enqueue(capture_preview.job, lecture.public_id, lecture.language, job_timeout=capture_preview.TIMEOUT, depends_on=download)  # noqa: F841, E501
     clean = next(queue_metadata()).enqueue(clean_lecture.job, lecture.public_id, lecture.language, depends_on=summarise)  # noqa: F841, E501
+    description = next(queue_metadata()).enqueue(create_description_lecture.job, lecture.public_id, lecture.language, depends_on=summarise)  # noqa: E501
+    subjects = next(queue_classifications()).enqueue(classify_subjects_lecture.job, lecture.public_id, lecture.language, depends_on=description)  # noqa: F841, E501
     index = next(queue_metadata()).enqueue(index_lecture.job, lecture.public_id, lecture.language, depends_on=summarise)  # noqa: F841, E501
 
     return analysis
@@ -250,16 +265,42 @@ def schedule_parse_image_upload(
     image_upload,
     queue_default: Queue = get_default_queue,
     queue_image: Queue = get_image_queue,
-    queue_image_questions: Queue = get_image_questions_queue,
+    queue_image_metadata: Queue = get_image_metadata_queue,
+    queue_classifications: Queue = get_classifications_queue,
 ):
     img_queue = next(queue_image())
-    img_questions_queue = next(queue_image_questions())
+    img_metadata_queue = next(queue_image_metadata())
+    classifications_queue = next(queue_classifications())
 
     # analysis sequence
     text_content = img_queue.enqueue(parse_image_content.job, image_upload.public_id)  # noqa: E501
-    title = img_queue.enqueue(create_title.job, image_upload.public_id)  # noqa: F841
-    description_en = img_questions_queue.enqueue(create_description.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=text_content)  # noqa: E501
-    description_sv = img_questions_queue.enqueue(create_description.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=text_content)  # noqa: E501
-    search_queries_en = img_questions_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=[text_content, description_en])  # noqa: E501, F841
-    search_queries_sv = img_questions_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=[text_content, description_sv])  # noqa: E501, F841
-    subjects = img_questions_queue.enqueue(classify_subjects.job, image_upload.public_id, depends_on=[description_en])  # noqa: E501, F841
+    title = img_metadata_queue.enqueue(create_title.job, image_upload.public_id)  # noqa: F841
+    description_en = img_metadata_queue.enqueue(create_description_image_upload.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=text_content)  # noqa: E501
+    description_sv = img_metadata_queue.enqueue(create_description_image_upload.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=text_content)  # noqa: E501
+    search_queries_en = img_metadata_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=[text_content, description_en])  # noqa: E501, F841
+    search_queries_sv = img_metadata_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=[text_content, description_sv])  # noqa: E501, F841
+    subjects = classifications_queue.enqueue(classify_subjects_image_upload.job, image_upload.public_id, depends_on=[description_en])  # noqa: E501, F841
+
+
+def schedule_classification_of_lecture(
+    lecture,
+    queue_classifications: Queue = get_classifications_queue,
+):
+    classifications_queue = next(queue_classifications())
+    classifications_queue.enqueue(
+        classify_subjects_lecture.job,
+        lecture.public_id,
+        lecture.language,
+    )
+
+
+def schedule_description_of_lecture(
+    lecture,
+    queue_metadata: Queue = get_metadata_queue,
+):
+    metadata_queue = next(queue_metadata())
+    metadata_queue.enqueue(
+        create_description_lecture.job,
+        lecture.public_id,
+        lecture.language,
+    )

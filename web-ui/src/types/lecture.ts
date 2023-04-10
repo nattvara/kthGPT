@@ -40,6 +40,8 @@ export interface Lecture {
   length: number | null;
   title: string | null;
   group: string | null;
+  description: string | null;
+  subjects: string[];
   date: Date | null;
   courses: Course[];
   courses_can_change: boolean;

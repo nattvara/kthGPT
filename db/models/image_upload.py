@@ -79,6 +79,9 @@ class ImageUpload(Base):
         return json.loads(val)
 
     def add_subject(self, subject_name: str):
+        if subject_name in self.subjects_list():
+            return
+
         return add_subject_with_name_and_reference_to_image_upload(
             subject_name,
             self.id

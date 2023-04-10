@@ -80,6 +80,22 @@ def get_unfinished_lectures():
     return out
 
 
+# LectureSubject
+def add_subject_with_name_and_reference_to_lecture(name: str, lecture_id: int):
+    from db.models import LectureSubject
+    subject = LectureSubject(
+        name=name,
+        lecture_id=lecture_id,
+    )
+    subject.save()
+    return subject
+
+
+def get_lecture_subjects_by_lecture_id(id: int):
+    from db.models import LectureSubject
+    return LectureSubject.filter(LectureSubject.lecture_id == id)
+
+
 # Analysis
 def get_all_analysis_for_lecture(lecture_id: int):
     from db.models import Analysis

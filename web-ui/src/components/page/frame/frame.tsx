@@ -113,7 +113,7 @@ function Frame(props: FrameProps) {
         </Row>
       )}
 
-      <Row>
+      <Row className={styles.breadcrumbs_container}>
         <Divider orientation="left">
           <div className={styles.breadcrumbs}>
             <Breadcrumb>

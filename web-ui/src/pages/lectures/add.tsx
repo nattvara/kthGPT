@@ -6,6 +6,7 @@ import LectureAddNewForm from '@/components/lecture/lecture-add-new-form/lecture
 
 export default function IndexPage() {
   useEffect(() => {
+    document.title = 'kthGPT - Add Lecture';
     registerPageLoad();
   }, []);
 

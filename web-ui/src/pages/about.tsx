@@ -8,6 +8,7 @@ const { Paragraph, Title, Link } = Typography;
 
 export default function AboutPage() {
   useEffect(() => {
+    document.title = 'kthGPT - About';
     registerPageLoad();
   }, []);
 

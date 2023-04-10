@@ -1,6 +1,6 @@
 # flake8: noqa
 from .url import URL
-from .lecture import Lecture
+from .lecture import Lecture, LectureSubject
 from .query import Query
 from .analysis import Analysis
 from .message import Message

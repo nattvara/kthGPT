@@ -84,7 +84,7 @@ export default function ImageQuestion(props: ImageQuestionProps) {
   };
 
   return (
-    <>
+    <div className={styles.container}>
       <Row>
         <QuestionInput
           language={'en'}
@@ -191,6 +191,6 @@ export default function ImageQuestion(props: ImageQuestionProps) {
           </Col>
         </Row>
       )}
-    </>
+    </div>
   );
 }

@@ -144,7 +144,7 @@ export default function QuestionsPage() {
     <>
       <Frame showBack={true} breadcrumbs={breadcrumbs}>
         <>
-          <Row>
+          <Row gutter={[0, 40]}>
             <Col sm={smLeft} md={mdLeft} lg={lgLeft}>
               <LectureQuestion lecture={lecture} />
             </Col>

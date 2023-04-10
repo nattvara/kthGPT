@@ -27,6 +27,7 @@ export default function IndexPage() {
   };
 
   useEffect(() => {
+    document.title = 'kthGPT';
     registerPageLoad();
   }, []);
 

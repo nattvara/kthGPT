@@ -1,5 +1,5 @@
 import styles from './lecture-preview.less';
-import { Image, Card, Spin, Row, Col, Space } from 'antd';
+import { Image, Card, Spin, Row, Col, Space, Tag, Typography } from 'antd';
 import { Lecture } from '@/types/lecture';
 import { makeUrl } from '@/http';
 import { EVENT_GOTO_CONTENT, CATEGORY_PREVIEW, emitEvent } from '@/matomo';
@@ -15,6 +15,7 @@ import kthLogo from '@/assets/kth.svg';
 import youtubeLogoSmall from '@/assets/youtube-small.svg';
 
 const { Meta } = Card;
+const { Title } = Typography;
 
 const prettyLengthString = (seconds: number) => {
   const hours = Math.floor(seconds / 3600);
@@ -269,6 +270,20 @@ export default function LecturePreview(props: LecturePreviewProps) {
             </>
           }
         />
+        {lecture.subjects.length > 0 && (
+          <div className={styles.subjects}>
+            <Row>
+              <Title level={5}>Subjects covered</Title>
+            </Row>
+            <Row>
+              {lecture.subjects.map((subject, index) => (
+                <Col key={index}>
+                  <Tag color="magenta">{subject}</Tag>
+                </Col>
+              ))}
+            </Row>
+          </div>
+        )}
       </>
     </Card>
   );

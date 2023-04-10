@@ -8,6 +8,7 @@ const { Title } = Typography;
 
 export default function QueuePage() {
   useEffect(() => {
+    document.title = 'kthGPT - Queue';
     registerPageLoad();
   }, []);
 
