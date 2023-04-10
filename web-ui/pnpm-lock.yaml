@@ -15,6 +15,7 @@ specifiers:
   eslint-plugin-prettier: ^4.2.1
   katex: ^0.16.4
   prettier: ^2.8.4
+  react-katex: ^3.0.1
   typescript: ^4.1.2
   umi: ^4.0.51
 
@@ -36,6 +37,7 @@ devDependencies:
   eslint-plugin-prettier: 4.2.1_u2zha4kiojzs42thzpgwygphmy
   katex: 0.16.4
   prettier: 2.8.4
+  react-katex: 3.0.1
   typescript: 4.9.5
 
 packages:
@@ -9064,6 +9066,15 @@ packages:
 
   /react-is/18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
+    dev: true
+
+  /react-katex/3.0.1:
+    resolution: {integrity: sha512-wIUW1fU5dHlkKvq4POfDkHruQsYp3fM8xNb/jnc8dnQ+nNCnaj0sx5pw7E6UyuEdLRyFKK0HZjmXBo+AtXXy0A==}
+    peerDependencies:
+      prop-types: ^15.8.1
+      react: '>=15.3.2 <=18'
+    dependencies:
+      katex: 0.16.4
     dev: true
 
   /react-lifecycles-compat/3.0.4:
