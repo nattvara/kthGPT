@@ -1,8 +1,8 @@
 import Frame from '@/components/page/frame/frame';
-import DeniedTable from '@/components/tables/failures-table/failures-table';
 import { registerPageLoad } from '@/matomo';
 import { useEffect } from 'react';
 import { Typography } from 'antd';
+import TableFailures from '@/components/table/table-failures/table-failures';
 
 const { Title } = Typography;
 
@@ -17,7 +17,7 @@ export default function FailuresPage() {
       <Frame>
         <>
           <Title level={3}>Lectures that has failed</Title>
-          <DeniedTable />
+          <TableFailures />
         </>
       </Frame>
     </>

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { Lecture } from '@/types/lecture';
-import styles from './failures-table.less';
+import styles from './table-denied.less';
 import { ColumnsType } from 'antd/es/table';
 import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';
@@ -12,7 +12,7 @@ import kthLogo from '@/assets/kth.svg';
 import youtubeLogo from '@/assets/youtube.svg';
 import {
   emitEvent,
-  CATEGORY_FAILURE_TABLE,
+  CATEGORY_DENIED_TABLE,
   EVENT_ERROR_RESPONSE,
 } from '@/matomo';
 
@@ -39,17 +39,6 @@ const columns: ColumnsType<Lecture> = [
   {
     title: 'Title',
     dataIndex: 'title',
-  },
-  {
-    title: 'Analysis',
-    dataIndex: 'combined_public_id_and_lang',
-    render: (combined_public_id_and_lang: string) => (
-      <>
-        <Link href={`/lectures/${combined_public_id_and_lang}/watch`}>
-          View Progress
-        </Link>
-      </>
-    ),
   },
   {
     title: 'Content Link',
@@ -97,9 +86,16 @@ const columns: ColumnsType<Lecture> = [
     },
   },
   {
-    title: 'Progress',
-    dataIndex: 'overall_progress',
-    render: (val: string) => <>{val}%</>,
+    title: 'State',
+    dataIndex: 'state',
+    render: (val: string) => {
+      val = val.replaceAll('_', ' ');
+
+      const titleCase = val
+        .toLowerCase()
+        .replace(/(^|\s)\S/g, (match) => match.toUpperCase());
+      return <>{titleCase}</>;
+    },
   },
 ];
 
@@ -107,13 +103,13 @@ interface LectureResponse extends ServerResponse {
   data: Lecture[];
 }
 
-export default function FailuresTable() {
+export default function TableDenied() {
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [notificationApi, contextHolder] = notification.useNotification();
 
   const { mutate: fetchLectures } = useMutation(
     async () => {
-      return await apiClient.get(`/lectures?summary=true&only_failed=true`);
+      return await apiClient.get(`/lectures?summary=true&only_denied=true`);
     },
     {
       onSuccess: (res: LectureResponse) => {
@@ -134,11 +130,7 @@ export default function FailuresTable() {
           message: 'Failed to get lectures',
           description: err.response.data.detail,
         });
-        emitEvent(
-          CATEGORY_FAILURE_TABLE,
-          EVENT_ERROR_RESPONSE,
-          'fetchLectures'
-        );
+        emitEvent(CATEGORY_DENIED_TABLE, EVENT_ERROR_RESPONSE, 'fetchLectures');
       },
     }
   );
