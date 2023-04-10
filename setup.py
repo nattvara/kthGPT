@@ -42,6 +42,7 @@ setup(
             'dispatch_capture_preview_for_all_lectures = jobs.cmd:capture_preview_for_all_lectures',
             'dispatch_cleanup_for_all_lectures = jobs.cmd:cleanup_for_all_lectures',
             'dispatch_classification_for_all_lectures = jobs.cmd:reclassify_all_lectures',
+            'dispatch_description_for_all_lectures = jobs.cmd:create_descriptions_all_lectures',
             'fetch_kth_courses = courses.cmd:fetch_kth_courses',
             'index_all_courses = index.cmd:index_all_courses',
             'index_all_lectures = index.cmd:index_all_lectures',

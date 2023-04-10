@@ -7,6 +7,7 @@ from db.crud import (
 )
 from jobs import (
     schedule_classification_of_lecture,
+    schedule_description_of_lecture,
     schedule_analysis_of_lecture,
     schedule_cleanup_of_lecture,
     get_metadata_queue,
@@ -79,5 +80,21 @@ def reclassify_all_lectures():
 
         print(f'scheduling classification of {lecture.id}')
         schedule_classification_of_lecture(lecture)
+
+    print(f'skipped {skipped} lectures without description')
+
+
+def create_descriptions_all_lectures():
+    print('dispatching jobs to create descriptions for all lectures')
+
+    lectures = get_all_ready_lectures()
+    skipped = 0
+    for lecture in lectures:
+        if lecture.description is not None:
+            skipped += 1
+            continue
+
+        print(f'scheduling description for {lecture.id}')
+        schedule_description_of_lecture(lecture)
 
     print(f'skipped {skipped} lectures without description')
