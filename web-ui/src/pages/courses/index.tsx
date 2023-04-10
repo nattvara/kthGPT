@@ -1,4 +1,6 @@
-import PageFrame, { BreadcrumbItem } from '@/components/page/page-frame/page-frame';
+import PageFrame, {
+  BreadcrumbItem,
+} from '@/components/page/page-frame/page-frame';
 import { registerPageLoad } from '@/matomo';
 import { Col, Row, Grid } from 'antd';
 import { useEffect, useState } from 'react';
