@@ -203,6 +203,7 @@ def search_in_transcripts_and_titles(search_string: str, include_id=False, inclu
                     'transcript',
                     'description',
                     'courses',
+                    'courses_names',
                     'content_link',
                 ],
             }

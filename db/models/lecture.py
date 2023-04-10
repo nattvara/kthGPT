@@ -240,8 +240,10 @@ class Lecture(Base):
 
     def to_doc(self):
         course_codes = []
+        course_names = []
         for course in self.courses():
             course_codes.append(course['course_code'])
+            course_names.append(course['display_name'])
 
         return {
             'public_id': self.public_id,
@@ -258,6 +260,7 @@ class Lecture(Base):
             'preview_small_uri': self.preview_small_uri(),
             'content_link': self.content_link(),
             'courses': course_codes,
+            'courses_names': course_names,
             'no_course': len(course_codes) == 0,
             'transcript': self.transcript_text(),
         }
