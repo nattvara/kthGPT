@@ -33,6 +33,7 @@ QUEUE_GPT = 'fake_gpt'
 QUEUE_METADATA = 'fake_metadata'
 QUEUE_IMAGE = 'fake_image'
 QUEUE_IMAGE_QUESTIONS = 'fake_image_questions'
+QUEUE_CLASSIFICATIONS = 'fake_classifications'
 
 
 def pytest_configure(config):
@@ -82,6 +83,7 @@ def run_around_tests(mocker):
     mocker.patch('jobs.get_metadata_queue', return_value=get_fake_queue(QUEUE_METADATA))
     mocker.patch('jobs.get_image_queue', return_value=get_fake_queue(QUEUE_IMAGE))
     mocker.patch('jobs.get_image_questions_queue', return_value=get_fake_queue(QUEUE_IMAGE_QUESTIONS))
+    mocker.patch('jobs.get_classifications_queue', return_value=get_fake_queue(QUEUE_CLASSIFICATIONS))
 
     yield
     teardown(db)
