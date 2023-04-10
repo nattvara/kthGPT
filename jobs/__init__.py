@@ -21,10 +21,11 @@ from jobs.pipelines.parse_image_upload import (
 )
 from config.settings import settings
 from jobs.tasks.lecture import (
+    classify_subjects,
     capture_preview,
     classify_video,
     clean_lecture,
-    index_lecture
+    index_lecture,
 )
 from jobs.tasks.lecture import (
     fetch_metadata,
@@ -43,6 +44,7 @@ GPT = 'gpt'
 METADATA = 'metadata'
 IMAGE = 'image'
 IMAGE_QUESTIONS = 'image_questions'
+CLASSIFICATIONS = 'classifications'
 
 
 def get_default_queue() -> Queue:
@@ -130,6 +132,15 @@ def get_image_questions_queue() -> Queue:
     try:
         conn = get_connection()
         queue = Queue(IMAGE_QUESTIONS, connection=conn)
+        yield queue
+    finally:
+        queue.connection.close()
+
+
+def get_classifications_queue() -> Queue:
+    try:
+        conn = get_connection()
+        queue = Queue(CLASSIFICATIONS, connection=conn)
         yield queue
     finally:
         queue.connection.close()
@@ -263,3 +274,15 @@ def schedule_parse_image_upload(
     search_queries_en = img_questions_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.ENGLISH, depends_on=[text_content, description_en])  # noqa: E501, F841
     search_queries_sv = img_questions_queue.enqueue(create_search_queries.job, image_upload.public_id, image_upload.Language.SWEDISH, depends_on=[text_content, description_sv])  # noqa: E501, F841
     subjects = img_questions_queue.enqueue(classify_subjects.job, image_upload.public_id, depends_on=[description_en])  # noqa: E501, F841
+
+
+def schedule_classification_of_lecture(
+    lecture,
+    queue_classifications: Queue = get_classifications_queue,
+):
+    classifications_queue = next(queue_classifications())
+    classifications_queue.enqueue(
+        classify_subjects.job,
+        lecture.public_id,
+        lecture.language,
+    )
