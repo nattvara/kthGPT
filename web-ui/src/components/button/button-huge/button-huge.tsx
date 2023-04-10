@@ -1,18 +1,18 @@
-import styles from './huge-button.less';
+import styles from './button-huge.less';
 import { Row, Typography } from 'antd';
 import { useState } from 'react';
 import { history } from 'umi';
 
 const { Title } = Typography;
 
-interface HugeButtonProps {
+interface ButtonHugeProps {
   icon: JSX.Element;
   title: string;
   subtitle: string;
   url: string;
 }
 
-export default function HugeButton(props: HugeButtonProps) {
+export default function ButtonHuge(props: ButtonHugeProps) {
   const [hovering, setHovering] = useState<boolean>(false);
 
   const goToUrl = async (url: string, newTab = false) => {

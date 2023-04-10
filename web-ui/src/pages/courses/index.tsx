@@ -1,4 +1,6 @@
-import Frame, { BreadcrumbItem } from '@/components/page/frame/frame';
+import PageFrame, {
+  BreadcrumbItem,
+} from '@/components/page/page-frame/page-frame';
 import { registerPageLoad } from '@/matomo';
 import { Col, Row, Grid } from 'antd';
 import { useEffect, useState } from 'react';
@@ -74,7 +76,7 @@ export default function IndexPage() {
 
   return (
     <>
-      <Frame showBack={true} breadcrumbs={breadcrumbs}>
+      <PageFrame showBack={true} breadcrumbs={breadcrumbs}>
         <>
           <Row>
             {shouldShowCourseList && (
@@ -93,7 +95,7 @@ export default function IndexPage() {
             )}
           </Row>
         </>
-      </Frame>
+      </PageFrame>
     </>
   );
 }

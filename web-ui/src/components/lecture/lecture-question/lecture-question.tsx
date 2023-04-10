@@ -14,9 +14,9 @@ import {
   EVENT_RECEIVED_QUESTION_ANSWER,
   EVENT_ERROR_RESPONSE,
 } from '@/matomo';
-import QuestionInput from '@/components/input/question-input/question-input';
+import InputQuestion from '@/components/input/input-question/input-question';
 import LectureTranscript from '../lecture-transcript-modal/lecture-transcript-modal';
-import { SearchResultLoading } from '@/components/searching/search-result-loading/search-result-loading';
+import { SearchResultLoading } from '@/components/search/search-result-loading/search-result-loading';
 
 const examples = [
   {
@@ -157,7 +157,7 @@ export default function LectureQuestion(props: LectureQuestionProps) {
 
   return (
     <>
-      <QuestionInput
+      <InputQuestion
         language={lecture.language}
         placeholder={placeholder}
         isAsking={isMakingQuery}

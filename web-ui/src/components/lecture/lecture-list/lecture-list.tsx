@@ -12,7 +12,7 @@ import {
   EVENT_GOTO_LECTURE,
   EVENT_ERROR_RESPONSE,
 } from '@/matomo';
-import { SearchResultLoading } from '@/components/searching/search-result-loading/search-result-loading';
+import { SearchResultLoading } from '@/components/search/search-result-loading/search-result-loading';
 
 const { Search } = Input;
 

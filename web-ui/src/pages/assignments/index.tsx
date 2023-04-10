@@ -1,5 +1,5 @@
 import styles from './index.less';
-import Frame from '@/components/page/frame/frame';
+import PageFrame from '@/components/page/page-frame/page-frame';
 import { registerPageLoad } from '@/matomo';
 import {
   Button,
@@ -22,7 +22,7 @@ import { history } from 'umi';
 import ImageDescription from '@/components/image/image-description/image-description';
 import ImageQuestion from '@/components/image/image-question/image-question';
 import ImageParseFailure from '@/components/image/image-parse-failure/image-parse-failure';
-import SearchByImage from '@/components/searching/search-by-image/search-by-image';
+import SearchByImage from '@/components/search/search-by-image/search-by-image';
 import ImageSubjects from '@/components/image/image-subjects/image-subjects';
 
 const { Title, Paragraph } = Typography;
@@ -119,7 +119,7 @@ export default function AssignmentsIndexPage() {
   if (notFound) {
     return (
       <>
-        <Frame showBack={true} breadcrumbs={breadcrumbs}>
+        <PageFrame showBack={true} breadcrumbs={breadcrumbs}>
           <Result
             status="404"
             title="Could not find assignment"
@@ -134,7 +134,7 @@ export default function AssignmentsIndexPage() {
               </Button>,
             ]}
           />
-        </Frame>
+        </PageFrame>
       </>
     );
   }
@@ -142,18 +142,18 @@ export default function AssignmentsIndexPage() {
   if (uploadId === undefined) {
     return (
       <>
-        <Frame showBack={true} breadcrumbs={breadcrumbs}>
+        <PageFrame showBack={true} breadcrumbs={breadcrumbs}>
           <Skeleton active paragraph={{ rows: 4 }} />
-        </Frame>
+        </PageFrame>
       </>
     );
   }
   if (image === null) {
     return (
       <>
-        <Frame showBack={true} breadcrumbs={breadcrumbs}>
+        <PageFrame showBack={true} breadcrumbs={breadcrumbs}>
           <Skeleton active paragraph={{ rows: 4 }} />
-        </Frame>
+        </PageFrame>
       </>
     );
   }
@@ -161,7 +161,7 @@ export default function AssignmentsIndexPage() {
   return (
     <>
       {contextHolder}
-      <Frame showBack={true} breadcrumbs={breadcrumbs}>
+      <PageFrame showBack={true} breadcrumbs={breadcrumbs}>
         <Row>
           <Col sm={24} md={8} className={styles.padding_left_right}>
             <Space direction="vertical" size="large">
@@ -219,7 +219,7 @@ export default function AssignmentsIndexPage() {
             </Row>
           </Col>
         </Row>
-      </Frame>
+      </PageFrame>
     </>
   );
 }

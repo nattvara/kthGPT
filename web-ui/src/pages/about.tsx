@@ -1,4 +1,4 @@
-import Frame from '@/components/page/frame/frame';
+import PageFrame from '@/components/page/page-frame/page-frame';
 import { registerPageLoad } from '@/matomo';
 import { Row, Col, Typography } from 'antd';
 import { useEffect } from 'react';
@@ -14,7 +14,7 @@ export default function AboutPage() {
 
   return (
     <>
-      <Frame showBack={true} breadcrumbs={[{ title: 'About kthGPT' }]}>
+      <PageFrame showBack={true} breadcrumbs={[{ title: 'About kthGPT' }]}>
         <div className={styles.page}>
           <Row justify="center">
             <Col sm={24} md={15}>
@@ -168,7 +168,7 @@ export default function AboutPage() {
             </Col>
           </Row>
         </div>
-      </Frame>
+      </PageFrame>
     </>
   );
 }

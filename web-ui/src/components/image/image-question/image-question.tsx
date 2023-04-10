@@ -1,12 +1,13 @@
 import { Button, Col, Result, Row } from 'antd';
 import styles from './image-question.less';
 import { Image } from '@/types/search';
-import QuestionInput from '@/components/input/question-input/question-input';
+import InputQuestion from '@/components/input/input-question/input-question';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { ReloadOutlined } from '@ant-design/icons';
-import { SearchResultLoading } from '@/components/searching/search-result-loading/search-result-loading';
+import { SearchResultLoading } from '@/components/search/search-result-loading/search-result-loading';
+import { TextMath } from '@/components/text/text-math/text-math';
 
 interface QueryResponse extends ServerResponse {
   data: {
@@ -86,11 +87,11 @@ export default function ImageQuestion(props: ImageQuestionProps) {
   return (
     <div className={styles.container}>
       <Row>
-        <QuestionInput
+        <InputQuestion
           language={'en'}
           placeholder={'Enter a question about this assignment...'}
           disabled={!image.can_ask_question}
-          isAsking={false}
+          isAsking={isMakingQuery}
           examples={[
             {
               titleEn: 'Explain this assignment',
@@ -163,7 +164,9 @@ export default function ImageQuestion(props: ImageQuestionProps) {
             <>
               <Row gutter={[20, 20]}>
                 <Col span={24}>
-                  <pre className={styles.response}>{response}</pre>
+                  <div className={styles.response}>
+                    <TextMath text={response} />
+                  </div>
                 </Col>
               </Row>
 

@@ -1,5 +1,5 @@
 import { SendOutlined } from '@ant-design/icons';
-import styles from './question-input.less';
+import styles from './input-question.less';
 import { Row, Col, Button, Space, Input } from 'antd';
 import { useState } from 'react';
 
@@ -12,7 +12,7 @@ export interface Example {
   queryStringSv: string;
 }
 
-interface QuestionInputProps {
+interface InputQuestionProps {
   language: string;
   placeholder: string;
   isAsking: boolean;
@@ -23,7 +23,7 @@ interface QuestionInputProps {
   disabled: boolean;
 }
 
-export default function QuestionInput(props: QuestionInputProps) {
+export default function InputQuestion(props: InputQuestionProps) {
   const {
     placeholder,
     onAsk,

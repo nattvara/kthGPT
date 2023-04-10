@@ -1,4 +1,4 @@
-import styles from './highlight-text.less';
+import styles from './text-highlight.less';
 import { Space, Typography } from 'antd';
 import { Highlight } from '@/types/lecture';
 
@@ -28,11 +28,11 @@ function BoldedText(props: BoldedTextProps) {
   );
 }
 
-interface HighlightProps {
+interface TextHighlightProps {
   highlight: Highlight;
 }
 
-export function HighlightText(props: HighlightProps) {
+export function TextHighlight(props: TextHighlightProps) {
   const { transcript } = props.highlight;
 
   if (transcript === null) {

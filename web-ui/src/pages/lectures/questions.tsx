@@ -7,7 +7,7 @@ import { history } from 'umi';
 import LecturePreview from '@/components/lecture/lecture-preview/lecture-preview';
 import { Lecture } from '@/types/lecture';
 import { emitEvent, CATEGORY_QUESTIONS, EVENT_ERROR_RESPONSE } from '@/matomo';
-import Frame from '@/components/page/frame/frame';
+import PageFrame from '@/components/page/page-frame/page-frame';
 import { useParams } from 'umi';
 import { registerPageLoad } from '@/matomo';
 import LectureQuestion from '@/components/lecture/lecture-question/lecture-question';
@@ -109,7 +109,7 @@ export default function QuestionsPage() {
   if (notFound) {
     return (
       <>
-        <Frame showBack={true} breadcrumbs={breadcrumbs}>
+        <PageFrame showBack={true} breadcrumbs={breadcrumbs}>
           <Result
             status="404"
             title="Could not find lecture"
@@ -124,7 +124,7 @@ export default function QuestionsPage() {
               </Button>,
             ]}
           />
-        </Frame>
+        </PageFrame>
       </>
     );
   }
@@ -133,16 +133,16 @@ export default function QuestionsPage() {
   if (lecture === null) {
     return (
       <>
-        <Frame showBack={true} breadcrumbs={breadcrumbs}>
+        <PageFrame showBack={true} breadcrumbs={breadcrumbs}>
           <Skeleton active paragraph={{ rows: 4 }} />
-        </Frame>
+        </PageFrame>
       </>
     );
   }
 
   return (
     <>
-      <Frame showBack={true} breadcrumbs={breadcrumbs}>
+      <PageFrame showBack={true} breadcrumbs={breadcrumbs}>
         <>
           <Row gutter={[0, 40]}>
             <Col sm={smLeft} md={mdLeft} lg={lgLeft}>
@@ -166,7 +166,7 @@ export default function QuestionsPage() {
             </Col>
           </Row>
         </>
-      </Frame>
+      </PageFrame>
     </>
   );
 }

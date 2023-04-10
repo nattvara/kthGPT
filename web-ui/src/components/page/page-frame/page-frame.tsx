@@ -1,5 +1,5 @@
 import { FileTextOutlined, GithubOutlined } from '@ant-design/icons';
-import styles from './frame.less';
+import styles from './page-frame.less';
 import {
   Space,
   Row,
@@ -14,7 +14,7 @@ import {
 import kthLogo from '../../../assets/logo.svg';
 import { history } from 'umi';
 import { buildDate, isProduction } from '@/version';
-import BackButton from '../back-button/back-button';
+import PageBack from '../page-back/page-back';
 
 const { Link } = Typography;
 
@@ -25,14 +25,14 @@ export interface BreadcrumbItem {
   title: string;
 }
 
-interface FrameProps {
+interface PageFrameProps {
   showDescription?: boolean;
   showBack?: boolean;
   breadcrumbs?: BreadcrumbItem[];
   children: JSX.Element;
 }
 
-function Frame(props: FrameProps) {
+function PageFrame(props: PageFrameProps) {
   const { showDescription, showBack, breadcrumbs, children } = props;
 
   const goToGithub = () => {
@@ -109,7 +109,7 @@ function Frame(props: FrameProps) {
 
       {showBack === true && (
         <Row>
-          <BackButton></BackButton>
+          <PageBack></PageBack>
         </Row>
       )}
 
@@ -140,8 +140,8 @@ function Frame(props: FrameProps) {
   );
 }
 
-Frame.defaultProps = {
+PageFrame.defaultProps = {
   showDescription: true,
 };
 
-export default Frame;
+export default PageFrame;

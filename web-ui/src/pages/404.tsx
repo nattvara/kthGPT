@@ -1,4 +1,4 @@
-import Frame from '@/components/page/frame/frame';
+import PageFrame from '@/components/page/page-frame/page-frame';
 import { registerPageLoad } from '@/matomo';
 import { Result, Button, Row, Col } from 'antd';
 import { useEffect } from 'react';
@@ -13,7 +13,7 @@ export default function NotFoundPage() {
 
   return (
     <>
-      <Frame showDescription={false}>
+      <PageFrame showDescription={false}>
         <Result
           status="404"
           className={styles.result}
@@ -37,7 +37,7 @@ export default function NotFoundPage() {
             </>
           }
         />
-      </Frame>
+      </PageFrame>
     </>
   );
 }

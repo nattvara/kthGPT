@@ -1,5 +1,5 @@
-import Frame from '@/components/page/frame/frame';
-import DeniedTable from '@/components/tables/denied-table/denied-table';
+import PageFrame from '@/components/page/page-frame/page-frame';
+import DeniedTable from '@/components/table/table-denied/table-denied';
 import { registerPageLoad } from '@/matomo';
 import { useEffect } from 'react';
 import { Typography } from 'antd';
@@ -14,12 +14,12 @@ export default function DeniedPage() {
 
   return (
     <>
-      <Frame>
+      <PageFrame>
         <>
           <Title level={3}>Lectures that where denied by kthGPT</Title>
           <DeniedTable />
         </>
-      </Frame>
+      </PageFrame>
     </>
   );
 }
