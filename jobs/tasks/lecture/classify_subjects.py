@@ -29,4 +29,6 @@ def job(lecture_id: str, language: str):
     for label in labels:
         lecture.add_subject(label)
 
+    lecture.reindex()
+
     logger.info('done.')

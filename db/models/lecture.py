@@ -261,6 +261,7 @@ class Lecture(Base):
             'content_link': self.content_link(),
             'courses': course_codes,
             'courses_names': course_names,
+            'subjects': self.subjects_list(),
             'no_course': len(course_codes) == 0,
             'transcript': self.transcript_text(),
         }
