@@ -11,11 +11,15 @@ def job(image_id: str):
 
     try:
         classifier = SubjectClassifier.create_classifier_for(
-            'assignment',
+            'question',
             priority=SubjectClassifier.Priority.HIGH,
             upload=upload,
         )
-        labels = classifier.classify(upload.description_en)
+        text = f'''
+{upload.text_content}
+{upload.description_en}
+        '''.strip()
+        labels = classifier.classify(text)
 
         for label in labels:
             upload.add_subject(label)
