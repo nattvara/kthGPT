@@ -270,18 +270,20 @@ export default function LecturePreview(props: LecturePreviewProps) {
             </>
           }
         />
-        <div className={styles.subjects}>
-          <Row>
-            <Title level={5}>Subjects covered</Title>
-          </Row>
-          <Row>
-            {lecture.subjects.map((subject, index) => (
-              <Col key={index}>
-                <Tag color="magenta">{subject}</Tag>
-              </Col>
-            ))}
-          </Row>
-        </div>
+        {lecture.subjects.length > 0 && (
+          <div className={styles.subjects}>
+            <Row>
+              <Title level={5}>Subjects covered</Title>
+            </Row>
+            <Row>
+              {lecture.subjects.map((subject, index) => (
+                <Col key={index}>
+                  <Tag color="magenta">{subject}</Tag>
+                </Col>
+              ))}
+            </Row>
+          </div>
+        )}
       </>
     </Card>
   );
