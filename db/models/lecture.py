@@ -205,6 +205,9 @@ class Lecture(Base):
         return now < expires_at
 
     def add_subject(self, subject_name: str):
+        if subject_name in self.subjects_list():
+            return
+
         return add_subject_with_name_and_reference_to_lecture(
             subject_name,
             self.id
