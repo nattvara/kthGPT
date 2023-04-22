@@ -1,4 +1,4 @@
-from classifiers import SubjectClassifier
+from classifiers import SubjectMultipassClassifier
 from db.crud import (
     get_image_upload_by_public_id
 )
@@ -10,9 +10,9 @@ def job(image_id: str):
         raise ValueError(f'image {image_id} was not found')
 
     try:
-        classifier = SubjectClassifier.create_classifier_for(
+        classifier = SubjectMultipassClassifier.create_classifier_for(
             'question',
-            priority=SubjectClassifier.Priority.HIGH,
+            priority=SubjectMultipassClassifier.Priority.HIGH,
             upload=upload,
         )
         text = f'''

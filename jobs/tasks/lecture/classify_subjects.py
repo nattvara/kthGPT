@@ -1,7 +1,7 @@
 import logging
 
 from db.crud import get_lecture_by_public_id_and_language
-from classifiers.subject import SubjectClassifier
+from classifiers.subject_multipass import SubjectMultipassClassifier
 
 # 5 mins
 TIMEOUT = 5 * 60
@@ -19,9 +19,9 @@ def job(lecture_id: str, language: str):
 
     analysis = lecture.get_last_analysis()
 
-    classifier = SubjectClassifier.create_classifier_for(
+    classifier = SubjectMultipassClassifier.create_classifier_for(
         'lecture',
-        priority=SubjectClassifier.Priority.LOW,
+        priority=SubjectMultipassClassifier.Priority.LOW,
         analysis=analysis,
     )
     labels = classifier.classify(lecture.description)

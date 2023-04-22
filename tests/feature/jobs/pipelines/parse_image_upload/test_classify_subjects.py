@@ -6,7 +6,7 @@ from jobs.pipelines.parse_image_upload import (
 def test_classify_subjects_job_creates_imageupload_subjects(mocker, make_mocked_classifier, image_upload):
     labels = ['foo', 'bar']
     mocker.patch(
-        'classifiers.SubjectClassifier.create_classifier_for',
+        'classifiers.SubjectMultipassClassifier.create_classifier_for',
         return_value=make_mocked_classifier(labels)
     )
 
@@ -21,7 +21,7 @@ def test_classify_subjects_job_creates_imageupload_subjects(mocker, make_mocked_
 def test_classify_subjects_saves_progress(mocker, make_mocked_classifier, image_upload):
     labels = ['foo', 'bar']
     mocker.patch(
-        'classifiers.SubjectClassifier.create_classifier_for',
+        'classifiers.SubjectMultipassClassifier.create_classifier_for',
         return_value=make_mocked_classifier(labels)
     )
 
@@ -35,7 +35,7 @@ def test_create_title_job_saves_failure_reason_on_error(mocker, make_mocked_clas
     labels = ['foo', 'bar']
     err = ValueError('bang!')
     mocker.patch(
-        'classifiers.SubjectClassifier.create_classifier_for',
+        'classifiers.SubjectMultipassClassifier.create_classifier_for',
         return_value=make_mocked_classifier(labels, err)
     )
 

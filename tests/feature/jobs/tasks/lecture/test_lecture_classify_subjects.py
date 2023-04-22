@@ -6,7 +6,7 @@ from jobs.tasks.lecture import classify_subjects
 def test_classification_can_approve_video(mocker, make_mocked_classifier, analysed_lecture):
     labels = ['some label', 'some other label']
     mocker.patch(
-        'classifiers.SubjectClassifier.create_classifier_for',
+        'classifiers.SubjectMultipassClassifier.create_classifier_for',
         return_value=make_mocked_classifier(labels)
     )
 
