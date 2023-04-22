@@ -2,7 +2,7 @@ import { Lecture } from '@/types/lecture';
 import PageFrame from '@/components/page/page-frame/page-frame';
 import SearchHuge from '@/components/search/search-huge/search-huge';
 import { registerPageLoad } from '@/matomo';
-import { Button, Col, Row } from 'antd';
+import { Button, Col, Row, Grid } from 'antd';
 import styles from './index.less';
 import { useEffect, useState } from 'react';
 import SearchResult from '@/components/search/search-results/search-result';
@@ -18,12 +18,16 @@ import CourseList from '@/components/course/course-list/course-list';
 import ImageUpload from '@/components/image/image-upload/image-upload';
 import { Image } from '@/types/search';
 import { history } from 'umi';
+import HelpAssignmentExamples from '@/components/help/help-assignment-examples/help-assignment-examples';
+
+const { useBreakpoint } = Grid;
 
 const RANDOM_ASSIGNMENT_SUBJECT = 'Mathematics';
 
 export default function IndexPage() {
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [hasSearched, setHasSearched] = useState<boolean>(false);
+  const screens = useBreakpoint();
 
   const foundLectures = (lectures: Lecture[]) => {
     setLectures(lectures);
@@ -71,6 +75,7 @@ export default function IndexPage() {
           {!hasSearched && (
             <Row className={styles.fullwidth}>
               <Col sm={24} md={8}>
+                {screens.md && <HelpAssignmentExamples />}
                 <ImageUpload
                   onUploadComplete={(image) => onImageUploadComplete(image)}
                 />
