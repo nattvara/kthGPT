@@ -1,7 +1,6 @@
 from unittest.mock import call
 
 from classifiers import SubjectMultipassClassifier
-from tools.text.prompts.classify_subjects import create_validation_prompt_for_subjects
 
 TEXT_STRING = '''
 some text mentioning a bunch of math jargon
