@@ -23,6 +23,7 @@ def job(lecture_id: str, language: str):
         'lecture',
         priority=SubjectMultipassClassifier.Priority.LOW,
         analysis=analysis,
+        samples=3,
     )
     labels = classifier.classify(lecture.description)
 

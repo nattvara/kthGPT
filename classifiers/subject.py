@@ -4,8 +4,6 @@ from db.models import Analysis, ImageUpload
 import tools.text.prompts as prompts
 import tools.text.ai
 
-NUMBER_OF_LABELS_TO_APPLY = 3
-
 LABELS = [
     # Architecture
     'Sustainability Environmental Engineering',
@@ -119,8 +117,8 @@ class SubjectClassifier:
             return self.custom_labels
         return LABELS
 
-    def classify(self, string: str) -> List[str]:
-        prompt = self.create_prompt(string)
+    def classify(self, string: str, target_number_of_labels: int = 3) -> List[str]:
+        prompt = self.create_prompt(string, target_number_of_labels)
 
         if self.priority == self.Priority.HIGH:
             response = self.high_priority_request(prompt)
@@ -132,10 +130,10 @@ class SubjectClassifier:
         classification = self.parse_response(response)
         return classification
 
-    def create_prompt(self, text: str) -> str:
+    def create_prompt(self, text: str, target_number_of_labels: int) -> str:
         return prompts.create_classification_prompt_for_subjects(
             self.what,
-            NUMBER_OF_LABELS_TO_APPLY,
+            target_number_of_labels,
             self.get_labels(),
             text,
         )

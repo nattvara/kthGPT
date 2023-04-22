@@ -29,12 +29,14 @@ class SubjectMultipassClassifier(SubjectClassifier):
     ):
         return SubjectMultipassClassifier(what, priority, upload, analysis, samples=samples)
 
-    def classify(self, string: str) -> List[str]:
+    def classify(self, string: str, target_number_of_labels: int = 3) -> List[str]:
         subjects = []
 
         for i in range(self.samples):
             log().info(f'SubjectMultipassClassifier sample {i + 1}/{self.samples}')
-            classification = self.base_classifier.classify(string)
+
+            classification = self.base_classifier.classify(string, 4)
+
             for subject in classification:
                 if subject not in subjects:
                     subjects.append(subject)
@@ -44,4 +46,4 @@ class SubjectMultipassClassifier(SubjectClassifier):
 
         self.base_classifier.override_labels(subjects)
 
-        return self.base_classifier.classify(string)
+        return self.base_classifier.classify(string, target_number_of_labels)

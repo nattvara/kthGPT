@@ -14,6 +14,7 @@ def job(image_id: str):
             'question',
             priority=SubjectMultipassClassifier.Priority.HIGH,
             upload=upload,
+            samples=3,
         )
         text = f'''
 {upload.text_content}
