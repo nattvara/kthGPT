@@ -63,11 +63,12 @@ Sammanfattning:
 def create_description_prompt(lecture: Lecture):
     # The word 'summary' seems to have a better effect than 'description'
     return f'''
-Summarize the contents of this lecture into no more than 400 words. The must
-be in english. The summary should include important keywords.
+Consider the contents of this lecture. Create a text that first, summarizes the topics covered, then
+another paragraph that explains the content, followed by a paragraph about the broader context about
+the content, such as why it is important and in which scientific fields. The text must be in english.
 
 The lecture is about:
 {lecture.summary_text()}
 
-Summary:
+Text:
 '''.strip()
