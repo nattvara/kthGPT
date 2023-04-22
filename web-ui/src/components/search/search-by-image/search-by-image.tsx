@@ -94,7 +94,7 @@ export default function SearchByImage(props: SearchByImageProps) {
   };
 
   const goToLecture = async (lecture: Lecture, newTab = false) => {
-    const url = `/questions/lectures/${lecture.public_id}/${lecture.language}`;
+    const url = `/lectures/${lecture.public_id}/${lecture.language}/questions`;
 
     if (newTab) {
       window.open(url, '_blank');
