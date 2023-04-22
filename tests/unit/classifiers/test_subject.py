@@ -50,7 +50,7 @@ Engineering Sciences
     classifier.classify(TEXT_STRING)
 
     assert gpt3_mock.mock_calls[0] == call(
-        classifier.create_prompt(TEXT_STRING),
+        classifier.create_prompt(TEXT_STRING, 3),
         time_to_live=60 * 2,
         max_retries=4,
         retry_interval=[
@@ -68,7 +68,7 @@ Engineering Sciences
     classifier.classify(TEXT_STRING)
 
     assert gpt3_mock.mock_calls[1] == call(
-        classifier.create_prompt(TEXT_STRING),
+        classifier.create_prompt(TEXT_STRING, 3),
         time_to_live=60,
         max_retries=5,
         retry_interval=[
@@ -87,7 +87,7 @@ Engineering Sciences
     classifier.classify(TEXT_STRING)
 
     assert gpt3_mock.mock_calls[2] == call(
-        classifier.create_prompt(TEXT_STRING),
+        classifier.create_prompt(TEXT_STRING, 3),
         time_to_live=60 * 60 * 10,
         max_retries=10,
         retry_interval=[
@@ -176,7 +176,7 @@ def test_classification_can_have_upload_attached(mocker, image_upload):
     classifier.classify(TEXT_STRING)
 
     assert gpt3_mock.mock_calls[0] == call(
-        classifier.create_prompt(TEXT_STRING),
+        classifier.create_prompt(TEXT_STRING, 3),
         time_to_live=60 * 2,
         max_retries=4,
         retry_interval=[
@@ -199,7 +199,7 @@ def test_classification_can_have_analysis_attached(mocker, analysed_lecture):
     classifier.classify(TEXT_STRING)
 
     assert gpt3_mock.mock_calls[0] == call(
-        classifier.create_prompt(TEXT_STRING),
+        classifier.create_prompt(TEXT_STRING, 3),
         time_to_live=60 * 2,
         max_retries=4,
         retry_interval=[
@@ -228,3 +228,20 @@ Theoretical Computer Science
     result = classifier.classify(TEXT_STRING)
 
     assert result == ['Computer Science', 'Software Engineering and Security', 'Theoretical Computer Science']
+
+
+def test_labels_can_be_overriden(mocker):
+    new_labels = ['Foo', 'Bar', 'Baz']
+    gpt_response = '''
+Mathematics
+Foo
+bar
+Engineering Sciences
+'''
+    mocker.patch('tools.text.ai.gpt3', return_value=gpt_response)
+
+    classifier = SubjectClassifier.create_classifier_for('lecture')
+    classifier.override_labels(new_labels)
+    result = classifier.classify(TEXT_STRING)
+
+    assert result == ['Foo', 'Bar']

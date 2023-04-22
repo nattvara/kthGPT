@@ -26,7 +26,8 @@ Beskrivning:
 
 def create_title_from_assignment(upload: ImageUpload) -> str:
     return f'''
-Consider the content of an assignment captured from an image. Create a title for the assignment.
+Consider the content of an assignment captured from an image. Create a title for the assignment. Do not use any
+latex code in the title.
 
 Assignment:
 {upload.text_content}

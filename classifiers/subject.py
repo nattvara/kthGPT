@@ -4,8 +4,6 @@ from db.models import Analysis, ImageUpload
 import tools.text.prompts as prompts
 import tools.text.ai
 
-NUMBER_OF_LABELS_TO_APPLY = 3
-
 LABELS = [
     # Architecture
     'Sustainability Environmental Engineering',
@@ -62,7 +60,8 @@ LABELS = [
     'Basic Mathematics and Foundations',
     'Analysis and Calculus',
     'Algebra and Geometry',
-    'Probability and Statistics',
+    'Probability Theory',
+    'Statistics',
     'Applied Mathematics and Computational Methods'
 
     # Physics
@@ -88,9 +87,10 @@ class SubjectClassifier:
         self.priority = priority
         self.upload = upload
         self.analysis = analysis
+        self.custom_labels = None
 
         self.lowercase_labels = {}
-        for (idx, label) in enumerate(LABELS):
+        for (idx, label) in enumerate(self.get_labels()):
             self.lowercase_labels[label.lower()] = idx
 
     class Priority:
@@ -107,8 +107,27 @@ class SubjectClassifier:
     ):
         return SubjectClassifier(what, priority, upload, analysis)
 
-    def classify(self, string: str) -> List[str]:
-        prompt = self.create_prompt(string)
+    def override_labels(self, labels: List[str]):
+        self.custom_labels = labels
+        self.lowercase_labels = {}
+        for (idx, label) in enumerate(labels):
+            self.lowercase_labels[label.lower()] = idx
+
+    def get_labels(self) -> List[str]:
+        if self.custom_labels is not None:
+            return self.custom_labels
+        return LABELS
+
+    def classify(
+        self,
+        string: str,
+        target_number_of_labels: int = 3,
+        validation_prompt=False
+    ) -> List[str]:
+        if validation_prompt:
+            prompt = self.create_validation_prompt(string)
+        else:
+            prompt = self.create_prompt(string, target_number_of_labels)
 
         if self.priority == self.Priority.HIGH:
             response = self.high_priority_request(prompt)
@@ -120,11 +139,18 @@ class SubjectClassifier:
         classification = self.parse_response(response)
         return classification
 
-    def create_prompt(self, text: str) -> str:
+    def create_prompt(self, text: str, target_number_of_labels: int) -> str:
         return prompts.create_classification_prompt_for_subjects(
             self.what,
-            NUMBER_OF_LABELS_TO_APPLY,
-            LABELS,
+            target_number_of_labels,
+            self.get_labels(),
+            text,
+        )
+
+    def create_validation_prompt(self, text: str) -> str:
+        return prompts.create_validation_prompt_for_subjects(
+            self.what,
+            self.get_labels(),
             text,
         )
 
@@ -137,7 +163,7 @@ class SubjectClassifier:
 
             for label in self.lowercase_labels:
                 if label in line.lower():
-                    original_case_label = LABELS[self.lowercase_labels[label]]
+                    original_case_label = self.get_labels()[self.lowercase_labels[label]]
 
                     if original_case_label not in out:
                         out.append(original_case_label)
