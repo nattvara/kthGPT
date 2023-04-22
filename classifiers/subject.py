@@ -88,9 +88,10 @@ class SubjectClassifier:
         self.priority = priority
         self.upload = upload
         self.analysis = analysis
+        self.custom_labels = None
 
         self.lowercase_labels = {}
-        for (idx, label) in enumerate(LABELS):
+        for (idx, label) in enumerate(self.get_labels()):
             self.lowercase_labels[label.lower()] = idx
 
     class Priority:
@@ -106,6 +107,17 @@ class SubjectClassifier:
         analysis: Optional[Analysis] = None,
     ):
         return SubjectClassifier(what, priority, upload, analysis)
+
+    def override_labels(self, labels: List[str]):
+        self.custom_labels = labels
+        self.lowercase_labels = {}
+        for (idx, label) in enumerate(labels):
+            self.lowercase_labels[label.lower()] = idx
+
+    def get_labels(self) -> List[str]:
+        if self.custom_labels is not None:
+            return self.custom_labels
+        return LABELS
 
     def classify(self, string: str) -> List[str]:
         prompt = self.create_prompt(string)
@@ -124,7 +136,7 @@ class SubjectClassifier:
         return prompts.create_classification_prompt_for_subjects(
             self.what,
             NUMBER_OF_LABELS_TO_APPLY,
-            LABELS,
+            self.get_labels(),
             text,
         )
 
@@ -137,7 +149,7 @@ class SubjectClassifier:
 
             for label in self.lowercase_labels:
                 if label in line.lower():
-                    original_case_label = LABELS[self.lowercase_labels[label]]
+                    original_case_label = self.get_labels()[self.lowercase_labels[label]]
 
                     if original_case_label not in out:
                         out.append(original_case_label)

@@ -228,3 +228,20 @@ Theoretical Computer Science
     result = classifier.classify(TEXT_STRING)
 
     assert result == ['Computer Science', 'Software Engineering and Security', 'Theoretical Computer Science']
+
+
+def test_labels_can_be_overriden(mocker):
+    new_labels = ['Foo', 'Bar', 'Baz']
+    gpt_response = '''
+Mathematics
+Foo
+bar
+Engineering Sciences
+'''
+    mocker.patch('tools.text.ai.gpt3', return_value=gpt_response)
+
+    classifier = SubjectClassifier.create_classifier_for('lecture')
+    classifier.override_labels(new_labels)
+    result = classifier.classify(TEXT_STRING)
+
+    assert result == ['Foo', 'Bar']
