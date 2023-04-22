@@ -1,6 +1,7 @@
 from unittest.mock import call
 
 from classifiers import SubjectMultipassClassifier
+from tools.text.prompts.classify_subjects import create_validation_prompt_for_subjects
 
 TEXT_STRING = '''
 some text mentioning a bunch of math jargon
@@ -24,6 +25,8 @@ def test_subject_multipass_classifier_can_be_created():
 
 
 def test_classification_use_subject_classifier(mocker):
+    mocker.patch('tools.text.ai.gpt3')
+
     return_1 = ['Mathematics', 'Engineering Sciences']
     subject_mock = mocker.patch('classifiers.subject.SubjectClassifier.classify', return_value=return_1)
 
@@ -36,6 +39,8 @@ def test_classification_use_subject_classifier(mocker):
 
 
 def test_classification_can_sample_multiple_times(mocker):
+    mocker.patch('tools.text.ai.gpt3')
+
     subject_mock = mocker.patch('classifiers.subject.SubjectClassifier.classify', return_value=[])
     classifier = SubjectMultipassClassifier.create_classifier_for(
         'lecture',
@@ -44,10 +49,10 @@ def test_classification_can_sample_multiple_times(mocker):
 
     classifier.classify(TEXT_STRING)
 
-    assert subject_mock.call_count == 10 + 1  # one extra for the last pass
+    assert subject_mock.call_count == 10 + 1  # one extra for the validation pass
 
 
-def test_last_pass_is_used_with_sampled_subjects(mocker):
+def test_validation_pass_is_used_with_sampled_subjects(mocker):
     return_1 = ['foo', 'bar']
     return_2 = ['foo', 'baz']
     return_3 = ['bat']
@@ -73,3 +78,21 @@ def test_last_pass_is_used_with_sampled_subjects(mocker):
         ['foo', 'bar', 'baz', 'bat']
     )
     assert result == ['foo']
+
+
+def test_last_pass_is_using_a_custom_validation_prompt(mocker):
+    classify_mock = mocker.patch('classifiers.subject.SubjectClassifier.classify')
+
+    classifier = SubjectMultipassClassifier.create_classifier_for(
+        'lecture',
+        samples=3
+    )
+
+    classifier.classify(TEXT_STRING)
+
+    assert classify_mock.call_count == 4
+    assert list(classify_mock.mock_calls)[-1] == call(
+        TEXT_STRING,
+        0,
+        validation_prompt=True,
+    )

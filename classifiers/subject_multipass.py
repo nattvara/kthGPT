@@ -46,4 +46,4 @@ class SubjectMultipassClassifier(SubjectClassifier):
 
         self.base_classifier.override_labels(subjects)
 
-        return self.base_classifier.classify(string, target_number_of_labels)
+        return self.base_classifier.classify(string, 0, validation_prompt=True)

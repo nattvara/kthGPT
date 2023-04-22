@@ -117,8 +117,16 @@ class SubjectClassifier:
             return self.custom_labels
         return LABELS
 
-    def classify(self, string: str, target_number_of_labels: int = 3) -> List[str]:
-        prompt = self.create_prompt(string, target_number_of_labels)
+    def classify(
+        self,
+        string: str,
+        target_number_of_labels: int = 3,
+        validation_prompt=False
+    ) -> List[str]:
+        if validation_prompt:
+            prompt = self.create_validation_prompt(string)
+        else:
+            prompt = self.create_prompt(string, target_number_of_labels)
 
         if self.priority == self.Priority.HIGH:
             response = self.high_priority_request(prompt)
@@ -134,6 +142,13 @@ class SubjectClassifier:
         return prompts.create_classification_prompt_for_subjects(
             self.what,
             target_number_of_labels,
+            self.get_labels(),
+            text,
+        )
+
+    def create_validation_prompt(self, text: str) -> str:
+        return prompts.create_validation_prompt_for_subjects(
+            self.what,
             self.get_labels(),
             text,
         )

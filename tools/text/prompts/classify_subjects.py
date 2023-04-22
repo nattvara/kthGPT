@@ -23,3 +23,26 @@ Subjects:
 
 Decision:
 '''.strip()
+
+
+def create_validation_prompt_for_subjects(
+    what_to_classify: str,
+    labels: List[str],
+    text_to_classify: str,
+):
+    subjects_str = ''
+    for label in labels:
+        subjects_str += label + '\n'
+
+    return f'''
+Decide which of the following subjects are good classifications of the {what_to_classify.lower()}. Decision
+must have one subject per line.
+
+Subjects:
+{subjects_str}
+
+{what_to_classify.title()}:
+{text_to_classify}
+
+Decision:
+'''.strip()
