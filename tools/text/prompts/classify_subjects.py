@@ -13,7 +13,7 @@ def create_classification_prompt_for_subjects(
 
     return f'''
 Consider the following {what_to_classify.lower()}, and the following list of subjects. Classify which
-subjects the assignment belongs two. Choose at most {number_of_labels}. Decision should have one subject per line.
+subjects the assignment belongs to. Choose {number_of_labels} subjects. Decision should have one subject per line.
 
 {what_to_classify.title()}:
 {text_to_classify}
