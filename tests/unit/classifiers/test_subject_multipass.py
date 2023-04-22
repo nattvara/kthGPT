@@ -41,7 +41,7 @@ def test_classification_use_subject_classifier(mocker):
 def test_classification_can_sample_multiple_times(mocker):
     mocker.patch('tools.text.ai.gpt3')
 
-    subject_mock = mocker.patch('classifiers.subject.SubjectClassifier.classify', return_value=[])
+    subject_mock = mocker.patch('classifiers.subject.SubjectClassifier.classify', return_value=['foo'])
     classifier = SubjectMultipassClassifier.create_classifier_for(
         'lecture',
         samples=10
@@ -81,7 +81,7 @@ def test_validation_pass_is_used_with_sampled_subjects(mocker):
 
 
 def test_last_pass_is_using_a_custom_validation_prompt(mocker):
-    classify_mock = mocker.patch('classifiers.subject.SubjectClassifier.classify')
+    classify_mock = mocker.patch('classifiers.subject.SubjectClassifier.classify', return_value=['foo'])
 
     classifier = SubjectMultipassClassifier.create_classifier_for(
         'lecture',
@@ -96,3 +96,29 @@ def test_last_pass_is_using_a_custom_validation_prompt(mocker):
         0,
         validation_prompt=True,
     )
+
+
+def test_last_pass_will_be_rerun_if_result_is_empty(mocker):
+    return_1 = ['foo']
+    return_2 = ['foo']
+    return_3 = ['foo']
+
+    # final passes
+    return_4 = []
+    return_5 = ['foo']
+    classify_mock = mocker.patch('classifiers.subject.SubjectClassifier.classify', side_effect=[
+        return_1,
+        return_2,
+        return_3,
+        return_4,
+        return_5,
+    ])
+
+    classifier = SubjectMultipassClassifier.create_classifier_for(
+        'lecture',
+        samples=3
+    )
+
+    classifier.classify(TEXT_STRING)
+
+    assert classify_mock.call_count == 5

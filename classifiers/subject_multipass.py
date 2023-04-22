@@ -46,4 +46,11 @@ class SubjectMultipassClassifier(SubjectClassifier):
 
         self.base_classifier.override_labels(subjects)
 
-        return self.base_classifier.classify(string, 0, validation_prompt=True)
+        validation_pass = self.base_classifier.classify(string, 0, validation_prompt=True)
+
+        # Sometimes yields an empty result or bad labels, re-running it will ask GPT-3 again,
+        # with a good chance of producing a better result
+        if len(validation_pass) == 0:
+            validation_pass = self.base_classifier.classify(string, 0, validation_prompt=True)
+
+        return validation_pass
