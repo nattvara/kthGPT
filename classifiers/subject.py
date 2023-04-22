@@ -60,7 +60,8 @@ LABELS = [
     'Basic Mathematics and Foundations',
     'Analysis and Calculus',
     'Algebra and Geometry',
-    'Probability and Statistics',
+    'Probability Theory',
+    'Statistics',
     'Applied Mathematics and Computational Methods'
 
     # Physics
