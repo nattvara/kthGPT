@@ -150,7 +150,7 @@ def get_image_data(public_id: str) -> FileResponse:
 
 
 @router.get('/assignments/image/random/{subject}', dependencies=[Depends(get_db)])
-def get_random_assignment(subject: str) -> ImageOutputModel:
+def get_random_assignment_with_subject(subject: str) -> ImageOutputModel:
     upload = get_random_image_upload_by_subject(subject)
 
     if upload is None:
