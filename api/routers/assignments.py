@@ -8,6 +8,7 @@ from tools.files.paths import get_sha_of_binary_file_descriptor
 from db.models import ImageUpload
 from db import get_db
 from db.crud import (
+    get_random_image_upload_by_subject,
     get_image_upload_by_image_sha,
     get_image_upload_by_public_id,
 )
@@ -146,3 +147,13 @@ def get_image_data(public_id: str) -> FileResponse:
         raise HTTPException(status_code=404)
 
     return FileResponse(upload.get_filename())
+
+
+@router.get('/assignments/image/random/{subject}', dependencies=[Depends(get_db)])
+def get_random_assignment(subject: str) -> ImageOutputModel:
+    upload = get_random_image_upload_by_subject(subject)
+
+    if upload is None:
+        raise HTTPException(status_code=404)
+
+    return upload.to_dict()

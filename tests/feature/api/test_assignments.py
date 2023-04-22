@@ -120,3 +120,14 @@ def test_image_upload_can_be_restarted(mocker, api_client, image_upload):
 
     assert schedule_parse_image_upload_mock.call_count == 1
     assert schedule_parse_image_upload_mock.mock_calls[0] == call(image)
+
+
+def test_random_upload_of_subject_can_be_retrieved(mocker, api_client, image_upload):
+    image_upload.add_subject('Analysis and Calculus')
+
+    response = api_client.get('/assignments/image/random/Analysis and Calculus')
+
+    image_id = response.json()['id']
+    image = get_image_upload_by_public_id(image_id)
+
+    assert 'Analysis and Calculus' in image.subjects_list()
