@@ -250,15 +250,37 @@ To run the testsuite execute the following command in the repository root.
 
 ```bash
 $ pytest
-===================== test session starts ======================
-collected 5 items
+=================================== test session starts ===================================
+collected 100 items
 
-tests/feature/api/test_index.py .                        [ 20%]
-tests/feature/api/test_lectures.py .                     [ 40%]
-tests/feature/jobs/test_download_lecture.py .            [ 60%]
-tests/unit/tools/video/test_img.py ..                    [100%]
+tests/feature/api/test_assignments.py ........                                      [  8%]
+tests/feature/api/test_courses.py .                                                 [  9%]
+tests/feature/api/test_index.py .                                                   [ 10%]
+tests/feature/api/test_lectures.py .                                                [ 11%]
+tests/feature/api/test_query.py ........                                            [ 19%]
+tests/feature/api/test_search.py ...............                                    [ 34%]
+tests/feature/jobs/pipelines/analyse_lecture/test_clean_lecture.py .                [ 35%]
+tests/feature/jobs/pipelines/analyse_lecture/test_download_lecture.py .             [ 36%]
+tests/feature/jobs/pipelines/analyse_lecture/test_extract_audio.py .                [ 37%]
+tests/feature/jobs/pipelines/analyse_lecture/test_transcribe_lecture.py ...         [ 40%]
+tests/feature/jobs/pipelines/parse_image_upload/test_classify_subjects.py ...       [ 43%]
+tests/feature/jobs/pipelines/parse_image_upload/test_create_description.py ....     [ 47%]
+tests/feature/jobs/pipelines/parse_image_upload/test_create_search_queries.py ....  [ 51%]
+tests/feature/jobs/pipelines/parse_image_upload/test_create_title.py ..             [ 53%]
+tests/feature/jobs/pipelines/parse_image_upload/test_parse_image_content.py ...     [ 56%]
+tests/feature/jobs/tasks/lecture/test_capture_preview.py .                          [ 57%]
+tests/feature/jobs/tasks/lecture/test_classify_video.py ..                          [ 59%]
+tests/feature/jobs/tasks/lecture/test_fetch_metadata.py .......                     [ 66%]
+tests/feature/jobs/tasks/lecture/test_lecture_classify_subjects.py ..               [ 68%]
+tests/feature/jobs/tasks/lecture/test_lecture_create_description.py .               [ 69%]
+tests/unit/classifiers/test_subject.py ...........                                  [ 80%]
+tests/unit/classifiers/test_subject_multipass.py ......                             [ 86%]
+tests/unit/db/test_crud.py ..                                                       [ 88%]
+tests/unit/db/models/test_image_question.py ........                                [ 96%]
+tests/unit/index/test_lecture.py ..                                                 [ 98%]
+tests/unit/tools/video/test_img.py ..                                               [100%]
 
-====================== 5 passed in 0.78s =======================
+=================================== 100 passed in 6.67s ===================================
 ```
 
 ## Screenshots
