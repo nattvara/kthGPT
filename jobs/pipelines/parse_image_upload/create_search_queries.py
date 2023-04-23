@@ -44,6 +44,7 @@ def job(image_id: str, language: str):
                 logger.info(f'query {language}: {query}')
                 queries.append(query)
 
+        upload.refresh()
         if language == upload.Language.ENGLISH:
             upload.search_queries_en = json.dumps(queries)
             upload.create_search_queries_en_ok = True
@@ -57,6 +58,7 @@ def job(image_id: str, language: str):
         else:
             raise ValueError(f'language {language} is not supported')
     except Exception as e:
+        upload.refresh()
         if language == upload.Language.ENGLISH:
             upload.create_search_queries_en_ok = False
             upload.create_search_queries_en_failure_reason = str(e)

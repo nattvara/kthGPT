@@ -22,6 +22,7 @@ def job(image_id: str):
         '''.strip()
         labels = classifier.classify(text)
 
+        upload.refresh()
         for label in labels:
             upload.add_subject(label)
 
@@ -30,6 +31,7 @@ def job(image_id: str):
 
         upload.save()
     except Exception as e:
+        upload.refresh()
         upload.classify_subjects_ok = False
         upload.classify_subjects_failure_reason = str(e)
         upload.save()

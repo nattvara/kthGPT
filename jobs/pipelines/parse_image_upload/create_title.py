@@ -27,12 +27,14 @@ def job(image_id: str):
             upload_id=upload.id,
         )
 
+        upload.refresh()
         upload.title = response
         upload.create_title_ok = True
         upload.create_title_failure_reason = None
 
         upload.save()
     except Exception as e:
+        upload.refresh()
         upload.create_title_ok = False
         upload.create_title_failure_reason = str(e)
         upload.save()

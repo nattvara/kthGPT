@@ -33,6 +33,7 @@ def job(image_id: str, language: str):
             upload_id=upload.id,
         )
 
+        upload.refresh()
         if language == ImageUpload.Language.ENGLISH:
             upload.description_en = response
             upload.create_description_en_ok = True
@@ -46,6 +47,7 @@ def job(image_id: str, language: str):
 
         upload.save()
     except Exception as e:
+        upload.refresh()
         if language == ImageUpload.Language.ENGLISH:
             upload.create_description_en_ok = False
             upload.create_description_en_failure_reason = str(e)
