@@ -22,9 +22,13 @@ function Latex(props: LatexProps) {
     );
   }
 
+  // replace \[ with \begin{equation}
+  let replaced = code.replaceAll('\\[', '\\begin{equation}');
+  replaced = replaced.replaceAll('\\]', '\\end{equation}');
+
   return (
     <span className={`${styles.math} ${styles.block_math}`}>
-      <BlockMath math={code} />
+      <BlockMath math={replaced} />
     </span>
   );
 }
@@ -36,7 +40,12 @@ interface TextMathProps {
 export function TextMath(props: TextMathProps) {
   const { text } = props;
 
-  const regex = /\$(.+?)\$|\\begin\{((\s|\S)*?)\}((\s|\S)*?)\\end\{\2\}/gm;
+  // this regex captures
+  // $ signs        -> $singleline_content$
+  // \begin blocks  -> \begin{same_tag}multiline_content\end{same_tag}
+  // \[ equations   -> \[multiline_content\]
+  const regex =
+    /\$(.+?)\$|\\begin\{((\s|\S)*?)\}((\s|\S)*?)\\end\{\2\}|\\\[((\s|\S)*?)\\\]/gm;
   const parts = [];
   let lastIndex = 0;
   let match;
