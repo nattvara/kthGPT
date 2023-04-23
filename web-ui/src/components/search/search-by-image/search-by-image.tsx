@@ -10,6 +10,17 @@ import { history } from 'umi';
 import { LecturePreviewCompact } from '@/components/lecture/lecture-preview/lecture-preview';
 import { Highlight, Lecture } from '@/types/lecture';
 import { TextHighlight } from '@/components/text/text-highlight/text-highlight';
+import {
+  ACTION_NONE,
+  CATEGORY_SEARCH_BY_IMAGE,
+  EVENT_ERROR_RESPONSE,
+  EVENT_FETCH_ANSWER,
+  EVENT_FETCH_RELEVANCE,
+  EVENT_GOTO_LECTURE,
+  EVENT_LOAD_MORE,
+  EVENT_SEARCH_BY_IMAGE,
+} from '@/matomo/events';
+import { emitEvent } from '@/matomo';
 
 const { Paragraph } = Typography;
 
@@ -70,8 +81,15 @@ export default function SearchByImage(props: SearchByImageProps) {
         setSearchQuestionId(result.data.id);
       },
       onError: (err: ServerErrorResponse) => {
+        emitEvent(CATEGORY_SEARCH_BY_IMAGE, EVENT_ERROR_RESPONSE, 'doSearch');
+
         if (err.code === 'ECONNABORTED') {
           setError('Search took to long to response, try again!');
+          emitEvent(
+            CATEGORY_SEARCH_BY_IMAGE,
+            EVENT_ERROR_RESPONSE,
+            'ECONNABORTED'
+          );
         }
 
         if (err.response.status === 409) {
@@ -81,9 +99,16 @@ export default function SearchByImage(props: SearchByImageProps) {
 
         if (err.response && err.response.data.detail) {
           setError(err.response.data.detail);
+          emitEvent(
+            CATEGORY_SEARCH_BY_IMAGE,
+            EVENT_ERROR_RESPONSE,
+            err.response.data.detail
+          );
+          return;
         }
 
         console.error(err);
+        setError(`Something wen't wrong`);
       },
     }
   );
@@ -91,6 +116,7 @@ export default function SearchByImage(props: SearchByImageProps) {
   const search = async () => {
     if (isSearching) return;
     doSearch();
+    emitEvent(CATEGORY_SEARCH_BY_IMAGE, EVENT_SEARCH_BY_IMAGE, ACTION_NONE);
   };
 
   const goToLecture = async (lecture: Lecture, newTab = false) => {
@@ -101,14 +127,22 @@ export default function SearchByImage(props: SearchByImageProps) {
     } else {
       await history.push(url);
     }
+
+    emitEvent(
+      CATEGORY_SEARCH_BY_IMAGE,
+      EVENT_GOTO_LECTURE,
+      `${lecture.public_id}/${lecture.language}`
+    );
   };
 
   const increaseLimit = () => {
     if (limit + HITS_TO_PAGINATE_AFTER > hits.length) {
       setLimit(hits.length);
-      return;
+    } else {
+      setLimit(limit + HITS_TO_PAGINATE_AFTER);
     }
-    setLimit(limit + HITS_TO_PAGINATE_AFTER);
+
+    emitEvent(CATEGORY_SEARCH_BY_IMAGE, EVENT_LOAD_MORE, ACTION_NONE);
   };
 
   useEffect(() => {
@@ -230,6 +264,7 @@ export function ImageQuestionHit(props: ImageQuestionHitProps) {
 
   const { isLoading: isLoadingRelevance, mutate: fetchRelevance } = useMutation(
     async () => {
+      emitEvent(CATEGORY_SEARCH_BY_IMAGE, EVENT_FETCH_RELEVANCE, ACTION_NONE);
       return await apiClient.get(
         `/search/image/${imageId}/questions/${searchQuestionId}/hits/${hit.id}/relevance`
       );
@@ -242,13 +277,19 @@ export function ImageQuestionHit(props: ImageQuestionHitProps) {
         setRelevance(result.data.relevance);
       },
       onError: (err: ServerErrorResponse) => {
-        console.log(err);
+        console.error(err);
+        emitEvent(
+          CATEGORY_SEARCH_BY_IMAGE,
+          EVENT_ERROR_RESPONSE,
+          'fetchAnswer'
+        );
       },
     }
   );
 
   const { isLoading: isLoadingAnswer, mutate: fetchAnswer } = useMutation(
     async () => {
+      emitEvent(CATEGORY_SEARCH_BY_IMAGE, EVENT_FETCH_ANSWER, ACTION_NONE);
       return await apiClient.get(
         `/search/image/${imageId}/questions/${searchQuestionId}/hits/${hit.id}/answer`
       );
@@ -264,7 +305,12 @@ export function ImageQuestionHit(props: ImageQuestionHitProps) {
         });
       },
       onError: (err: ServerErrorResponse) => {
-        console.log(err);
+        console.error(err);
+        emitEvent(
+          CATEGORY_SEARCH_BY_IMAGE,
+          EVENT_ERROR_RESPONSE,
+          'fetchAnswer'
+        );
       },
     }
   );
