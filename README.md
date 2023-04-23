@@ -225,7 +225,7 @@ docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" --name open
 Start a queue worker.
 
 ```bash
-rq worker --with-scheduler --url='redis://:@localhost:6379' default download extract transcribe summarise monitoring approval metadata image image_questions image image_metadata classifications
+rq worker --with-scheduler --url='redis://:@localhost:6379' default download extract transcribe summarise monitoring approval metadata image image_metadata classifications
 rq worker --with-scheduler --url='redis://:redis@localhost:6379' gpt # gpt queue must run on at least one separate worker
 ```
 
