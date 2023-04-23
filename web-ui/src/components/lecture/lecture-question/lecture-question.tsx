@@ -105,15 +105,15 @@ export default function LectureQuestion(props: LectureQuestionProps) {
           headers: res.headers,
           data: res.data,
         };
+        setError('');
+        setResponse(result.data.response);
+        setWasCached(result.data.cached);
+        setOverrideCache(false);
         emitEvent(
           CATEGORY_LECTURE_QUESTIONS,
           EVENT_RECEIVED_QUESTION_ANSWER,
           ACTION_NONE
         );
-        setError('');
-        setResponse(result.data.response);
-        setWasCached(result.data.cached);
-        setOverrideCache(false);
       },
       onError: (err: ServerErrorResponse) => {
         if (err.code === 'ECONNABORTED') {

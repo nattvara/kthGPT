@@ -8,6 +8,15 @@ import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { ReloadOutlined } from '@ant-design/icons';
 import { SearchResultLoading } from '@/components/search/search-result-loading/search-result-loading';
 import { TextMath } from '@/components/text/text-math/text-math';
+import {
+  ACTION_NONE,
+  CATEGORY_IMAGE_QUESTION,
+  EVENT_ASKED_QUESTION,
+  EVENT_ASKED_QUESTION_NO_CACHE,
+  EVENT_ERROR_RESPONSE,
+  EVENT_RECEIVED_QUESTION_ANSWER,
+} from '@/matomo/events';
+import { emitEvent } from '@/matomo';
 
 interface QueryResponse extends ServerResponse {
   data: {
@@ -55,16 +64,28 @@ export default function ImageQuestion(props: ImageQuestionProps) {
         setResponse(result.data.response);
         setWasCached(result.data.cached);
         setOverrideCache(false);
+        emitEvent(
+          CATEGORY_IMAGE_QUESTION,
+          EVENT_RECEIVED_QUESTION_ANSWER,
+          ACTION_NONE
+        );
       },
       onError: (err: ServerErrorResponse) => {
         if (err.code === 'ECONNABORTED') {
           setError('OpenAI took to long to response, try asking again!');
+          emitEvent(
+            CATEGORY_IMAGE_QUESTION,
+            EVENT_ERROR_RESPONSE,
+            'ECONNABORTED'
+          );
         }
         const data = err.response.data;
         if (data.detail) {
           setError(data.detail);
+          emitEvent(CATEGORY_IMAGE_QUESTION, EVENT_ERROR_RESPONSE, data.detail);
         } else {
           setError('Something went wrong when communicating with OpenAI.');
+          emitEvent(CATEGORY_IMAGE_QUESTION, EVENT_ERROR_RESPONSE, 'makeQuery');
         }
       },
     }
@@ -75,6 +96,8 @@ export default function ImageQuestion(props: ImageQuestionProps) {
     if (isMakingQuery) return;
 
     makeQuery();
+
+    emitEvent(CATEGORY_IMAGE_QUESTION, EVENT_ASKED_QUESTION, queryString);
   };
 
   const askQuestionWithoutCache = async () => {
@@ -82,6 +105,12 @@ export default function ImageQuestion(props: ImageQuestionProps) {
 
     await setOverrideCache(true);
     askQuestion(queryString);
+
+    emitEvent(
+      CATEGORY_IMAGE_QUESTION,
+      EVENT_ASKED_QUESTION_NO_CACHE,
+      queryString
+    );
   };
 
   return (

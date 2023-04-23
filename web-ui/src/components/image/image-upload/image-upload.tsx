@@ -11,6 +11,13 @@ import apiClient, {
 import { FileImageOutlined } from '@ant-design/icons';
 import { UploadChangeParam, UploadFile } from 'antd/es/upload';
 import { Image as ImageType } from '@/types/search';
+import {
+  ACTION_NONE,
+  CATEGORY_IMAGE_UPLOAD,
+  EVENT_ERROR_RESPONSE,
+  EVENT_IMAGE_UPLOADED,
+} from '@/matomo/events';
+import { emitEvent } from '@/matomo';
 
 const { Title } = Typography;
 const { Dragger } = Upload;
@@ -46,6 +53,7 @@ export default function ImageUpload(props: ImageUploadProps) {
       if (status === 'done') {
         setId(info.file.response.id);
         setError('');
+        emitEvent(CATEGORY_IMAGE_UPLOAD, EVENT_IMAGE_UPLOADED, ACTION_NONE);
       } else if (status === 'error') {
         if (info.file.response) {
           setError(info.file.response.detail);
@@ -54,6 +62,7 @@ export default function ImageUpload(props: ImageUploadProps) {
             'Something went wrong when uploading the image. Please try again.'
           );
         }
+        emitEvent(CATEGORY_IMAGE_UPLOAD, EVENT_ERROR_RESPONSE, 'uploadProps');
       }
     },
   };
@@ -77,6 +86,7 @@ export default function ImageUpload(props: ImageUploadProps) {
           message: 'Failed to get image',
           description: err.response.data.detail,
         });
+        emitEvent(CATEGORY_IMAGE_UPLOAD, EVENT_ERROR_RESPONSE, 'fetchImage');
       },
     }
   );

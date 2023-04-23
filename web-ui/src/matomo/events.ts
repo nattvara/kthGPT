@@ -25,8 +25,16 @@ export const CATEGORY_LECTURE_LIST = 'lecture_list';
 
 export const CATEGORY_LECTURE_NEW = 'lecture_new';
 
+export const CATEGORY_IMAGE_UPLOAD = 'image_upload';
+
+export const CATEGORY_IMAGE_QUESTION = 'image_question';
+
+export const CATEGORY_IMAGE_PARSE_FAILURE = 'image_parse_failure';
+
 /* Generic Events */
 export const EVENT_ERROR_RESPONSE = 'error_response';
+
+export const EVENT_RESTART = 'error_response';
 
 /* Events */
 export const EVENT_GOTO_LECTURE = 'goto_lecture';
@@ -64,5 +72,9 @@ export const EVENT_SUBMIT_URL_YOUTUBE = 'url_youtube';
 
 export const EVENT_SUBMIT_URL_UNKNOWN = 'url_unknown';
 
+export const EVENT_IMAGE_UPLOADED = 'image_uploaded';
+
 /* Generic Actions */
 export const ACTION_NONE = '_';
+
+export const ACTION_PARSE_IMAGE = 'parse_image';
