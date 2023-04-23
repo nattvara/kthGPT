@@ -3,7 +3,7 @@ import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
 
 function isInline(code: string) {
-  const pattern = /\$[^\$]*\$/;
+  const pattern = /\$[^$]*\$/;
   return pattern.test(code);
 }
 
