@@ -9,11 +9,15 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
+import { emitEvent } from '@/matomo';
 import {
-  emitEvent,
-  CATEGORY_COURSE_SELECTOR,
+  ACTION_NONE,
+  CATEGORY_COURSE_TAGGER,
   EVENT_ERROR_RESPONSE,
-} from '@/matomo';
+  EVENT_SEARCHED,
+  EVENT_TAGGED_COURSE,
+  EVENT_UNTAGGED_COURSE,
+} from '@/matomo/events';
 
 const { Search } = Input;
 const { Title, Paragraph } = Typography;
@@ -47,7 +51,7 @@ function CourseSearch(props: CourseSearchProps) {
       },
       onError: (err: ServerErrorResponse) => {
         console.log(err);
-        emitEvent(CATEGORY_COURSE_SELECTOR, EVENT_ERROR_RESPONSE, 'doSearch');
+        emitEvent(CATEGORY_COURSE_TAGGER, EVENT_ERROR_RESPONSE, 'doSearch');
       },
     }
   );
@@ -55,6 +59,7 @@ function CourseSearch(props: CourseSearchProps) {
   const search = async (query: string) => {
     await setQuery(query);
     doSearch();
+    emitEvent(CATEGORY_COURSE_TAGGER, EVENT_SEARCHED, query);
   };
 
   return (
@@ -126,13 +131,20 @@ function NonAddedCourse(props: NonAddedCourseProps) {
       notificationApi['success']({
         message: `Added lecture to ${course_code}`,
       });
+      emitEvent(
+        CATEGORY_COURSE_TAGGER,
+        EVENT_TAGGED_COURSE,
+        `${course_code} on ${
+          lecture.title === null ? ACTION_NONE : lecture.title
+        }`
+      );
     } catch (err: unknown) {
       notificationApi['error']({
         icon: <WarningOutlined />,
         message: 'Course was not added',
         description: (err as ServerErrorResponse).response.data.detail,
       });
-      emitEvent(CATEGORY_COURSE_SELECTOR, EVENT_ERROR_RESPONSE, 'addCourse');
+      emitEvent(CATEGORY_COURSE_TAGGER, EVENT_ERROR_RESPONSE, 'addCourse');
     } finally {
       await setLoading(false);
     }
@@ -184,13 +196,20 @@ function AddedCourse(props: AddedCourseProps) {
         `/lectures/${lecture.public_id}/${lecture.language}/course/${course_code}`
       );
       onLectureUpdated(response.data);
+      emitEvent(
+        CATEGORY_COURSE_TAGGER,
+        EVENT_UNTAGGED_COURSE,
+        `${course_code} on ${
+          lecture.title === null ? ACTION_NONE : lecture.title
+        }`
+      );
     } catch (err: unknown) {
       notificationApi['warning']({
         icon: <WarningOutlined />,
         message: 'Course was not removed',
         description: (err as ServerErrorResponse).response.data.detail,
       });
-      emitEvent(CATEGORY_COURSE_SELECTOR, EVENT_ERROR_RESPONSE, 'removeCourse');
+      emitEvent(CATEGORY_COURSE_TAGGER, EVENT_ERROR_RESPONSE, 'removeCourse');
     } finally {
       await setLoading(false);
     }

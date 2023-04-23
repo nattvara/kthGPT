@@ -31,15 +31,21 @@ export const CATEGORY_IMAGE_QUESTION = 'image_question';
 
 export const CATEGORY_IMAGE_PARSE_FAILURE = 'image_parse_failure';
 
+export const CATEGORY_COURSE_TAGGER = 'course_tagger';
+
+export const CATEGORY_COURSE_CONTENT = 'course_content';
+
+export const CATEGORY_COURSE_LIST = 'course_list';
+
 /* Generic Events */
 export const EVENT_ERROR_RESPONSE = 'error_response';
 
-export const EVENT_RESTART = 'error_response';
+export const EVENT_RESTART = 'error_restart';
+
+export const EVENT_SEARCHED = 'searched';
 
 /* Events */
 export const EVENT_GOTO_LECTURE = 'goto_lecture';
-
-export const EVENT_SEARCHED = 'searched';
 
 export const EVENT_LOAD_MORE = 'load_more';
 
@@ -73,6 +79,10 @@ export const EVENT_SUBMIT_URL_YOUTUBE = 'url_youtube';
 export const EVENT_SUBMIT_URL_UNKNOWN = 'url_unknown';
 
 export const EVENT_IMAGE_UPLOADED = 'image_uploaded';
+
+export const EVENT_TAGGED_COURSE = 'tagged_course';
+
+export const EVENT_UNTAGGED_COURSE = 'untagged_course';
 
 /* Generic Actions */
 export const ACTION_NONE = '_';
