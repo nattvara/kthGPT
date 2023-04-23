@@ -1,6 +1,6 @@
 import styles from './watch.less';
 import PageFrame from '@/components/page/page-frame/page-frame';
-import { registerPageLoad } from '@/matomo';
+import { emitEvent, registerPageLoad } from '@/matomo';
 import { Lecture } from '@/types/lecture';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
@@ -13,6 +13,12 @@ import LecturePreview from '@/components/lecture/lecture-preview/lecture-preview
 import CourseTagger from '@/components/course/course-tagger/course-tagger';
 import LectureQueueSummary from '@/components/lecture/lecture-queue-summary/lecture-queue-summary';
 import LectureProgress from '@/components/lecture/lecture-progress/lecture-progress';
+import {
+  ACTION_NONE,
+  CATEGORY_PAGE_WATCH,
+  EVENT_ERROR_RESPONSE,
+  EVENT_RESTART,
+} from '@/matomo/events';
 
 const UPDATE_LECTURE_INTERVAL = 1000;
 
@@ -52,6 +58,7 @@ export default function WatchPage() {
         if (err.response.status === 404) {
           setNotFound(true);
         }
+        emitEvent(CATEGORY_PAGE_WATCH, EVENT_ERROR_RESPONSE, 'fetchLecture');
       },
     }
   );
@@ -79,18 +86,23 @@ export default function WatchPage() {
           headers: res.headers,
           data: res.data,
         };
-        console.log(result.data);
-
+        console.log(result);
         notificationApi['success']({
           message: 'Restarted analysis',
           description: 'Hopefully it works this time!',
         });
+        emitEvent(
+          CATEGORY_PAGE_WATCH,
+          EVENT_RESTART,
+          lecture === null ? ACTION_NONE : lecture.public_id
+        );
       },
       onError: (err: ServerErrorResponse) => {
         notificationApi['error']({
           message: 'Failed restart analysis',
           description: err.response.data.detail,
         });
+        emitEvent(CATEGORY_PAGE_WATCH, EVENT_ERROR_RESPONSE, 'restart');
       },
     }
   );

@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import apiClient, { ServerErrorResponse } from '@/http';
 import LectureList from '@/components/lecture/lecture-list/lecture-list';
 import { useMutation } from '@tanstack/react-query';
+import { CATEGORY_COURSE_CONTENT, EVENT_ERROR_RESPONSE } from '@/matomo/events';
+import { emitEvent } from '@/matomo';
 
 const { Title } = Typography;
 
@@ -35,6 +37,11 @@ export default function CourseContent(props: CourseContentProps) {
         },
         onError: (err: ServerErrorResponse) => {
           console.error(err);
+          emitEvent(
+            CATEGORY_COURSE_CONTENT,
+            EVENT_ERROR_RESPONSE,
+            'fetchCourseInfo'
+          );
         },
       }
     );

@@ -1,3 +1,9 @@
+import { emitEvent } from '@/matomo';
+import {
+  ACTION_NONE,
+  CATEGORY_PAGE_FRAME,
+  EVENT_GOTO_GITHUB_ISSUES,
+} from '@/matomo/events';
 import { Lecture } from '@/types/lecture';
 import { BulbOutlined, GithubFilled, LoadingOutlined } from '@ant-design/icons';
 import { Button, Col, Result, Row, Typography } from 'antd';
@@ -13,6 +19,7 @@ interface LectureWatchResultProps {
 
 const openGithubIssues = () => {
   window.open('https://github.com/nattvara/kthGPT/issues', '_blank');
+  emitEvent(CATEGORY_PAGE_FRAME, EVENT_GOTO_GITHUB_ISSUES, ACTION_NONE);
 };
 
 export default function LectureWatchResult(props: LectureWatchResultProps) {

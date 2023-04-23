@@ -2,7 +2,7 @@ import styles from './lecture-preview.less';
 import { Image, Card, Spin, Row, Col, Space, Tag, Typography } from 'antd';
 import { Lecture } from '@/types/lecture';
 import { makeUrl } from '@/http';
-import { EVENT_GOTO_CONTENT, CATEGORY_PREVIEW, emitEvent } from '@/matomo';
+import { emitEvent } from '@/matomo';
 import {
   AudioOutlined,
   BookOutlined,
@@ -13,6 +13,7 @@ import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';
 import kthLogo from '@/assets/kth.svg';
 import youtubeLogoSmall from '@/assets/youtube-small.svg';
+import { CATEGORY_LECTURE_PREVIEW, EVENT_GOTO_CONTENT } from '@/matomo/events';
 
 const { Meta } = Card;
 const { Title } = Typography;
@@ -125,9 +126,9 @@ interface LecturePreviewProps {
 export default function LecturePreview(props: LecturePreviewProps) {
   const { lecture } = props;
 
-  const openKthPlay = (url: string) => {
+  const openContentLink = (url: string) => {
     window.open(url, '_blank');
-    emitEvent(CATEGORY_PREVIEW, EVENT_GOTO_CONTENT, url);
+    emitEvent(CATEGORY_LECTURE_PREVIEW, EVENT_GOTO_CONTENT, url);
   };
 
   let flagIcon = '';
@@ -155,7 +156,7 @@ export default function LecturePreview(props: LecturePreviewProps) {
     <Card
       hoverable
       className={styles.preview}
-      onClick={() => openKthPlay(lecture.content_link)}
+      onClick={() => openContentLink(lecture.content_link)}
       cover={
         <>
           <Spin tip="Loading..." spinning={lecture.preview_uri === null}>

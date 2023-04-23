@@ -5,18 +5,18 @@ import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { Lecture } from '@/types/lecture';
-import {
-  emitEvent,
-  EVENT_ASKED_QUESTION,
-  EVENT_ASKED_QUESTION_NO_CACHE,
-  ACTION_NONE,
-  CATEGORY_QUESTIONS,
-  EVENT_RECEIVED_QUESTION_ANSWER,
-  EVENT_ERROR_RESPONSE,
-} from '@/matomo';
+import { emitEvent } from '@/matomo';
 import InputQuestion from '@/components/input/input-question/input-question';
 import LectureTranscript from '../lecture-transcript-modal/lecture-transcript-modal';
 import { SearchResultLoading } from '@/components/search/search-result-loading/search-result-loading';
+import {
+  ACTION_NONE,
+  CATEGORY_LECTURE_QUESTIONS,
+  EVENT_ASKED_QUESTION,
+  EVENT_ASKED_QUESTION_NO_CACHE,
+  EVENT_ERROR_RESPONSE,
+  EVENT_RECEIVED_QUESTION_ANSWER,
+} from '@/matomo/events';
 
 const examples = [
   {
@@ -105,15 +105,15 @@ export default function LectureQuestion(props: LectureQuestionProps) {
           headers: res.headers,
           data: res.data,
         };
-        emitEvent(
-          CATEGORY_QUESTIONS,
-          EVENT_RECEIVED_QUESTION_ANSWER,
-          ACTION_NONE
-        );
         setError('');
         setResponse(result.data.response);
         setWasCached(result.data.cached);
         setOverrideCache(false);
+        emitEvent(
+          CATEGORY_LECTURE_QUESTIONS,
+          EVENT_RECEIVED_QUESTION_ANSWER,
+          ACTION_NONE
+        );
       },
       onError: (err: ServerErrorResponse) => {
         if (err.code === 'ECONNABORTED') {
@@ -125,7 +125,11 @@ export default function LectureQuestion(props: LectureQuestionProps) {
         } else {
           setError('Something went wrong when communicating with OpenAI.');
         }
-        emitEvent(CATEGORY_QUESTIONS, EVENT_ERROR_RESPONSE, 'makeQuery');
+        emitEvent(
+          CATEGORY_LECTURE_QUESTIONS,
+          EVENT_ERROR_RESPONSE,
+          'makeQuery'
+        );
       },
     }
   );
@@ -136,7 +140,7 @@ export default function LectureQuestion(props: LectureQuestionProps) {
 
     makeQuery();
 
-    emitEvent(CATEGORY_QUESTIONS, EVENT_ASKED_QUESTION, queryString);
+    emitEvent(CATEGORY_LECTURE_QUESTIONS, EVENT_ASKED_QUESTION, queryString);
   };
 
   const askQuestionWithoutCache = async () => {
@@ -145,7 +149,11 @@ export default function LectureQuestion(props: LectureQuestionProps) {
     await setOverrideCache(true);
     askQuestion(queryString);
 
-    emitEvent(CATEGORY_QUESTIONS, EVENT_ASKED_QUESTION_NO_CACHE, queryString);
+    emitEvent(
+      CATEGORY_LECTURE_QUESTIONS,
+      EVENT_ASKED_QUESTION_NO_CACHE,
+      queryString
+    );
   };
 
   let placeholder = '';

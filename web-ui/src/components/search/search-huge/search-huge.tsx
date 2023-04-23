@@ -4,11 +4,12 @@ import { Row, Input } from 'antd';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
+import { emitEvent } from '@/matomo';
 import {
-  emitEvent,
+  CATEGORY_SEARCH_HUGE,
   EVENT_ERROR_RESPONSE,
-  CATEGORY_SEARCH_TOOL,
-} from '@/matomo';
+  EVENT_SEARCHED,
+} from '@/matomo/events';
 
 const { Search } = Input;
 
@@ -40,8 +41,8 @@ export default function SearchHuge(props: SearchHugeProps) {
         foundLectures(result.data);
       },
       onError: (err: ServerErrorResponse) => {
-        console.log(err);
-        emitEvent(CATEGORY_SEARCH_TOOL, EVENT_ERROR_RESPONSE, 'doSearch');
+        console.error(err);
+        emitEvent(CATEGORY_SEARCH_HUGE, EVENT_ERROR_RESPONSE, 'doSearch');
       },
     }
   );
@@ -49,6 +50,7 @@ export default function SearchHuge(props: SearchHugeProps) {
   const search = async (query: string) => {
     await setQuery(query);
     doSearch();
+    emitEvent(CATEGORY_SEARCH_HUGE, EVENT_SEARCHED, query);
   };
 
   return (

@@ -15,6 +15,12 @@ import kthLogo from '../../../assets/logo.svg';
 import { history } from 'umi';
 import { buildDate, isProduction } from '@/version';
 import PageBack from '../page-back/page-back';
+import {
+  ACTION_NONE,
+  CATEGORY_PAGE_FRAME,
+  EVENT_GOTO_GITHUB,
+} from '@/matomo/events';
+import { emitEvent } from '@/matomo';
 
 const { Link } = Typography;
 
@@ -37,6 +43,7 @@ function PageFrame(props: PageFrameProps) {
 
   const goToGithub = () => {
     window.open(GITHUB_URL, '_blank');
+    emitEvent(CATEGORY_PAGE_FRAME, EVENT_GOTO_GITHUB, ACTION_NONE);
   };
 
   return (

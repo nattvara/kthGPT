@@ -22,15 +22,14 @@ import kthLogo from '@/assets/kth.svg';
 import youtubeLogo from '@/assets/youtube.svg';
 import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';
+import { emitEvent } from '@/matomo';
 import {
-  emitEvent,
-  CATEGORY_URL,
-  EVENT_SUBMIT_URL_KTH,
-  EVENT_SUBMIT_URL_YOUTUBE,
-  EVENT_SUBMIT_URL_UNKNOWN,
-  CATEGORY_LECTURE_ADDER,
+  CATEGORY_LECTURE_NEW,
   EVENT_ERROR_RESPONSE,
-} from '@/matomo';
+  EVENT_SUBMIT_URL_KTH,
+  EVENT_SUBMIT_URL_UNKNOWN,
+  EVENT_SUBMIT_URL_YOUTUBE,
+} from '@/matomo/events';
 
 const { Title, Link, Paragraph } = Typography;
 const { Meta } = Card;
@@ -275,19 +274,19 @@ export default function LectureAddNewForm() {
       },
       onError: (err: ServerErrorResponse) => {
         setError(err.response.data.detail);
-        emitEvent(CATEGORY_LECTURE_ADDER, EVENT_ERROR_RESPONSE, 'postUrl');
+        emitEvent(CATEGORY_LECTURE_NEW, EVENT_ERROR_RESPONSE, 'postUrl');
       },
     }
   );
 
   const submit = async () => {
-    await postUrl();
+    postUrl();
     if (source === SOURCE_YOUTUBE) {
-      emitEvent(CATEGORY_URL, EVENT_SUBMIT_URL_YOUTUBE, url);
+      emitEvent(CATEGORY_LECTURE_NEW, EVENT_SUBMIT_URL_YOUTUBE, url);
     } else if (source === SOURCE_KTH) {
-      emitEvent(CATEGORY_URL, EVENT_SUBMIT_URL_KTH, url);
+      emitEvent(CATEGORY_LECTURE_NEW, EVENT_SUBMIT_URL_KTH, url);
     } else {
-      emitEvent(CATEGORY_URL, EVENT_SUBMIT_URL_UNKNOWN, url);
+      emitEvent(CATEGORY_LECTURE_NEW, EVENT_SUBMIT_URL_UNKNOWN, url);
     }
   };
 

@@ -5,8 +5,14 @@ import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import apiClient, { ServerErrorResponse } from '@/http';
 import { Lecture } from '@/types/lecture';
-import { emitEvent, CATEGORY_QUESTIONS, EVENT_ERROR_RESPONSE } from '@/matomo';
+import { emitEvent } from '@/matomo';
 import { SearchResultLoading } from '@/components/search/search-result-loading/search-result-loading';
+import {
+  ACTION_NONE,
+  CATEGORY_LECTURE_TRANSCRIPT_MODAL,
+  EVENT_ERROR_RESPONSE,
+  EVENT_SHOW_TRANSCRIPT,
+} from '@/matomo/events';
 
 interface TranscriptResponse {
   data: string;
@@ -45,7 +51,7 @@ export default function LectureTranscript(props: LectureTranscriptProps) {
         onError: (err: ServerErrorResponse) => {
           console.error(err);
           emitEvent(
-            CATEGORY_QUESTIONS,
+            CATEGORY_LECTURE_TRANSCRIPT_MODAL,
             EVENT_ERROR_RESPONSE,
             'fetchTranscript'
           );
@@ -61,6 +67,11 @@ export default function LectureTranscript(props: LectureTranscriptProps) {
         onClick={() => {
           fetchTranscript();
           setShowTranscript(true);
+          emitEvent(
+            CATEGORY_LECTURE_TRANSCRIPT_MODAL,
+            EVENT_SHOW_TRANSCRIPT,
+            lecture.title === null ? ACTION_NONE : lecture.title
+          );
         }}
       >
         <FileTextOutlined /> Show transcript

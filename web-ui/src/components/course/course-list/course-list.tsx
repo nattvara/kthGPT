@@ -5,13 +5,13 @@ import { RightOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
-import {
-  CATEGORY_COURSE_BROWSER,
-  CATEGORY_SELECTOR,
-  emitEvent,
-  EVENT_ERROR_RESPONSE,
-} from '@/matomo';
+import { emitEvent } from '@/matomo';
 import { SearchResultLoading } from '@/components/search/search-result-loading/search-result-loading';
+import {
+  CATEGORY_COURSE_LIST,
+  EVENT_ERROR_RESPONSE,
+  EVENT_SEARCHED,
+} from '@/matomo/events';
 
 const { Search } = Input;
 const { Link } = Typography;
@@ -60,11 +60,7 @@ export default function CourseList(props: CourseBrowserProps) {
       },
       onError: (err: ServerErrorResponse) => {
         console.log(err);
-        emitEvent(
-          CATEGORY_COURSE_BROWSER,
-          EVENT_ERROR_RESPONSE,
-          'doCourseSearch'
-        );
+        emitEvent(CATEGORY_COURSE_LIST, EVENT_ERROR_RESPONSE, 'doCourseSearch');
       },
     }
   );
@@ -75,13 +71,14 @@ export default function CourseList(props: CourseBrowserProps) {
       await setLecturesWithoutCourse(response.data.lectures_without_courses);
     } catch (err: unknown) {
       console.log(err);
-      emitEvent(CATEGORY_SELECTOR, EVENT_ERROR_RESPONSE, 'fetchStats');
+      emitEvent(CATEGORY_COURSE_LIST, EVENT_ERROR_RESPONSE, 'fetchStats');
     }
   };
 
   const searchCourses = async (query: string) => {
     await setCourseQuery(query);
     doCourseSearch();
+    emitEvent(CATEGORY_COURSE_LIST, EVENT_SEARCHED, query);
   };
 
   useEffect(() => {

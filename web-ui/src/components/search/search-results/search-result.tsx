@@ -2,9 +2,14 @@ import styles from './search-result.less';
 import { Lecture } from '@/types/lecture';
 import { Row, Space, Col } from 'antd';
 import { history } from 'umi';
-import { emitEvent, CATEGORY_SEARCH_TOOL, EVENT_GOTO_LECTURE } from '@/matomo';
+import { emitEvent } from '@/matomo';
 import { LecturePreviewCompact } from '@/components/lecture/lecture-preview/lecture-preview';
 import { TextHighlight } from '@/components/text/text-highlight/text-highlight';
+import {
+  ACTION_NONE,
+  CATEGORY_SEARCH_RESULTS,
+  EVENT_GOTO_LECTURE,
+} from '@/matomo/events';
 
 interface SearchResultProps {
   lectures: Lecture[];
@@ -24,9 +29,9 @@ export default function SearchResult(props: SearchResultProps) {
     }
 
     emitEvent(
-      CATEGORY_SEARCH_TOOL,
+      CATEGORY_SEARCH_RESULTS,
       EVENT_GOTO_LECTURE,
-      `${lecture.public_id}/${lecture.language}`
+      lecture.title === null ? ACTION_NONE : lecture.title
     );
   };
 
