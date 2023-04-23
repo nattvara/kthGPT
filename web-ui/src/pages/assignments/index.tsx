@@ -172,7 +172,7 @@ export default function AssignmentsIndexPage() {
       {contextHolder}
       <PageFrame showBack={true} breadcrumbs={breadcrumbs}>
         <Row>
-          <Col sm={24} md={8} className={styles.padding_left_right}>
+          <Col sm={24} md={7} className={styles.padding_left_right}>
             <Space direction="vertical" size="large">
               <Row>
                 <ImageUpload
@@ -206,12 +206,12 @@ export default function AssignmentsIndexPage() {
               </Row>
             </Space>
           </Col>
-          <Col sm={24} md={8} className={styles.padding_left_right}>
+          <Col sm={24} md={10} className={styles.padding_left_right}>
             <Row>
               <ImageQuestion image={image} />
             </Row>
           </Col>
-          <Col sm={24} md={8} className={styles.padding_left_right}>
+          <Col sm={24} md={7} className={styles.padding_left_right}>
             <Row>
               <Title level={2} className={styles.section_title}>
                 🧑‍🏫 Where can I learn how to solve this assignment?
