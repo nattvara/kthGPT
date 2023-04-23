@@ -1,6 +1,6 @@
 # kthGPT <!-- omit in toc -->
 
-kthGPT is a free and open source tool that can watch a lecture for you. It allows students to ask questions about any lecture using the GPT-3 model.
+kthGPT is a free and open source tool that can watch a lecture for you. As a student, kthGPT can help you learn how to solve assignments and understand lecture slides and other course material.
 
 > This project **is not** affiliated with KTH. It's just a tool that's meant to be useful for KTH students.
 
@@ -9,9 +9,17 @@ kthGPT is a free and open source tool that can watch a lecture for you. It allow
 # Table of Contents <!-- omit in toc -->
 
 - [Usage](#usage)
-  - [1. Select lecture](#1-select-lecture)
-  - [2. Wait for kthGPT to "watch" the lecture](#2-wait-for-kthgpt-to-watch-the-lecture)
-  - [3. Ask questions about the lecture](#3-ask-questions-about-the-lecture)
+  - [Understanding an assignment](#understanding-an-assignment)
+    - [1. Select an assignment](#1-select-an-assignment)
+    - [2. kthGPT will parse the assignment](#2-kthgpt-will-parse-the-assignment)
+    - [3. Ask questions and find relevant lectures](#3-ask-questions-and-find-relevant-lectures)
+      - [Detailed step-by-step instructions](#detailed-step-by-step-instructions)
+      - [Explaining exam solutions](#explaining-exam-solutions)
+      - [Asking questions about notation](#asking-questions-about-notation)
+  - [Watching lectures](#watching-lectures)
+    - [1. Select lecture](#1-select-lecture)
+    - [2. Wait for kthGPT to "watch" the lecture](#2-wait-for-kthgpt-to-watch-the-lecture)
+    - [3. Ask questions about the lecture](#3-ask-questions-about-the-lecture)
 - [Run the tool locally](#run-the-tool-locally)
   - [Docker](#docker)
   - [Development](#development)
@@ -23,13 +31,80 @@ kthGPT is a free and open source tool that can watch a lecture for you. It allow
 
 kthGPT is available at [https://kthgpt.com](https://kthgpt.com) - it's free to use!
 
-### 1. Select lecture
+### Understanding an assignment
+
+#### 1. Select an assignment
+
+Take an image of the assignment you want help with. It can be handwritten or a screenshot straight from the exam. Note, kthGPT currently doesn't support PDF uploads.
+
+Make sure the screenshot includes all the necessary information about the assignment. kthGPT can only consider one screenshot at the time.
+
+> **The following is a good example of how to submit an image.**
+>
+> ![a good example](web-ui/src/assets/examples/example_3.png)
+
+#### 2. kthGPT will parse the assignment
+
+Wait for kthGPT to analyze the assignment. This usually takes between 30-60 seconds.
+
+#### 3. Ask questions and find relevant lectures
+
+The assignment is now ready for questions, ask-away! On the right hand side kthGPT is showing which lectures are relevant to the assignment, and where in the lecture you can learn how to solve the assignment.
+
+Below are some examples of questions you can ask.
+
+##### Detailed step-by-step instructions
+
+Consider this assignment.
+
+![Example 2](web-ui/src/assets/examples/example_2.png)
+
+kthGPT produced the following response to this question.
+
+> Question: **_Give me detailed step-by-step instructions of how to solve this assignment_**
+>
+> Response
+> ![Example response 2](docs/img/example_response_1.png)
+
+##### Explaining exam solutions
+
+Consider this image of an assignment and its solution
+
+![Example 40](web-ui/src/assets/examples/example_40.png)
+
+kthGPT produced the following response to this question.
+
+> Question: **_Consider this solution to an assignment, explain how the solution works in detail. Include step by step instructions_**
+>
+> The assignment is to analyze and solve a two-player game with a payoff matrix. The first step is to find all strategies that are strictly dominated. This means that for a given strategy, there is another strategy which gives a higher payoff regardless of the opponent's move. To do this, we can use the iterated elimination of strictly dominated strategies. This involves looking at all the strategies and seeing if any of them can be eliminated, i.e. if there is another strategy which always yields a higher payoff. In this case, strategy B is strictly dominated, as strategy A gives an equally high payoff in the first row of the matrix, and it also gives a higher payoff in the second row.
+>
+> The next step is to find all rationalizable strategies for each player. This involves looking at the remaining strategies and seeing if any can be eliminated, as they are not considered 'rational'. For example, if one strategy yields a 0 payoff no matter what the opponent does, then it might not be considered rational. In this case, none of the remaining strategies are strictly dominated, so the subset consisting of strategies A, C, and D is the set of rational strategies for both players.
+>
+> The third step is to find all the pure-strategy Nash equilibria. This means finding all the strategies where both players playing best response strategies will get the same payoff. In this case, the strategies A, C, and D all meet this criteria and hence can be considered Nash equilibria.
+>
+>Finally, the fourth step is to find all pure-strategy perfect equilibria. This is similar to Nash equilibria, but with additional criteria. For a strategy to be considered a perfect equilibrium, both players must be playing Nash strategies and the strategy must not involve a player playing a weakly-dominated strategy. In this case, the strategies A and C are perfect equilibria, as they do not involve weakly-dominated strategies. The strategy D is not a perfect equilibrium, as it involves playing a weakly-dominated strategy.
+
+##### Asking questions about notation
+
+Sometimes it's tricky to put words against what question you have, consider this lecture slide.
+
+![Example 4](web-ui/src/assets/examples/example_4.png)
+
+kthGPT produced the following answer to this question.
+
+> **Question: _What does the bolded one mean at the end of the slide? The one at 1_n_b_**
+>
+> ![Example response 2](docs/img/example_response_2.png)
+
+### Watching lectures
+
+#### 1. Select lecture
 
 Select a lecture that's already been watched or add a new one! kthGPT can watch lectures hosted on [KTH Play](https://play.kth.se/) or [YouTube](https://youtube.com).
 
 It can't watch any video on YouTube. Due to limited capacity kthGPT will only watch "relevant videos". Relevant videos are such that it thinks are `Recorded Lectures`. kthGPT uses a sample of the video to do this assessment.
 
-### 2. Wait for kthGPT to "watch" the lecture
+#### 2. Wait for kthGPT to "watch" the lecture
 
 If the video has not been watched by kthGPT before, it will start watching the video and try to produce a summary. It will only listen to the audio, so nothing been shown or written in the lecture will be included in the summary.
 
@@ -37,7 +112,7 @@ This process is very resource intensive and usually takes between 20-60 minutes.
 
 If the audio quality in the video is bad, the quality of the summary will be worse. kthGPT is generally best at understanding English. However, if the audio quality is good, Swedish should be just fine as well.
 
-### 3. Ask questions about the lecture
+#### 3. Ask questions about the lecture
 
 The lecture is ready. kthGPT can now use GPT-3 to answer questions about the lecture. Some useful queries:
 
@@ -188,17 +263,25 @@ tests/unit/tools/video/test_img.py ..                    [100%]
 
 ## Screenshots
 
-> ### Select a KTH Play or YouTube lecture
+> ### kthGPT start-page
 
-![Select](docs/img/select.png)
+![homepage](docs/img/index.png)
 
-> ### Wait for kthGPT to watch the lecture
+> ### Add lectures from KTH Play or YouTube lecture
 
-![Analyse](docs/img/analyse.png)
+![Add new lecture](docs/img/add_lecture.png)
 
-> ### Ask questions about the lecture
+> ### Ask questions about lectures
 
-![Questions](docs/img/question.png)
+![Questions](docs/img/questions.png)
+
+> ### Full transcript search across lectures
+
+![Search in transcripts](docs/img/search.png)
+
+> ### Ask questions about assignments
+
+![Ask questions about assignments](docs/img/assignment.png)
 
 ## License
 
