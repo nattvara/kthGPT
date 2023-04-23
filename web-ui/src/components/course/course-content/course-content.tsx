@@ -64,9 +64,11 @@ export default function CourseContent(props: CourseContentProps) {
       {!isLoadingCourseInfo && (
         <>
           <Row>
-            <Title level={2} className={styles.course_code}>
-              {course.course_code}
-            </Title>
+            {course.course_code !== 'no_course' && (
+              <Title level={2} className={styles.course_code}>
+                {course.course_code}
+              </Title>
+            )}
           </Row>
           <Row>
             <Title level={3} className={styles.display_name}>
