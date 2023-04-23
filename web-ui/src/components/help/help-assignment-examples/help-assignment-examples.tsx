@@ -1,13 +1,45 @@
 import { useEffect, useState } from 'react';
 import styles from './help-assignment-examples.less';
 import { Row, Image } from 'antd';
-import example1 from '@/assets/example_1.png';
-import example2 from '@/assets/example_2.png';
-import example3 from '@/assets/example_3.png';
-import example4 from '@/assets/example_4.png';
-import example5 from '@/assets/example_5.png';
-import example6 from '@/assets/example_6.png';
-import example7 from '@/assets/example_7.png';
+import example1 from '@/assets/examples/example_1.png';
+import example2 from '@/assets/examples/example_2.png';
+import example3 from '@/assets/examples/example_3.png';
+import example4 from '@/assets/examples/example_4.png';
+import example5 from '@/assets/examples/example_5.png';
+import example6 from '@/assets/examples/example_6.png';
+import example7 from '@/assets/examples/example_7.png';
+import example8 from '@/assets/examples/example_8.png';
+import example9 from '@/assets/examples/example_9.png';
+import example10 from '@/assets/examples/example_10.png';
+import example11 from '@/assets/examples/example_11.png';
+import example12 from '@/assets/examples/example_12.png';
+import example13 from '@/assets/examples/example_13.png';
+import example14 from '@/assets/examples/example_14.png';
+import example15 from '@/assets/examples/example_15.png';
+import example16 from '@/assets/examples/example_16.png';
+import example17 from '@/assets/examples/example_17.png';
+import example18 from '@/assets/examples/example_18.png';
+import example19 from '@/assets/examples/example_19.png';
+import example20 from '@/assets/examples/example_20.png';
+import example21 from '@/assets/examples/example_21.png';
+import example22 from '@/assets/examples/example_22.png';
+import example23 from '@/assets/examples/example_23.png';
+import example24 from '@/assets/examples/example_24.png';
+import example25 from '@/assets/examples/example_25.png';
+import example26 from '@/assets/examples/example_26.png';
+import example27 from '@/assets/examples/example_27.png';
+import example28 from '@/assets/examples/example_28.png';
+import example29 from '@/assets/examples/example_29.png';
+import example30 from '@/assets/examples/example_30.png';
+import example31 from '@/assets/examples/example_31.png';
+import example32 from '@/assets/examples/example_32.png';
+import example33 from '@/assets/examples/example_33.png';
+import example34 from '@/assets/examples/example_34.png';
+import example35 from '@/assets/examples/example_35.png';
+import example36 from '@/assets/examples/example_36.png';
+import example37 from '@/assets/examples/example_37.png';
+import example38 from '@/assets/examples/example_38.png';
+import example39 from '@/assets/examples/example_39.png';
 import arrow from '@/assets/arrow.svg';
 
 type ExampleKeys =
@@ -17,7 +49,39 @@ type ExampleKeys =
   | 'example_4'
   | 'example_5'
   | 'example_6'
-  | 'example_7';
+  | 'example_7'
+  | 'example_8'
+  | 'example_9'
+  | 'example_10'
+  | 'example_11'
+  | 'example_12'
+  | 'example_13'
+  | 'example_14'
+  | 'example_15'
+  | 'example_16'
+  | 'example_17'
+  | 'example_18'
+  | 'example_19'
+  | 'example_20'
+  | 'example_21'
+  | 'example_22'
+  | 'example_23'
+  | 'example_24'
+  | 'example_25'
+  | 'example_26'
+  | 'example_27'
+  | 'example_28'
+  | 'example_29'
+  | 'example_30'
+  | 'example_31'
+  | 'example_32'
+  | 'example_33'
+  | 'example_34'
+  | 'example_35'
+  | 'example_36'
+  | 'example_37'
+  | 'example_38'
+  | 'example_39';
 
 type Examples = {
   [key in ExampleKeys]: string;
@@ -31,6 +95,38 @@ const EXAMPLES: Examples = {
   example_5: example5,
   example_6: example6,
   example_7: example7,
+  example_8: example8,
+  example_9: example9,
+  example_10: example10,
+  example_11: example11,
+  example_12: example12,
+  example_13: example13,
+  example_14: example14,
+  example_15: example15,
+  example_16: example16,
+  example_17: example17,
+  example_18: example18,
+  example_19: example19,
+  example_20: example20,
+  example_21: example21,
+  example_22: example22,
+  example_23: example23,
+  example_24: example24,
+  example_25: example25,
+  example_26: example26,
+  example_27: example27,
+  example_28: example28,
+  example_29: example29,
+  example_30: example30,
+  example_31: example31,
+  example_32: example32,
+  example_33: example33,
+  example_34: example34,
+  example_35: example35,
+  example_36: example36,
+  example_37: example37,
+  example_38: example38,
+  example_39: example39,
 };
 
 const randomInt = (min: number, max: number) => {
