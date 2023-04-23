@@ -1,7 +1,7 @@
 import { Lecture } from '@/types/lecture';
 import PageFrame from '@/components/page/page-frame/page-frame';
 import SearchHuge from '@/components/search/search-huge/search-huge';
-import { registerPageLoad } from '@/matomo';
+import { emitEvent, registerPageLoad } from '@/matomo';
 import { Button, Col, Row, Grid } from 'antd';
 import styles from './index.less';
 import { useEffect, useState } from 'react';
@@ -19,6 +19,7 @@ import ImageUpload from '@/components/image/image-upload/image-upload';
 import { Image } from '@/types/search';
 import { history } from 'umi';
 import HelpAssignmentExamples from '@/components/help/help-assignment-examples/help-assignment-examples';
+import { CATEGORY_PAGE_INDEX, EVENT_RANDOM_ASSIGNMENT } from '@/matomo/events';
 
 const { useBreakpoint } = Grid;
 
@@ -44,6 +45,7 @@ export default function IndexPage() {
       );
       const id = response.data.id;
       history.push(`/assignments/${id}`);
+      emitEvent(CATEGORY_PAGE_INDEX, EVENT_RANDOM_ASSIGNMENT, id);
     } catch (err: unknown) {
       console.error(err);
     }

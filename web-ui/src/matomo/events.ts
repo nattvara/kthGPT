@@ -43,6 +43,8 @@ export const CATEGORY_PAGE_LECTURE_QUESTIONS = 'page_lecture_questions';
 
 export const CATEGORY_PAGE_ASSIGNMENT = 'page_assignment';
 
+export const CATEGORY_PAGE_INDEX = 'page_index';
+
 /* Generic Events */
 export const EVENT_ERROR_RESPONSE = 'error_response';
 
@@ -89,6 +91,8 @@ export const EVENT_IMAGE_UPLOADED = 'image_uploaded';
 export const EVENT_TAGGED_COURSE = 'tagged_course';
 
 export const EVENT_UNTAGGED_COURSE = 'untagged_course';
+
+export const EVENT_RANDOM_ASSIGNMENT = 'goto_random_assignment';
 
 /* Generic Actions */
 export const ACTION_NONE = '_';
