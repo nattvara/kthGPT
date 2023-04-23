@@ -1,4 +1,5 @@
 from typing import Union
+from peewee import fn
 
 
 # URL
@@ -295,6 +296,19 @@ def get_image_upload_by_id(id: str):
 def get_image_upload_by_image_sha(sha: str):
     from db.models import ImageUpload
     return ImageUpload.filter(ImageUpload.image_sha == sha).first()
+
+
+def get_random_image_upload_by_subject(subject: str):
+    from db.models import ImageUpload, ImageUploadSubject
+    return ImageUpload.select().join(
+        ImageUploadSubject
+    ).where(
+        ImageUploadSubject.image_upload_id == ImageUpload.id
+    ).filter(
+        ImageUploadSubject.name == subject
+    ).order_by(
+        fn.Random()
+    ).first()
 
 
 # ImageUploadSubjects

@@ -129,7 +129,7 @@ export default function AboutPage() {
               <Paragraph>
                 In
                 <span> </span>
-                <Link href="/questions/lectures/0_xkulq3st/en" target="_blank">
+                <Link href="/lectures/0_xkulq3st/en/questions" target="_blank">
                   this lecture
                 </Link>
                 <span> </span>

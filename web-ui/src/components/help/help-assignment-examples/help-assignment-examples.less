@@ -1,0 +1,38 @@
+.container {
+  position: absolute;
+  top: -420px;
+  width: 90%;
+  height: 200px;
+}
+
+.image {
+  width: 230px !important;
+  height: 100px;
+  margin: 0 -50px;
+  margin-bottom: -200px;
+  background-color: white;
+  box-shadow: 0px 0px 20px rgb(154, 154, 154);
+  z-index: 10 !important;
+  position: relative;
+  border-radius: 2px;
+}
+
+.arrow {
+  pointer-events: none;
+  height: 300px !important;
+  position: relative;
+  left: -100px;
+  margin-bottom: -620px;
+  top: 90px;
+  z-index: 1;
+  transform: rotate(20deg);
+}
+
+.fade_in {
+  opacity: 0;
+  transition: opacity .1s ease-out;
+}
+
+.fade_in.loaded {
+  opacity: 1;
+}
