@@ -11,6 +11,8 @@ export const CATEGORY_SEARCH_HUGE = 'search_huge';
 
 export const CATEGORY_SEARCH_BY_IMAGE = 'search_by_image';
 
+export const CATEGORY_PAGE_FRAME = 'page_frame';
+
 /* Generic Events */
 export const EVENT_ERROR_RESPONSE = 'error_response';
 
@@ -25,6 +27,10 @@ export const EVENT_SEARCH_BY_IMAGE = 'search_by_image';
 export const EVENT_FETCH_ANSWER = 'fetch_answer';
 
 export const EVENT_FETCH_RELEVANCE = 'fetch_relevance';
+
+export const EVENT_GOTO_GITHUB = 'goto_github';
+
+export const EVENT_GO_BACK = 'go_back';
 
 /* Events */
 
