@@ -1,8 +1,10 @@
 from unittest.mock import call
 from io import BytesIO
 from PIL import Image
+import datetime
 import filecmp
 
+from config.settings import settings
 from db.crud import (
     get_image_upload_by_public_id,
 )
@@ -131,3 +133,26 @@ def test_random_upload_of_subject_can_be_retrieved(mocker, api_client, image_upl
     image = get_image_upload_by_public_id(image_id)
 
     assert 'Analysis and Calculus' in image.subjects_list()
+
+
+def test_assignments_respects_daily_rate_limit(mocker, api_client, random_image_generator):
+    # Limit for this testcase should be 42
+    assert settings.MATHPIX_DAILY_OCR_REQUESTS_LIMIT == 42
+
+    def do_upload():
+        filename = next(random_image_generator())
+        response = api_client.post(
+            '/assignments/image',
+            files={
+                'file': ('a_file_name.png', open(filename, 'rb'), 'image/png')
+            }
+        )
+        return response
+
+    for _ in range(settings.MATHPIX_DAILY_OCR_REQUESTS_LIMIT):
+        response = do_upload()
+        assert response.status_code == 200
+
+    # Rate limit should now be exceeded
+    response = do_upload()
+    assert response.status_code == 500

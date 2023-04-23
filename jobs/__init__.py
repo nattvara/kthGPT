@@ -2,6 +2,7 @@ from redis import Redis
 from rq import Queue
 
 from db.crud import (
+    get_number_of_images_uploaded_today,
     save_message_for_analysis,
     get_unfinished_lectures,
 )
@@ -46,6 +47,10 @@ METADATA = 'metadata'
 IMAGE = 'image'
 IMAGE_METADATA = 'image_metadata'
 CLASSIFICATIONS = 'classifications'
+
+
+class ImageUploadQueueDailyLimitException(Exception):
+    pass
 
 
 def get_default_queue() -> Queue:
@@ -268,6 +273,13 @@ def schedule_parse_image_upload(
     queue_image_metadata: Queue = get_image_metadata_queue,
     queue_classifications: Queue = get_classifications_queue,
 ):
+    uploaded_today = get_number_of_images_uploaded_today()
+    limit = settings.MATHPIX_DAILY_OCR_REQUESTS_LIMIT
+    if uploaded_today > limit:
+        raise ImageUploadQueueDailyLimitException(
+            f'number of image uploads today is greater than the allowed limit (limit: {limit}, today: {uploaded_today})'
+        )
+
     img_queue = next(queue_image())
     img_metadata_queue = next(queue_image_metadata())
     classifications_queue = next(queue_classifications())

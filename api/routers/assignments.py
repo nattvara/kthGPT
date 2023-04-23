@@ -6,6 +6,7 @@ import os
 
 from tools.files.paths import get_sha_of_binary_file_descriptor
 from db.models import ImageUpload
+from config.logger import log
 from db import get_db
 from db.crud import (
     get_random_image_upload_by_subject,
@@ -104,7 +105,11 @@ def search_image(file: UploadFile) -> ImageCreationOutputModel:
         should_start_parse_image_upload_pipeline = True
 
     if should_start_parse_image_upload_pipeline:
-        jobs.schedule_parse_image_upload(image)
+        try:
+            jobs.schedule_parse_image_upload(image)
+        except jobs.ImageUploadQueueDailyLimitException as e:
+            log().error(e)
+            raise HTTPException(status_code=500, detail='Daily limit allowed by the system has been exceeded')  # noqa: E501
 
     return {
         'id': image.public_id,
@@ -134,7 +139,11 @@ def update_image_upload(
     if restart and not upload.parse_image_upload_complete():
         upload.clear_parse_results()
         upload.save()
-        jobs.schedule_parse_image_upload(upload)
+        try:
+            jobs.schedule_parse_image_upload(upload)
+        except jobs.ImageUploadQueueDailyLimitException as e:
+            log().error(e)
+            raise HTTPException(status_code=500, detail='Daily limit allowed by the system has been exceeded')  # noqa: E501
 
     return upload.to_dict()
 
