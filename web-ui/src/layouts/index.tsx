@@ -1,5 +1,5 @@
 import { Outlet } from 'umi';
-import { Layout } from 'antd';
+import { ConfigProvider, Layout } from 'antd';
 import React from 'react';
 import styles from './index.less';
 
@@ -10,13 +10,22 @@ const { Content } = Layout;
 
 const App: React.FC = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Content className={styles.content}>
-        <div>
-          <Outlet />
-        </div>
-      </Content>
-    </QueryClientProvider>
+    <ConfigProvider
+      theme={{
+        token: {
+          fontFamily:
+            'Lato, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji',
+        },
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        <Content className={styles.content}>
+          <div>
+            <Outlet />
+          </div>
+        </Content>
+      </QueryClientProvider>
+    </ConfigProvider>
   );
 };
 
