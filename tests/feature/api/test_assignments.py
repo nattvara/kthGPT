@@ -136,6 +136,8 @@ def test_random_upload_of_subject_can_be_retrieved(mocker, api_client, image_upl
 
 
 def test_assignments_respects_daily_rate_limit(mocker, api_client, random_image_generator):
+    mocker.patch('jobs.start_parse_image_upload_pipeline')
+
     # Limit for this testcase should be 42
     assert settings.MATHPIX_DAILY_OCR_REQUESTS_LIMIT == 42
 

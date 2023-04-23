@@ -266,13 +266,7 @@ def analysis_queues_restart(
         schedule_analysis_of_lecture(lecture)
 
 
-def schedule_parse_image_upload(
-    image_upload,
-    queue_default: Queue = get_default_queue,
-    queue_image: Queue = get_image_queue,
-    queue_image_metadata: Queue = get_image_metadata_queue,
-    queue_classifications: Queue = get_classifications_queue,
-):
+def schedule_parse_image_upload(image_upload):
     uploaded_today = get_number_of_images_uploaded_today()
     limit = settings.MATHPIX_DAILY_OCR_REQUESTS_LIMIT
     if uploaded_today > limit:
@@ -280,6 +274,16 @@ def schedule_parse_image_upload(
             f'number of image uploads today is greater than the allowed limit (limit: {limit}, today: {uploaded_today})'
         )
 
+    start_parse_image_upload_pipeline(image_upload)
+
+
+def start_parse_image_upload_pipeline(
+    image_upload,
+    queue_default: Queue = get_default_queue,
+    queue_image: Queue = get_image_queue,
+    queue_image_metadata: Queue = get_image_metadata_queue,
+    queue_classifications: Queue = get_classifications_queue,
+):
     img_queue = next(queue_image())
     img_metadata_queue = next(queue_image_metadata())
     classifications_queue = next(queue_classifications())
