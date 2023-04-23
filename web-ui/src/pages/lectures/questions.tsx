@@ -6,12 +6,16 @@ import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { history } from 'umi';
 import LecturePreview from '@/components/lecture/lecture-preview/lecture-preview';
 import { Lecture } from '@/types/lecture';
-import { emitEvent, CATEGORY_QUESTIONS, EVENT_ERROR_RESPONSE } from '@/matomo';
+import { emitEvent } from '@/matomo';
 import PageFrame from '@/components/page/page-frame/page-frame';
 import { useParams } from 'umi';
 import { registerPageLoad } from '@/matomo';
 import LectureQuestion from '@/components/lecture/lecture-question/lecture-question';
 import CourseTagger from '@/components/course/course-tagger/course-tagger';
+import {
+  CATEGORY_PAGE_LECTURE_QUESTIONS,
+  EVENT_ERROR_RESPONSE,
+} from '@/matomo/events';
 
 interface LectureResponse extends ServerResponse {
   data: Lecture;
@@ -41,7 +45,11 @@ export default function QuestionsPage() {
         if (err.response.status === 404) {
           setNotFound(true);
         }
-        emitEvent(CATEGORY_QUESTIONS, EVENT_ERROR_RESPONSE, 'fetchLecture');
+        emitEvent(
+          CATEGORY_PAGE_LECTURE_QUESTIONS,
+          EVENT_ERROR_RESPONSE,
+          'fetchLecture'
+        );
       },
     }
   );

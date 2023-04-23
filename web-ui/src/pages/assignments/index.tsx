@@ -1,6 +1,6 @@
 import styles from './index.less';
 import PageFrame from '@/components/page/page-frame/page-frame';
-import { registerPageLoad } from '@/matomo';
+import { emitEvent, registerPageLoad } from '@/matomo';
 import {
   Button,
   Col,
@@ -24,6 +24,10 @@ import ImageQuestion from '@/components/image/image-question/image-question';
 import ImageParseFailure from '@/components/image/image-parse-failure/image-parse-failure';
 import SearchByImage from '@/components/search/search-by-image/search-by-image';
 import ImageSubjects from '@/components/image/image-subjects/image-subjects';
+import {
+  CATEGORY_PAGE_ASSIGNMENT,
+  EVENT_ERROR_RESPONSE,
+} from '@/matomo/events';
 
 const { Title, Paragraph } = Typography;
 
@@ -74,6 +78,11 @@ export default function AssignmentsIndexPage() {
             message: 'Failed to get image upload',
             description: err.response.data.detail,
           });
+          emitEvent(
+            CATEGORY_PAGE_ASSIGNMENT,
+            EVENT_ERROR_RESPONSE,
+            'fetchImage'
+          );
         }
       },
     }

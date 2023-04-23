@@ -37,6 +37,12 @@ export const CATEGORY_COURSE_CONTENT = 'course_content';
 
 export const CATEGORY_COURSE_LIST = 'course_list';
 
+export const CATEGORY_PAGE_WATCH = 'page_watch';
+
+export const CATEGORY_PAGE_LECTURE_QUESTIONS = 'page_lecture_questions';
+
+export const CATEGORY_PAGE_ASSIGNMENT = 'page_assignment';
+
 /* Generic Events */
 export const EVENT_ERROR_RESPONSE = 'error_response';
 
