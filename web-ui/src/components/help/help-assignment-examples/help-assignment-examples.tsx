@@ -141,6 +141,7 @@ function ImageExample(props: ImageExampleProps) {
   const { example } = props;
 
   const [rotation, setRotation] = useState<number>(0);
+  const [loaded, setLoaded] = useState<boolean>(false);
   const [src, setSrc] = useState<string>('');
 
   useEffect(() => {
@@ -150,10 +151,13 @@ function ImageExample(props: ImageExampleProps) {
 
   return (
     <Image
-      className={styles.image}
+      className={`${styles.image} ${styles.fade_in} ${
+        loaded ? styles.loaded : ''
+      }`}
       style={{ transform: `rotate(${rotation}deg)` }}
       src={src}
       preview={false}
+      onLoad={() => setLoaded(true)}
     />
   );
 }
@@ -180,10 +184,10 @@ export default function HelpAssignmentExamples() {
 
   return (
     <Row className={styles.container}>
+      <Image src={arrow} className={styles.arrow} preview={false} />
       {examples.map((example) => (
         <ImageExample key={example} example={example as ExampleKeys} />
       ))}
-      <Image src={arrow} className={styles.arrow} preview={false} />
     </Row>
   );
 }
