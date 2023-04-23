@@ -10,11 +10,8 @@ import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';
 import kthLogo from '@/assets/kth.svg';
 import youtubeLogo from '@/assets/youtube.svg';
-import {
-  emitEvent,
-  CATEGORY_FAILURE_TABLE,
-  EVENT_ERROR_RESPONSE,
-} from '@/matomo';
+import { emitEvent } from '@/matomo';
+import { CATEGORY_TABLE_FAILURE, EVENT_ERROR_RESPONSE } from '@/matomo/events';
 
 const { Link } = Typography;
 
@@ -135,7 +132,7 @@ export default function TableFailures() {
           description: err.response.data.detail,
         });
         emitEvent(
-          CATEGORY_FAILURE_TABLE,
+          CATEGORY_TABLE_FAILURE,
           EVENT_ERROR_RESPONSE,
           'fetchLectures'
         );

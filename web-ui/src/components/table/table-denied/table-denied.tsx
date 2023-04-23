@@ -10,11 +10,8 @@ import svFlag from '@/assets/flag-sv.svg';
 import enFlag from '@/assets/flag-en.svg';
 import kthLogo from '@/assets/kth.svg';
 import youtubeLogo from '@/assets/youtube.svg';
-import {
-  emitEvent,
-  CATEGORY_DENIED_TABLE,
-  EVENT_ERROR_RESPONSE,
-} from '@/matomo';
+import { emitEvent } from '@/matomo';
+import { CATEGORY_TABLE_DENIED, EVENT_ERROR_RESPONSE } from '@/matomo/events';
 
 const { Link } = Typography;
 
@@ -130,7 +127,7 @@ export default function TableDenied() {
           message: 'Failed to get lectures',
           description: err.response.data.detail,
         });
-        emitEvent(CATEGORY_DENIED_TABLE, EVENT_ERROR_RESPONSE, 'fetchLectures');
+        emitEvent(CATEGORY_TABLE_DENIED, EVENT_ERROR_RESPONSE, 'fetchLectures');
       },
     }
   );
