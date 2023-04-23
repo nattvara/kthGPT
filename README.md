@@ -158,6 +158,9 @@ cp .env.example .env
 
 Make sure to update `OPENAI_API_KEY=sk-xxx...` with an API key from OpenAI [available here](https://platform.openai.com/account/api-keys).
 
+Also set `MATHPIX_APP_ID` and `MATHPIX_APP_KEY` for the [Mathpix](mathpix.com) API.
+
+> For Mathpix to work you need to set up a proxy to your local environment, for instance using [ngrok](https://ngrok.com/).
 
 ```bash
 # If host machine is running ARM (eg. M1 macs)
@@ -231,6 +234,15 @@ Start the web server.
 ```bash
 uvicorn api:main --reload
 ```
+
+Start a reverse proxy using [ngrok](https://ngrok.com/) (used for MathPix API).
+
+```bash
+ngrok http 8000
+```
+
+> Make sure to update the value in the `.env` file accordingly
+> `API_ENDPOINT=https://xxx.ngrok.io/`
 
 Start the frontend.
 
