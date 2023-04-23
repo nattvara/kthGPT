@@ -6,13 +6,15 @@ import { useEffect, useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { history } from 'umi';
 import { LecturePreviewCompact } from '@/components/lecture/lecture-preview/lecture-preview';
-import {
-  CATEGORY_COURSE_BROWSER,
-  emitEvent,
-  EVENT_GOTO_LECTURE,
-  EVENT_ERROR_RESPONSE,
-} from '@/matomo';
+import { emitEvent } from '@/matomo';
 import { SearchResultLoading } from '@/components/search/search-result-loading/search-result-loading';
+import {
+  ACTION_NONE,
+  CATEGORY_LECTURE_LIST,
+  EVENT_ERROR_RESPONSE,
+  EVENT_GOTO_LECTURE,
+  EVENT_SEARCHED,
+} from '@/matomo/events';
 
 const { Search } = Input;
 
@@ -63,7 +65,7 @@ export default function LectureList(props: LectureListProps) {
         onError: (err: ServerErrorResponse) => {
           console.log(err);
           emitEvent(
-            CATEGORY_COURSE_BROWSER,
+            CATEGORY_LECTURE_LIST,
             EVENT_ERROR_RESPONSE,
             'doLectureSearch'
           );
@@ -74,6 +76,7 @@ export default function LectureList(props: LectureListProps) {
   const searchLectures = async (query: string) => {
     await setLectureQuery(query);
     doLectureSearch();
+    emitEvent(CATEGORY_LECTURE_LIST, EVENT_SEARCHED, query);
   };
 
   const goToLecture = async (lecture: Lecture, newTab = false) => {
@@ -86,9 +89,9 @@ export default function LectureList(props: LectureListProps) {
     }
 
     emitEvent(
-      CATEGORY_COURSE_BROWSER,
+      CATEGORY_LECTURE_LIST,
       EVENT_GOTO_LECTURE,
-      `${lecture.public_id}/${lecture.language}`
+      lecture.title === null ? ACTION_NONE : lecture.title
     );
   };
 

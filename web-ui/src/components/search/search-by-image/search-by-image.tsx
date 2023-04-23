@@ -131,7 +131,7 @@ export default function SearchByImage(props: SearchByImageProps) {
     emitEvent(
       CATEGORY_SEARCH_BY_IMAGE,
       EVENT_GOTO_LECTURE,
-      `${lecture.public_id}/${lecture.language}`
+      lecture.title === null ? ACTION_NONE : lecture.title
     );
   };
 

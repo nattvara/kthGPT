@@ -3,6 +3,11 @@ import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
 import { Alert, notification, Typography } from 'antd';
+import {
+  CATEGORY_LECTURE_QUEUE_SUMMARY,
+  EVENT_ERROR_RESPONSE,
+} from '@/matomo/events';
+import { emitEvent } from '@/matomo';
 
 const { Link } = Typography;
 
@@ -34,6 +39,11 @@ export default function LectureQueueSummary() {
           message: 'Failed to get lecture queue',
           description: err.response.data.detail,
         });
+        emitEvent(
+          CATEGORY_LECTURE_QUEUE_SUMMARY,
+          EVENT_ERROR_RESPONSE,
+          'fetchUnfinishedLectures'
+        );
       },
     }
   );
