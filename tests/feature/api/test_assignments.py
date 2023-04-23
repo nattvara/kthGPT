@@ -1,7 +1,6 @@
 from unittest.mock import call
 from io import BytesIO
 from PIL import Image
-import datetime
 import filecmp
 
 from config.settings import settings
