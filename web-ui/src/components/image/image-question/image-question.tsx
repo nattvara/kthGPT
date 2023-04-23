@@ -113,6 +113,13 @@ export default function ImageQuestion(props: ImageQuestionProps) {
               queryStringSv: '',
             },
             {
+              titleEn: 'Explain this solution',
+              titleSv: '',
+              queryStringEn:
+                'Consider this solution to an assignment, explain how the solution works in detail. Include step by step instructions',
+              queryStringSv: '',
+            },
+            {
               titleEn: 'How do I solve assignment b?',
               titleSv: '',
               queryStringEn:
