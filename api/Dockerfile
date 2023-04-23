@@ -15,6 +15,7 @@ COPY db ./db
 COPY jobs ./jobs
 COPY tools ./tools
 COPY courses ./courses
+COPY classifiers ./classifiers
 COPY index ./index
 COPY setup.py .
 COPY requirements.txt .
