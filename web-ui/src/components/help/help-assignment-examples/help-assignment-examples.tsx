@@ -27,19 +27,19 @@ import example23 from '@/assets/examples/example_23.png';
 import example24 from '@/assets/examples/example_24.png';
 import example25 from '@/assets/examples/example_25.png';
 import example26 from '@/assets/examples/example_26.png';
-import example27 from '@/assets/examples/example_27.png';
-import example28 from '@/assets/examples/example_28.png';
-import example29 from '@/assets/examples/example_29.png';
-import example30 from '@/assets/examples/example_30.png';
-import example31 from '@/assets/examples/example_31.png';
+import example27 from '@/assets/examples/example_27.jpg';
+import example28 from '@/assets/examples/example_28.jpg';
+import example29 from '@/assets/examples/example_29.jpg';
+import example30 from '@/assets/examples/example_30.jpg';
+import example31 from '@/assets/examples/example_31.jpg';
 import example32 from '@/assets/examples/example_32.png';
 import example33 from '@/assets/examples/example_33.png';
 import example34 from '@/assets/examples/example_34.png';
 import example35 from '@/assets/examples/example_35.png';
-import example36 from '@/assets/examples/example_36.png';
-import example37 from '@/assets/examples/example_37.png';
-import example38 from '@/assets/examples/example_38.png';
-import example39 from '@/assets/examples/example_39.png';
+import example36 from '@/assets/examples/example_36.jpg';
+import example37 from '@/assets/examples/example_37.jpg';
+import example38 from '@/assets/examples/example_38.jpg';
+import example39 from '@/assets/examples/example_39.jpg';
 import arrow from '@/assets/arrow.svg';
 
 type ExampleKeys =
