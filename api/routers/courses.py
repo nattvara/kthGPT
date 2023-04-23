@@ -16,6 +16,12 @@ class CourseOutputModel(BaseModel):
 
 @router.get('/courses/{course_code}', dependencies=[Depends(get_db)])
 def get_course(course_code: str) -> CourseOutputModel:
+    if course_code == 'no_course':
+        return {
+            'course_code': 'no_course',
+            'display_name': 'Untagged Lectures',
+        }
+
     course = find_course_code(course_code)
     if course is None:
         raise HTTPException(status_code=404)
