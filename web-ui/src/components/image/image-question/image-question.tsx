@@ -49,7 +49,7 @@ export default function ImageQuestion(props: ImageQuestionProps) {
           override_cache: overrideCache,
         },
         {
-          timeout: 1000 * 40, // 40s timeout
+          timeout: 1000 * 80, // 80s timeout
         }
       );
     },
