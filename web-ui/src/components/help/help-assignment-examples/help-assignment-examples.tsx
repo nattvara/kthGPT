@@ -40,6 +40,7 @@ import example36 from '@/assets/examples/example_36.jpg';
 import example37 from '@/assets/examples/example_37.jpg';
 import example38 from '@/assets/examples/example_38.jpg';
 import example39 from '@/assets/examples/example_39.jpg';
+import example40 from '@/assets/examples/example_40.png';
 import arrow from '@/assets/arrow.svg';
 
 type ExampleKeys =
@@ -81,7 +82,8 @@ type ExampleKeys =
   | 'example_36'
   | 'example_37'
   | 'example_38'
-  | 'example_39';
+  | 'example_39'
+  | 'example_40';
 
 type Examples = {
   [key in ExampleKeys]: string;
@@ -127,6 +129,7 @@ const EXAMPLES: Examples = {
   example_37: example37,
   example_38: example38,
   example_39: example39,
+  example_40: example40,
 };
 
 const randomInt = (min: number, max: number) => {

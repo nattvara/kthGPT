@@ -1,6 +1,6 @@
 # kthGPT <!-- omit in toc -->
 
-kthGPT is a free and open source tool that can watch a lecture for you. It allows students to ask questions about any lecture using the GPT-3 model.
+kthGPT is a free and open source tool that can watch a lecture for you. As a student, kthGPT can help you learn how to solve assignments and understand lecture slides and other course material.
 
 > This project **is not** affiliated with KTH. It's just a tool that's meant to be useful for KTH students.
 
@@ -9,9 +9,17 @@ kthGPT is a free and open source tool that can watch a lecture for you. It allow
 # Table of Contents <!-- omit in toc -->
 
 - [Usage](#usage)
-  - [1. Select lecture](#1-select-lecture)
-  - [2. Wait for kthGPT to "watch" the lecture](#2-wait-for-kthgpt-to-watch-the-lecture)
-  - [3. Ask questions about the lecture](#3-ask-questions-about-the-lecture)
+  - [Understanding an assignment](#understanding-an-assignment)
+    - [1. Select an assignment](#1-select-an-assignment)
+    - [2. kthGPT will parse the assignment](#2-kthgpt-will-parse-the-assignment)
+    - [3. Ask questions and find relevant lectures](#3-ask-questions-and-find-relevant-lectures)
+      - [Detailed step-by-step instructions](#detailed-step-by-step-instructions)
+      - [Explaining exam solutions](#explaining-exam-solutions)
+      - [Asking questions about notation](#asking-questions-about-notation)
+  - [Watching lectures](#watching-lectures)
+    - [1. Select lecture](#1-select-lecture)
+    - [2. Wait for kthGPT to "watch" the lecture](#2-wait-for-kthgpt-to-watch-the-lecture)
+    - [3. Ask questions about the lecture](#3-ask-questions-about-the-lecture)
 - [Run the tool locally](#run-the-tool-locally)
   - [Docker](#docker)
   - [Development](#development)
@@ -23,13 +31,80 @@ kthGPT is a free and open source tool that can watch a lecture for you. It allow
 
 kthGPT is available at [https://kthgpt.com](https://kthgpt.com) - it's free to use!
 
-### 1. Select lecture
+### Understanding an assignment
+
+#### 1. Select an assignment
+
+Take an image of the assignment you want help with. It can be handwritten or a screenshot straight from the exam. Note, kthGPT currently doesn't support PDF uploads.
+
+Make sure the screenshot includes all the necessary information about the assignment. kthGPT can only consider one screenshot at the time.
+
+> **The following is a good example of how to submit an image.**
+>
+> ![a good example](web-ui/src/assets/examples/example_3.png)
+
+#### 2. kthGPT will parse the assignment
+
+Wait for kthGPT to analyze the assignment. This usually takes between 30-60 seconds.
+
+#### 3. Ask questions and find relevant lectures
+
+The assignment is now ready for questions, ask-away! On the right hand side kthGPT is showing which lectures are relevant to the assignment, and where in the lecture you can learn how to solve the assignment.
+
+Below are some examples of questions you can ask.
+
+##### Detailed step-by-step instructions
+
+Consider this assignment.
+
+![Example 2](web-ui/src/assets/examples/example_2.png)
+
+kthGPT produced the following response to this question.
+
+> Question: **_Give me detailed step-by-step instructions of how to solve this assignment_**
+>
+> Response
+> ![Example response 2](docs/img/example_response_1.png)
+
+##### Explaining exam solutions
+
+Consider this image of an assignment and its solution
+
+![Example 40](web-ui/src/assets/examples/example_40.png)
+
+kthGPT produced the following response to this question.
+
+> Question: **_Consider this solution to an assignment, explain how the solution works in detail. Include step by step instructions_**
+>
+> The assignment is to analyze and solve a two-player game with a payoff matrix. The first step is to find all strategies that are strictly dominated. This means that for a given strategy, there is another strategy which gives a higher payoff regardless of the opponent's move. To do this, we can use the iterated elimination of strictly dominated strategies. This involves looking at all the strategies and seeing if any of them can be eliminated, i.e. if there is another strategy which always yields a higher payoff. In this case, strategy B is strictly dominated, as strategy A gives an equally high payoff in the first row of the matrix, and it also gives a higher payoff in the second row.
+>
+> The next step is to find all rationalizable strategies for each player. This involves looking at the remaining strategies and seeing if any can be eliminated, as they are not considered 'rational'. For example, if one strategy yields a 0 payoff no matter what the opponent does, then it might not be considered rational. In this case, none of the remaining strategies are strictly dominated, so the subset consisting of strategies A, C, and D is the set of rational strategies for both players.
+>
+> The third step is to find all the pure-strategy Nash equilibria. This means finding all the strategies where both players playing best response strategies will get the same payoff. In this case, the strategies A, C, and D all meet this criteria and hence can be considered Nash equilibria.
+>
+>Finally, the fourth step is to find all pure-strategy perfect equilibria. This is similar to Nash equilibria, but with additional criteria. For a strategy to be considered a perfect equilibrium, both players must be playing Nash strategies and the strategy must not involve a player playing a weakly-dominated strategy. In this case, the strategies A and C are perfect equilibria, as they do not involve weakly-dominated strategies. The strategy D is not a perfect equilibrium, as it involves playing a weakly-dominated strategy.
+
+##### Asking questions about notation
+
+Sometimes it's tricky to put words against what question you have, consider this lecture slide.
+
+![Example 4](web-ui/src/assets/examples/example_4.png)
+
+kthGPT produced the following answer to this question.
+
+> **Question: _What does the bolded one mean at the end of the slide? The one at 1_n_b_**
+>
+> ![Example response 2](docs/img/example_response_2.png)
+
+### Watching lectures
+
+#### 1. Select lecture
 
 Select a lecture that's already been watched or add a new one! kthGPT can watch lectures hosted on [KTH Play](https://play.kth.se/) or [YouTube](https://youtube.com).
 
 It can't watch any video on YouTube. Due to limited capacity kthGPT will only watch "relevant videos". Relevant videos are such that it thinks are `Recorded Lectures`. kthGPT uses a sample of the video to do this assessment.
 
-### 2. Wait for kthGPT to "watch" the lecture
+#### 2. Wait for kthGPT to "watch" the lecture
 
 If the video has not been watched by kthGPT before, it will start watching the video and try to produce a summary. It will only listen to the audio, so nothing been shown or written in the lecture will be included in the summary.
 
@@ -37,7 +112,7 @@ This process is very resource intensive and usually takes between 20-60 minutes.
 
 If the audio quality in the video is bad, the quality of the summary will be worse. kthGPT is generally best at understanding English. However, if the audio quality is good, Swedish should be just fine as well.
 
-### 3. Ask questions about the lecture
+#### 3. Ask questions about the lecture
 
 The lecture is ready. kthGPT can now use GPT-3 to answer questions about the lecture. Some useful queries:
 
@@ -83,6 +158,9 @@ cp .env.example .env
 
 Make sure to update `OPENAI_API_KEY=sk-xxx...` with an API key from OpenAI [available here](https://platform.openai.com/account/api-keys).
 
+Also set `MATHPIX_APP_ID` and `MATHPIX_APP_KEY` for the [Mathpix](mathpix.com) API.
+
+> For Mathpix to work you need to set up a proxy to your local environment, for instance using [ngrok](https://ngrok.com/).
 
 ```bash
 # If host machine is running ARM (eg. M1 macs)
@@ -157,6 +235,15 @@ Start the web server.
 uvicorn api:main --reload
 ```
 
+Start a reverse proxy using [ngrok](https://ngrok.com/) (used for MathPix API).
+
+```bash
+ngrok http 8000
+```
+
+> Make sure to update the value in the `.env` file accordingly
+> `API_ENDPOINT=https://xxx.ngrok.io/`
+
 Start the frontend.
 
 ```bash
@@ -175,30 +262,60 @@ To run the testsuite execute the following command in the repository root.
 
 ```bash
 $ pytest
-===================== test session starts ======================
-collected 5 items
+=================================== test session starts ===================================
+collected 100 items
 
-tests/feature/api/test_index.py .                        [ 20%]
-tests/feature/api/test_lectures.py .                     [ 40%]
-tests/feature/jobs/test_download_lecture.py .            [ 60%]
-tests/unit/tools/video/test_img.py ..                    [100%]
+tests/feature/api/test_assignments.py ........                                      [  8%]
+tests/feature/api/test_courses.py .                                                 [  9%]
+tests/feature/api/test_index.py .                                                   [ 10%]
+tests/feature/api/test_lectures.py .                                                [ 11%]
+tests/feature/api/test_query.py ........                                            [ 19%]
+tests/feature/api/test_search.py ...............                                    [ 34%]
+tests/feature/jobs/pipelines/analyse_lecture/test_clean_lecture.py .                [ 35%]
+tests/feature/jobs/pipelines/analyse_lecture/test_download_lecture.py .             [ 36%]
+tests/feature/jobs/pipelines/analyse_lecture/test_extract_audio.py .                [ 37%]
+tests/feature/jobs/pipelines/analyse_lecture/test_transcribe_lecture.py ...         [ 40%]
+tests/feature/jobs/pipelines/parse_image_upload/test_classify_subjects.py ...       [ 43%]
+tests/feature/jobs/pipelines/parse_image_upload/test_create_description.py ....     [ 47%]
+tests/feature/jobs/pipelines/parse_image_upload/test_create_search_queries.py ....  [ 51%]
+tests/feature/jobs/pipelines/parse_image_upload/test_create_title.py ..             [ 53%]
+tests/feature/jobs/pipelines/parse_image_upload/test_parse_image_content.py ...     [ 56%]
+tests/feature/jobs/tasks/lecture/test_capture_preview.py .                          [ 57%]
+tests/feature/jobs/tasks/lecture/test_classify_video.py ..                          [ 59%]
+tests/feature/jobs/tasks/lecture/test_fetch_metadata.py .......                     [ 66%]
+tests/feature/jobs/tasks/lecture/test_lecture_classify_subjects.py ..               [ 68%]
+tests/feature/jobs/tasks/lecture/test_lecture_create_description.py .               [ 69%]
+tests/unit/classifiers/test_subject.py ...........                                  [ 80%]
+tests/unit/classifiers/test_subject_multipass.py ......                             [ 86%]
+tests/unit/db/test_crud.py ..                                                       [ 88%]
+tests/unit/db/models/test_image_question.py ........                                [ 96%]
+tests/unit/index/test_lecture.py ..                                                 [ 98%]
+tests/unit/tools/video/test_img.py ..                                               [100%]
 
-====================== 5 passed in 0.78s =======================
+=================================== 100 passed in 6.67s ===================================
 ```
 
 ## Screenshots
 
-> ### Select a KTH Play or YouTube lecture
+> ### kthGPT start-page
 
-![Select](docs/img/select.png)
+![homepage](docs/img/index.png)
 
-> ### Wait for kthGPT to watch the lecture
+> ### Add lectures from KTH Play or YouTube lecture
 
-![Analyse](docs/img/analyse.png)
+![Add new lecture](docs/img/add_lecture.png)
 
-> ### Ask questions about the lecture
+> ### Ask questions about lectures
 
-![Questions](docs/img/question.png)
+![Questions](docs/img/questions.png)
+
+> ### Full transcript search across lectures
+
+![Search in transcripts](docs/img/search.png)
+
+> ### Ask questions about assignments
+
+![Ask questions about assignments](docs/img/assignment.png)
 
 ## License
 

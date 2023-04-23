@@ -21,8 +21,9 @@ export default function AboutPage() {
               <Title>About kthGPT</Title>
               <Paragraph>
                 kthGPT is a free and open source tool that can watch a lecture
-                for you. It allows students to ask questions about any lecture
-                using the GPT-3 model.
+                for you. As a student, kthGPT can help you learn how to solve
+                assignments and understand lecture slides and other course
+                material.
               </Paragraph>
               <Paragraph>
                 <blockquote>
