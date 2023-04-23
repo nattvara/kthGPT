@@ -2,9 +2,11 @@ from fastapi.testclient import TestClient
 from db.models import Lecture, Analysis
 from fakeredis import FakeStrictRedis
 from rq import Queue
+from PIL import Image
 import subprocess
 import tempfile
 import peewee
+import random
 import pytest
 import shutil
 import json
@@ -43,6 +45,7 @@ def pytest_configure(config):
 
     settings.MATHPIX_APP_ID = TEST_MATHPIX_APP_ID
     settings.MATHPIX_APP_KEY = TEST_MATHPIX_APP_KEY
+    settings.MATHPIX_DAILY_OCR_REQUESTS_LIMIT = 42
 
     if os.path.exists(TEST_DB_FILEPATH):
         os.unlink(TEST_DB_FILEPATH)
@@ -248,6 +251,36 @@ def mp3_file():
 @pytest.fixture
 def img_file():
     return os.path.join(os.path.dirname(__file__), 'files') + '/example.png'
+
+
+@pytest.fixture
+def random_image_generator():
+    def create_random_image():
+        tf = tempfile.NamedTemporaryFile(
+            mode='w+',
+            delete=False,
+            suffix='.png'
+        )
+
+        width = 100
+        height = 100
+
+        img = Image.new('RGB', (width, height))
+
+        for x in range(width):
+            for y in range(height):
+                r = random.randint(0, 255)
+                g = random.randint(0, 255)
+                b = random.randint(0, 255)
+                img.putpixel((x, y), (r, g, b))
+
+        img.save(tf.name)
+        yield tf.name
+
+        tf.close()
+        os.unlink(tf.name)
+
+    return create_random_image
 
 
 @pytest.fixture

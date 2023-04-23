@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Union
 from peewee import fn
 
@@ -309,6 +310,18 @@ def get_random_image_upload_by_subject(subject: str):
     ).order_by(
         fn.Random()
     ).first()
+
+
+def get_number_of_images_uploaded_today() -> int:
+    from db.models import ImageUpload
+    today_start = datetime.combine(datetime.utcnow().date(), datetime.min.time())
+    today_end = datetime.combine(datetime.utcnow().date(), datetime.max.time())
+
+    today_image_uploads = ImageUpload.select().where(
+        (ImageUpload.created_at >= today_start) & (ImageUpload.created_at <= today_end)
+    )
+
+    return today_image_uploads.count()
 
 
 # ImageUploadSubjects
