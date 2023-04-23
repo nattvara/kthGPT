@@ -122,7 +122,8 @@ export default function ImageUpload(props: ImageUploadProps) {
                 }`}
               >
                 <Title level={5}>
-                  Click or drag image of an assignment to this area to upload
+                  Click or drag an image of an assignment, lecture slide or lab
+                  to this area to upload
                 </Title>
               </Row>
             </>
