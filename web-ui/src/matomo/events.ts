@@ -40,7 +40,7 @@ export const CATEGORY_COURSE_LIST = 'course_list';
 /* Generic Events */
 export const EVENT_ERROR_RESPONSE = 'error_response';
 
-export const EVENT_RESTART = 'error_restart';
+export const EVENT_RESTART = 'restart';
 
 export const EVENT_SEARCHED = 'searched';
 
