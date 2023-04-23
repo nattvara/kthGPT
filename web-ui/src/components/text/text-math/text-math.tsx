@@ -1,6 +1,11 @@
 import styles from './text-math.less';
 import 'katex/dist/katex.min.css';
-import { InlineMath } from 'react-katex';
+import { InlineMath, BlockMath } from 'react-katex';
+
+function isInline(code: string) {
+  const pattern = /\$[^\$]*\$/;
+  return pattern.test(code);
+}
 
 interface LatexProps {
   code: string;
@@ -9,9 +14,17 @@ interface LatexProps {
 function Latex(props: LatexProps) {
   const { code } = props;
 
+  if (isInline(code)) {
+    return (
+      <span className={styles.math}>
+        <InlineMath math={code.replaceAll('$', '')} />
+      </span>
+    );
+  }
+
   return (
-    <span className={styles.math}>
-      <InlineMath math={code} />
+    <span className={`${styles.math} ${styles.block_math}`}>
+      <BlockMath math={code} />
     </span>
   );
 }
@@ -23,7 +36,18 @@ interface TextMathProps {
 export function TextMath(props: TextMathProps) {
   const { text } = props;
 
-  const parts = text.split('$');
+  const regex = /\$(.+?)\$|\\begin\{((\s|\S)*?)\}((\s|\S)*?)\\end\{\2\}/gm;
+  const parts = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = regex.exec(text)) !== null) {
+    parts.push(text.slice(lastIndex, match.index));
+    parts.push(match[0]);
+    lastIndex = regex.lastIndex;
+  }
+  parts.push(text.slice(lastIndex));
+
   const content = parts.map((part, index) => {
     if (index % 2 === 0) {
       const lines = part.split('\n');
