@@ -54,6 +54,13 @@ h1.huge {
 .breadcrumbs_container {
   width: 100%;
   overflow-x: scroll;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.breadcrumbs_container::-webkit-scrollbar {
+  display: none;
 }
 
 .breadcrumbs {
