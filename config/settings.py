@@ -9,6 +9,7 @@ class Settings(BaseSettings):
 
     MATHPIX_APP_ID: str
     MATHPIX_APP_KEY: str
+    MATHPIX_DAILY_OCR_REQUESTS_LIMIT: int
 
     OPENAI_API_KEY: str
     WHISPER_TRANSCRIPTION_DEVICE: str
