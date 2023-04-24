@@ -123,9 +123,12 @@ export default function LectureList(props: LectureListProps) {
   };
 
   useEffect(() => {
-    setFirstLoad(true);
     searchLectures('');
-  }, [courseCode]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    if (courseCode !== lastCourseCode) {
+      setFirstLoad(true);
+    }
+  }, [courseCode, lastCourseCode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -151,58 +154,60 @@ export default function LectureList(props: LectureListProps) {
         />
       </Row>
 
-      <Row className={styles.result_container}>
-        {isSearchingLectures && firstLoad && (
-          <SearchResultLoading size={4} min={1} max={100} />
-        )}
-        <div className={styles.result_inner_container}>
-          {lectures.map((lecture, index) => {
-            if (index + 1 > limit) {
-              return <div key={lecture.public_id + lecture.language}></div>;
-            }
+      {!firstLoad && (
+        <Row className={styles.result_container}>
+          {isSearchingLectures && firstLoad && (
+            <SearchResultLoading size={4} min={1} max={100} />
+          )}
+          <div className={styles.result_inner_container}>
+            {lectures.map((lecture, index) => {
+              if (index + 1 > limit) {
+                return <div key={lecture.public_id + lecture.language}></div>;
+              }
 
-            return (
-              <Row
-                key={lecture.public_id + lecture.language}
-                className={styles.item}
-              >
-                <Col span={2} className={styles.row_number}>
-                  {index + 1}
-                </Col>
-                <Col span={22}>
-                  <LecturePreviewCompact
-                    lecture={lecture}
-                    onClick={() => goToLecture(lecture)}
-                    onMetaClick={() => goToLecture(lecture, true)}
-                    onCtrlClick={() => goToLecture(lecture, true)}
-                  />
-                </Col>
-              </Row>
-            );
-          })}
-        </div>
+              return (
+                <Row
+                  key={lecture.public_id + lecture.language}
+                  className={styles.item}
+                >
+                  <Col span={2} className={styles.row_number}>
+                    {index + 1}
+                  </Col>
+                  <Col span={22}>
+                    <LecturePreviewCompact
+                      lecture={lecture}
+                      onClick={() => goToLecture(lecture)}
+                      onMetaClick={() => goToLecture(lecture, true)}
+                      onCtrlClick={() => goToLecture(lecture, true)}
+                    />
+                  </Col>
+                </Row>
+              );
+            })}
+          </div>
 
-        <div className={styles.load_more}>
-          <Row justify="center" className={styles.full_width}>
-            <Col>
-              <Button
-                onClick={() => loadMore()}
-                type="primary"
-                key="btn"
-                size="large"
-                disabled={lectures.length <= limit}
-              >
-                Load {PAGINATE_AFTER} more hits
-              </Button>
-            </Col>
-          </Row>
-          <Row justify="center" className={styles.hits}>
-            <Paragraph>
-              Showing {limit} / {lectures.length} lectures
-            </Paragraph>
-          </Row>
-        </div>
-      </Row>
+          <div className={styles.load_more}>
+            <Row justify="center" className={styles.full_width}>
+              <Col>
+                <Button
+                  onClick={() => loadMore()}
+                  type="primary"
+                  key="btn"
+                  size="large"
+                  disabled={lectures.length <= limit}
+                >
+                  Load {PAGINATE_AFTER} more hits
+                </Button>
+              </Col>
+            </Row>
+            <Row justify="center" className={styles.hits}>
+              <Paragraph>
+                Showing {limit} / {lectures.length} lectures
+              </Paragraph>
+            </Row>
+          </div>
+        </Row>
+      )}
     </>
   );
 }
