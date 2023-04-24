@@ -29,11 +29,12 @@ interface ImageResponse extends ServerResponse {
 interface ImageUploadProps {
   uploadId?: string;
   noMargin?: boolean;
+  compact?: boolean;
   onUploadComplete: (image: ImageType) => void;
 }
 
 export default function ImageUpload(props: ImageUploadProps) {
-  const { uploadId, onUploadComplete, noMargin } = props;
+  const { uploadId, onUploadComplete, noMargin, compact } = props;
 
   const [id, setId] = useState<null | string>(null);
   const [error, setError] = useState<string>('');
@@ -111,7 +112,9 @@ export default function ImageUpload(props: ImageUploadProps) {
       {contextHolder}
       <Row>
         <Dragger
-          className={`${styles.dragger} ${noMargin ? styles.no_margin : ''}`}
+          className={`${styles.dragger} ${noMargin ? styles.no_margin : ''} ${
+            compact === true ? styles.compact : ''
+          }`}
           {...uploadProps}
         >
           {(id === null || image === null) && (
@@ -124,17 +127,26 @@ export default function ImageUpload(props: ImageUploadProps) {
               <Row
                 className={`${styles.title} ${hovering ? styles.hovering : ''}`}
               >
-                <Title level={3}>Ask a question about an assignment</Title>
+                {(compact === undefined || compact === false) && (
+                  <Title level={3}>Ask a question about an assignment</Title>
+                )}
+                {compact === true && (
+                  <Title level={5}>
+                    Ask a question about another assignment
+                  </Title>
+                )}
               </Row>
               <Row
                 className={`${styles.subtitle} ${
                   hovering ? styles.hovering : ''
                 }`}
               >
-                <Title level={5}>
-                  Click or drag an image of an assignment, lecture slide or lab
-                  to this area to upload
-                </Title>
+                {(compact === undefined || compact === false) && (
+                  <Title level={5}>
+                    Click or drag an image of an assignment, lecture slide or
+                    lab to this area to upload
+                  </Title>
+                )}
               </Row>
             </>
           )}
