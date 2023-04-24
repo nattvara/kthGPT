@@ -88,7 +88,7 @@ export default function IndexPage() {
                       type="primary"
                       size="large"
                     >
-                      <BulbOutlined /> Look at a random assignment
+                      <BulbOutlined /> Test with an example!
                     </Button>
                   </Col>
                 </Row>
