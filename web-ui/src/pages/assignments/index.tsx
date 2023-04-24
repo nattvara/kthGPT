@@ -10,11 +10,16 @@ import {
   Space,
   Typography,
   notification,
+  Image as AntImage,
 } from 'antd';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useParams } from 'umi';
-import apiClient, { ServerErrorResponse, ServerResponse } from '@/http';
+import apiClient, {
+  ServerErrorResponse,
+  ServerResponse,
+  makeUrl,
+} from '@/http';
 import { Image } from '@/types/search';
 import ImageUpload from '@/components/image/image-upload/image-upload';
 import ImageProgress from '@/components/image/image-progress/image-progress';
@@ -99,6 +104,8 @@ export default function AssignmentsIndexPage() {
     fetchImage();
   };
 
+  const previewUrl = makeUrl(`/assignments/image/${id}/img`);
+
   useEffect(() => {
     registerPageLoad();
   }, []);
@@ -175,9 +182,16 @@ export default function AssignmentsIndexPage() {
           <Col sm={24} md={7} className={styles.padding_left_right}>
             <Space direction="vertical" size="large">
               <Row>
+                <AntImage
+                  src={previewUrl}
+                  className={styles.image_preview}
+                  preview={true}
+                />
+              </Row>
+              <Row>
                 <ImageUpload
-                  uploadId={uploadId}
                   noMargin={true}
+                  compact={true}
                   onUploadComplete={(image) => onImageUploadComplete(image)}
                 />
               </Row>
