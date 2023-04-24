@@ -80,12 +80,12 @@ export default function CourseContent(props: CourseContentProps) {
 
       {/* Separate KTH Play and YouTube videos on desktop */}
       <Row>
-        <Col sm={0} md={12}>
+        <Col xs={0} sm={0} md={12}>
           <Divider orientation="left">KTH Play</Divider>
           <LectureList source="kth" courseCode={course.course_code} />
         </Col>
-        <Col sm={0} md={1}></Col>
-        <Col sm={0} md={11}>
+        <Col xs={0} sm={0} md={1}></Col>
+        <Col xs={0} sm={0} md={11}>
           <Divider orientation="left">Youtube</Divider>
           <LectureList source="youtube" courseCode={course.course_code} />
         </Col>
