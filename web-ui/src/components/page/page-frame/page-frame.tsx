@@ -77,7 +77,7 @@ function PageFrame(props: PageFrameProps) {
             {showDescription && (
               <>
                 <h1 className={styles.subtitle}>
-                  Ask GPT-3 questions about KTH lectures
+                  Help with lectures and assignments
                 </h1>
                 <Row className={styles.subtitle} justify="center">
                   <Col className={styles.header_btn}>
