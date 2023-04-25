@@ -80,7 +80,8 @@ function PageFrame(props: PageFrameProps) {
             {showDescription && (
               <>
                 <h1 className={styles.subtitle}>
-                  Help with lectures and assignments
+                  Get help from an AI with university<br></br>lectures and
+                  assignments
                 </h1>
                 <Row className={styles.subtitle} justify="center">
                   <Col className={styles.header_btn}>
