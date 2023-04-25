@@ -74,6 +74,9 @@ function PageFrame(props: PageFrameProps) {
                 <h1 className={styles.huge}>OpenUni.AI</h1>
               </Space>
             </Row>
+            <Row justify={'center'} className={styles.old_name}>
+              <h2>kthGPT</h2>
+            </Row>
             {showDescription && (
               <>
                 <h1 className={styles.subtitle}>
