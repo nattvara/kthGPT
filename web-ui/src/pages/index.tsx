@@ -52,7 +52,7 @@ export default function IndexPage() {
   };
 
   useEffect(() => {
-    document.title = 'kthGPT';
+    document.title = 'OpenUni.AI';
     registerPageLoad();
   }, []);
 
@@ -97,7 +97,7 @@ export default function IndexPage() {
                 <ButtonHugeWithPreview
                   icon={<FileSearchOutlined />}
                   title="Find a lecture"
-                  subtitle="Find a lecture from the lectures kthGPT has already watched"
+                  subtitle="Find a lecture from the lectures OpenUni.AI has already watched"
                   url="/courses"
                   preview={
                     <CourseList onCourseSelect={() => null} small={true} />

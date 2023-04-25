@@ -140,7 +140,7 @@ export default function WatchPage() {
 
   useEffect(() => {
     if (lecture && lecture.title) {
-      document.title = `kthGPT - ${lecture.title}`;
+      document.title = `OpenUni.AI | ${lecture.title}`;
     }
   }, [lecture]);
 
@@ -229,7 +229,7 @@ export default function WatchPage() {
                 <Row>
                   <Col span={24}>
                     <h1 className={styles.title}>
-                      kthGPT is watching the lecture 🍿
+                      OpenUni.AI is watching the lecture 🍿
                     </h1>
                     <h2 className={styles.subtitle}>
                       This can take a little while, but is only done once per

@@ -7,7 +7,7 @@ import styles from './404.less';
 
 export default function NotFoundPage() {
   useEffect(() => {
-    document.title = 'kthGPT - Not Found';
+    document.title = 'OpenUni.AI | Not Found';
     registerPageLoad();
   }, []);
 
@@ -31,7 +31,7 @@ export default function NotFoundPage() {
                   key="btn"
                   size="large"
                 >
-                  Go to kthgpt.com
+                  Go to OpenUni.AI
                 </Button>
               </Row>
             </>

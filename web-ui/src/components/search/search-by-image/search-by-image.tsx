@@ -179,7 +179,7 @@ export default function SearchByImage(props: SearchByImageProps) {
         {notReady && (
           <Result
             icon={<LoadingOutlined />}
-            title="Once kthGPT has understood the assignment, it will try to find the relevant lectures and display them here"
+            title="Once OpenUni.AI has understood the assignment, it will try to find the relevant lectures and display them here"
           />
         )}
       </Row>

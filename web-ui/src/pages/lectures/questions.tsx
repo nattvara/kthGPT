@@ -79,7 +79,7 @@ export default function QuestionsPage() {
 
   useEffect(() => {
     if (lecture && lecture.title) {
-      document.title = `kthGPT - ${lecture.title}`;
+      document.title = `OpenUni.AI | ${lecture.title}`;
     }
   }, [lecture]);
 

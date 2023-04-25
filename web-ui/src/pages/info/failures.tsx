@@ -8,7 +8,7 @@ const { Title } = Typography;
 
 export default function FailuresPage() {
   useEffect(() => {
-    document.title = 'kthGPT - Failures';
+    document.title = 'OpenUni.AI | Failures';
     registerPageLoad();
   }, []);
 

@@ -16,6 +16,9 @@
 
 h1.huge {
   font-size: 70px;
+  @media (max-width: 768px) {
+    font-size: 50px;
+  }
 }
 
 .steps {
@@ -72,5 +75,56 @@ h1.huge {
 
   * .ant-breadcrumb-separator {
     display: block !important;
+  }
+}
+
+.old_name {
+  h2 {
+    font-size: 50px;
+    text-shadow: 0px 0px 10px #eee;
+  }
+
+  h2 {
+    position: relative;
+    display: inline-block;
+  }
+
+  h2::before {
+    content: '';
+    width: 90%;
+    position: absolute;
+    right: 5%;
+    top: 45%;
+  }
+
+  h2::after {
+    content: '';
+    width: 84%;
+    position: absolute;
+    right: 8%;
+    top: 45%;
+  }
+
+  h2::before {
+    border-bottom: 5px solid rgba(255, 77, 79, 0.8);
+    border-radius: 2px;
+    transform: skewY(-11deg);
+  }
+
+  h2::after {
+    border-bottom: 5px solid rgba(255, 77, 79, 0.8);
+    border-radius: 2px;
+    transform: skewY(10deg);
+  }
+
+  @media (min-width: 768px) {
+    font-size: 50px;
+    height: 0;
+
+    h2 {
+      position: relative;
+      right: -340px;
+      transform: rotate(20deg);
+    }
   }
 }

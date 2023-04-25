@@ -8,7 +8,7 @@ const { Title } = Typography;
 
 export default function DeniedPage() {
   useEffect(() => {
-    document.title = 'kthGPT - Denied';
+    document.title = 'OpenUni.AI | Denied';
     registerPageLoad();
   }, []);
 
@@ -16,7 +16,7 @@ export default function DeniedPage() {
     <>
       <PageFrame>
         <>
-          <Title level={3}>Lectures that where denied by kthGPT</Title>
+          <Title level={3}>Lectures that where denied by OpenUni.AI</Title>
           <DeniedTable />
         </>
       </PageFrame>

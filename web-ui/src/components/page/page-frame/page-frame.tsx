@@ -71,13 +71,17 @@ function PageFrame(props: PageFrameProps) {
                   }`}
                   preview={false}
                 />
-                <h1 className={styles.huge}>kthGPT</h1>
+                <h1 className={styles.huge}>OpenUni.AI</h1>
               </Space>
+            </Row>
+            <Row justify={'center'} className={styles.old_name}>
+              <h2>kthGPT</h2>
             </Row>
             {showDescription && (
               <>
                 <h1 className={styles.subtitle}>
-                  Help with lectures and assignments
+                  Get help from an AI with university<br></br>lectures and
+                  assignments
                 </h1>
                 <Row className={styles.subtitle} justify="center">
                   <Col className={styles.header_btn}>
@@ -100,7 +104,7 @@ function PageFrame(props: PageFrameProps) {
                       <Button type="dashed">
                         {isProduction && (
                           <>
-                            kthGPT <strong>{buildDate}</strong> Version
+                            OpenUni.AI <strong>{buildDate}</strong> Version
                           </>
                         )}
                         {!isProduction && <>Development build</>}
