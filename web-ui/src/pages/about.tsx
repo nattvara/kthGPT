@@ -8,22 +8,22 @@ const { Paragraph, Title, Link } = Typography;
 
 export default function AboutPage() {
   useEffect(() => {
-    document.title = 'kthGPT - About';
+    document.title = 'OpenUni.AI | About';
     registerPageLoad();
   }, []);
 
   return (
     <>
-      <PageFrame showBack={true} breadcrumbs={[{ title: 'About kthGPT' }]}>
+      <PageFrame showBack={true} breadcrumbs={[{ title: 'About OpenUni.AI' }]}>
         <div className={styles.page}>
           <Row justify="center">
             <Col sm={24} md={15}>
-              <Title>About kthGPT</Title>
+              <Title>About OpenUni.AI</Title>
               <Paragraph>
-                kthGPT is a free and open source tool that can watch a lecture
-                for you. As a student, kthGPT can help you learn how to solve
-                assignments and understand lecture slides and other course
-                material.
+                OpenUni.AI is a free and open source tool that can watch a
+                lecture for you. As a student, OpenUni.AI can help you learn how
+                to solve assignments and understand lecture slides and other
+                course material.
               </Paragraph>
               <Paragraph>
                 <blockquote>
@@ -36,7 +36,7 @@ export default function AboutPage() {
               <Title level={3}>1. Select lecture</Title>
               <Paragraph>
                 Select a lecture that's already been watched or add a new one!
-                kthGPT can watch lectures hosted on
+                OpenUni.AI can watch lectures hosted on
                 <span> </span>
                 <Link href="https://play.kth.se/" target="_blank">
                   KTH Play
@@ -51,14 +51,16 @@ export default function AboutPage() {
               </Paragraph>
               <Paragraph>
                 It can't watch any video on YouTube. Due to limited capacity
-                kthGPT will only watch "relevant videos". Relevant videos are
-                such that it thinks are <code>Recorded Lectures</code>. kthGPT
-                uses a sample of the video to do this assessment.
+                OpenUni.AI will only watch "relevant videos". Relevant videos
+                are such that it thinks are <code>Recorded Lectures</code>.
+                OpenUni.AI uses a sample of the video to do this assessment.
               </Paragraph>
 
-              <Title level={3}>2. Wait for kthGPT to "watch" the lecture</Title>
+              <Title level={3}>
+                2. Wait for OpenUni.AI to "watch" the lecture
+              </Title>
               <Paragraph>
-                If the video has not been watched by kthGPT before, it will
+                If the video has not been watched by OpenUni.AI before, it will
                 start watching the video and try to produce a summary. It will
                 only listen to the audio, so nothing been shown or written in
                 the lecture will be included in the summary.
@@ -70,14 +72,14 @@ export default function AboutPage() {
               </Paragraph>
               <Paragraph>
                 If the audio quality in the video is bad, the quality of the
-                summary will be worse. kthGPT is generally best at understanding
-                English. However, if the audio quality is good, Swedish should
-                be just fine as well.
+                summary will be worse. OpenUni.AI is generally best at
+                understanding English. However, if the audio quality is good,
+                Swedish should be just fine as well.
               </Paragraph>
 
               <Title level={3}>3. Ask questions about the lecture</Title>
               <Paragraph>
-                The lecture is ready. kthGPT can now use GPT-3 to answer
+                The lecture is ready. OpenUni.AI can now use GPT-3 to answer
                 questions about the lecture. Some useful queries:
               </Paragraph>
 

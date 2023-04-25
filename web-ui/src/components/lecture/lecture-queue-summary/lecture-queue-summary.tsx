@@ -67,7 +67,7 @@ export default function LectureQueueSummary() {
         <Alert
           message={
             <>
-              kthGPT has limited capacity. Currently there is
+              OpenUni.AI has limited capacity. Currently there is
               <strong> {unfinishedLectures.length - 1} </strong>
               other lectures being watched. view the progress
               <Link href="/info/queue" target="_blank">

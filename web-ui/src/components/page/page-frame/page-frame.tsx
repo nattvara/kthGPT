@@ -104,7 +104,7 @@ function PageFrame(props: PageFrameProps) {
                       <Button type="dashed">
                         {isProduction && (
                           <>
-                            kthGPT <strong>{buildDate}</strong> Version
+                            OpenUni.AI <strong>{buildDate}</strong> Version
                           </>
                         )}
                         {!isProduction && <>Development build</>}

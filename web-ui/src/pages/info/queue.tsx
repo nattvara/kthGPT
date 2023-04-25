@@ -8,7 +8,7 @@ const { Title } = Typography;
 
 export default function QueuePage() {
   useEffect(() => {
-    document.title = 'kthGPT - Queue';
+    document.title = 'OpenUni.AI | Queue';
     registerPageLoad();
   }, []);
 
@@ -16,7 +16,9 @@ export default function QueuePage() {
     <>
       <PageFrame>
         <>
-          <Title level={3}>Current queue of videos for kthGPT to watch</Title>
+          <Title level={3}>
+            Current queue of videos for OpenUni.AI to watch
+          </Title>
           <TableQueue />
         </>
       </PageFrame>

@@ -66,14 +66,14 @@ export default function LectureWatchResult(props: LectureWatchResultProps) {
               <Row justify="center">
                 <Col xs={24} sm={12}>
                   <Paragraph>
-                    Since kthGPT has limited capacity only relevant videos are
-                    allowed. kthGPT is currently trying to figure out if the
-                    video is relevant. Relevant videos are educational videos,
-                    such as recorded lectures, tutorials about math, programming
-                    etc.
+                    Since OpenUni.AI has limited capacity only relevant videos
+                    are allowed. OpenUni.AI is currently trying to figure out if
+                    the video is relevant. Relevant videos are educational
+                    videos, such as recorded lectures, tutorials about math,
+                    programming etc.
                   </Paragraph>
                   <Paragraph>
-                    kthGPT will also not watch videos longer than 4 hours.
+                    OpenUni.AI will also not watch videos longer than 4 hours.
                   </Paragraph>
                   <Paragraph>
                     <strong>This can take a few minutes.</strong>
@@ -92,25 +92,25 @@ export default function LectureWatchResult(props: LectureWatchResultProps) {
       <>
         <Result
           status="error"
-          title="The video was denied by kthGPT"
+          title="The video was denied by OpenUni.AI"
           subTitle={
             <>
               <Row justify="center">
                 <Col xs={24} sm={12} style={{ textAlign: 'left' }}>
                   <Paragraph>
                     <strong>
-                      Since kthGPT has limited capacity only relevant videos are
-                      allowed.
+                      Since OpenUni.AI has limited capacity only relevant videos
+                      are allowed.
                     </strong>
                     <span> </span>
-                    kthGPT is using AI to determine which videos are relevant.
-                    And this video was denied. There is a few reasons why this
-                    could have happened. However, most likely this is because
-                    the video was off-topic.
+                    OpenUni.AI is using AI to determine which videos are
+                    relevant. And this video was denied. There is a few reasons
+                    why this could have happened. However, most likely this is
+                    because the video was off-topic.
                   </Paragraph>
                   <Paragraph>
                     Youtube videos should be about a topic that is relevant for
-                    a course at KTH, which is the purpose of kthGPT.
+                    a course at KTH, which is the purpose of OpenUni.AI.
                   </Paragraph>
                   <Paragraph>
                     <strong>If you feel this video should be admitted</strong>

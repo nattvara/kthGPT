@@ -128,7 +128,7 @@ export default function AssignmentsIndexPage() {
 
   useEffect(() => {
     if (image && image.title) {
-      document.title = `kthGPT - ${image.title}`;
+      document.title = `OpenUni.AI | ${image.title}`;
     }
   }, [image]);
 
@@ -231,7 +231,7 @@ export default function AssignmentsIndexPage() {
                 🧑‍🏫 Where can I learn how to solve this assignment?
               </Title>
               <Paragraph>
-                kthGPT is trying to find
+                OpenUni.AI is trying to find
                 <strong> which lectures are relevant</strong> for this
                 assignment, and <strong>where in them</strong> you can find the
                 information you need to solve the assignment.
