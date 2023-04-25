@@ -71,7 +71,7 @@ function PageFrame(props: PageFrameProps) {
                   }`}
                   preview={false}
                 />
-                <h1 className={styles.huge}>kthGPT</h1>
+                <h1 className={styles.huge}>OpenUni.AI</h1>
               </Space>
             </Row>
             {showDescription && (
