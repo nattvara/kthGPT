@@ -31,7 +31,7 @@ export default function NotFoundPage() {
                   key="btn"
                   size="large"
                 >
-                  Go to kthgpt.com
+                  Go to OpenUni.AI
                 </Button>
               </Row>
             </>
