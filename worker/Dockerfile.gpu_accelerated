@@ -1,5 +1,7 @@
-FROM mcr.microsoft.com/playwright
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11
+FROM ubuntu:22.04
+
+# Prevent dialog prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
 
 # set work directory
 WORKDIR /app
@@ -7,6 +9,21 @@ WORKDIR /app
 # set env variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+
+# Install system tools, Python, FastAPI essentials, and Playwright's dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    python3.11 \
+    python3-pip \
+    python3-venv \
+    libgtk-3-0 \
+    libdbus-glib-1-2 \
+    libnss3 \
+    libxss1 \
+    libasound2 \
+    ffmpeg \
+    gunicorn \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # copy project
 COPY api ./api
@@ -20,16 +37,13 @@ COPY index ./index
 COPY setup.py .
 COPY requirements.txt .
 
-# install dependencies
+# install pyhton dependencies
 RUN pip install -r requirements.txt
+
+# install playwright and dependencies
 RUN python setup.py install
 RUN playwright install
 RUN playwright install-deps
-
-# install ffmpeg
-RUN apt-get -y update
-RUN apt-get -y upgrade
-RUN apt-get install -y ffmpeg
 
 # Install GPU drivers
 RUN pip uninstall torch -y
