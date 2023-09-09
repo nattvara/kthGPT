@@ -8,7 +8,7 @@ setup(
     description='Ask GPT-3 questions about KTH lectures',
     author='Ludwig Kristoffersson',
     author_email='ludwig@kristoffersson.org',
-    python_requires='>=3.10',
+    python_requires='>=3.11',
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
