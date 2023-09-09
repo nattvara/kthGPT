@@ -1,5 +1,5 @@
 FROM mcr.microsoft.com/playwright
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.10
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11
 
 # set work directory
 WORKDIR /app
