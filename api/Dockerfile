@@ -19,8 +19,12 @@ RUN apt-get update && apt-get install -y \
     libgtk-3-0 \
     libdbus-glib-1-2 \
     libnss3 \
+    libpq-dev \
     libxss1 \
     libasound2 \
+    build-essential \
+    rustc \
+    cargo \
     ffmpeg \
     gunicorn \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -38,9 +42,10 @@ COPY setup.py .
 COPY requirements.txt .
 
 # install pyhton dependencies
+RUN pip install --upgrade pip setuptools wheel
 RUN pip install -r requirements.txt
 
 # install playwright and dependencies
-RUN python setup.py install
+RUN python3 setup.py install
 RUN playwright install
 RUN playwright install-deps
