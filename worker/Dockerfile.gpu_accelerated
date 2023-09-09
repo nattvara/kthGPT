@@ -9,11 +9,11 @@ WORKDIR /app
 # set env variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV PYTHONPATH=/app
 
 # Install system tools, Python, FastAPI essentials, and Playwright's dependencies
 RUN apt-get update && apt-get install -y \
     wget \
-    python3.11 \
     python3-pip \
     python3-venv \
     libgtk-3-0 \
