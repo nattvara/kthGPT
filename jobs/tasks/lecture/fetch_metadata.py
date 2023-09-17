@@ -37,6 +37,7 @@ def job(lecture_id: str, language: str):
     else:
         raise ValueError(f'unknown source {lecture.source}')
 
+    lecture.refresh()
     lecture.title = title
     lecture.date = date
     lecture.group = group

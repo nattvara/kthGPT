@@ -37,6 +37,7 @@ def job(lecture_id: str, language: str):
         analysis_id=analysis.id,
     )
 
+    lecture.refresh()
     lecture.description = response
     lecture.save()
 

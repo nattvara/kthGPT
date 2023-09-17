@@ -103,6 +103,7 @@ def job(lecture_id: str, language: str):
 
     logger.info(f'response from openAI: {response}')
 
+    lecture.refresh()
     lecture.approved = category_is_ok
     lecture.save()
 
