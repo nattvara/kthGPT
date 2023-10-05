@@ -1,10 +1,11 @@
 import {
   CheckCircleOutlined,
+  CopyOutlined,
   ExclamationCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
 import styles from './image-progress.less';
-import { Row, Col, Space, Progress, Tag, Collapse, Typography } from 'antd';
+import { Row, Col, Space, Progress, Tag, Collapse, Typography, Button, Tooltip } from 'antd';
 import { Image } from '@/types/search';
 import { useEffect } from 'react';
 
@@ -80,6 +81,12 @@ export default function ImageProgress(props: ImageProgressProps) {
     progressStatus = 'success';
   }
 
+  const copyTextContentToClipboard = () => {
+    if (image.text_content) {
+      navigator.clipboard.writeText(image.text_content);
+    }
+  };
+
   useEffect(() => {
     if (failed !== 0) {
       onUpdate({ failed: true });
@@ -104,6 +111,15 @@ export default function ImageProgress(props: ImageProgressProps) {
               <Row>
                 <Title level={4} style={{ margin: 0 }}>
                   Parsing Assignment
+                  <span> </span>
+                  <Tooltip title="Copy assignment text">
+                    <Button
+                      type="text"
+                      icon={<CopyOutlined />}
+                      onClick={() => copyTextContentToClipboard()}
+                      disabled={progressStatus !== 'success'}
+                    ></Button>
+                  </Tooltip>
                 </Title>
                 <Paragraph className={styles.meta}>
                   This usually takes around 30 seconds
