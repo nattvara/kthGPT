@@ -5,7 +5,17 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import styles from './image-progress.less';
-import { Row, Col, Space, Progress, Tag, Collapse, Typography, Button, Tooltip } from 'antd';
+import {
+  Row,
+  Col,
+  Space,
+  Progress,
+  Tag,
+  Collapse,
+  Typography,
+  Button,
+  Tooltip,
+} from 'antd';
 import { Image } from '@/types/search';
 import { useEffect } from 'react';
 
