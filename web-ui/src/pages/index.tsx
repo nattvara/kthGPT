@@ -2,7 +2,7 @@ import { Lecture } from '@/types/lecture';
 import PageFrame from '@/components/page/page-frame/page-frame';
 import SearchHuge from '@/components/search/search-huge/search-huge';
 import { emitEvent, registerPageLoad } from '@/matomo';
-import { Button, Col, Row, Grid } from 'antd';
+import { Button, Col, Row, Grid, Result } from 'antd';
 import styles from './index.less';
 import { useEffect, useState } from 'react';
 import SearchResult from '@/components/search/search-results/search-result';
@@ -59,6 +59,13 @@ export default function IndexPage() {
   return (
     <>
       <PageFrame>
+        <Row className={`${styles.fullwidth} ${styles.alert}`}>
+          <Result
+            className={styles.fullwidth}
+            title="This tool has been paused"
+            subTitle="Running this is very expensive, so to fund other tools, most functionality in this tool has been shut off."
+          />
+        </Row>
         <Row>
           <Row className={styles.fullwidth}>
             <SearchHuge
